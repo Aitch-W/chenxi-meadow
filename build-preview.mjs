@@ -5,7 +5,6 @@ let html = fs.readFileSync(path.join(root, 'dist/index.html'), 'utf8');
 const css = fs.readFileSync(path.join(root, 'dist/style.css'), 'utf8');
 let js = fs.readFileSync(path.join(root, 'dist/scene.js'), 'utf8');
 const app = fs.readFileSync(path.join(root, 'dist/app.js'), 'utf8');
-const scenes = fs.readFileSync(path.join(root, 'dist/scenes.js'), 'utf8');
 
 // 把本地 three.js 内联进 scene.js：去掉末尾 export，构造 THREE 命名空间
 let three = fs.readFileSync(path.join(root, 'dist/vendor/three.module.js'), 'utf8');
@@ -30,7 +29,5 @@ html = html.replace('<script type="module" src="app.js"></script>', () => `<scri
 // preview 单文件无法解析 lanyard 相关相对导入，去掉挂载脚本
 html = html.replace(/<script type="module">\s*import \{ initLanyard \}[\s\S]*?<\/script>/, '');
 html = html.replace(/<script type="module" src="lanyard-setup\.js"><\/script>/, '');
-// scenes.js 无外部导入，直接内联
-html = html.replace('<script type="module" src="scenes.js"></script>', () => `<script type="module">${scenes}</script>`);
 fs.writeFileSync(path.join(root, 'preview.html'), html);
 console.log('Updated preview.html: ' + Buffer.byteLength(html) + ' bytes');

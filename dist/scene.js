@@ -25,6 +25,25 @@ for(let i=0;i<26000;i++){
 }
 for(let i=0;i<95000;i++){ctx.fillStyle=i%2?'#fff4ce26':'#485d3920';ctx.fillRect(rand(0,2048),rand(0,2048),rand(.6,2),rand(.6,2))}
 const texture=new THREE.CanvasTexture(texCanvas);texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(3,2);texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());const grass=material('#efe8c5',{map:texture});
+// 沿飞行方向连续变化地貌配色（草原→蓝金田野→赤土→碧海），像第一页一样一直往前飞
+grass.onBeforeCompile=(shader)=>{
+  shader.vertexShader='varying float vObjY;\n'+shader.vertexShader.replace(
+    '#include <begin_vertex>',
+    '#include <begin_vertex>\nvObjY=position.y;'
+  );
+  shader.fragmentShader='varying float vObjY;\n'+shader.fragmentShader.replace(
+    '#include <color_fragment>',
+    '#include <color_fragment>\n'+
+    'float bz=clamp(vObjY/100.0+0.5,0.0,1.0)*4.0;\n'+
+    'vec3 cG=vec3(0.62,0.74,0.34), cB=vec3(0.22,0.48,0.80), cY=vec3(0.95,0.80,0.30), cR=vec3(0.90,0.46,0.18);\n'+
+    'vec3 bio;\n'+
+    'if(bz<1.0) bio=mix(cG,cB,smoothstep(0.0,1.0,bz));\n'+
+    'else if(bz<2.0) bio=mix(cB,cY,smoothstep(0.0,1.0,bz-1.0));\n'+
+    'else if(bz<3.0) bio=mix(cY,cR,smoothstep(0.0,1.0,bz-2.0));\n'+
+    'else bio=mix(cR,cG,smoothstep(0.0,1.0,bz-3.0));\n'+
+    'diffuseColor.rgb=mix(diffuseColor.rgb, diffuseColor.rgb*bio*1.7, 0.72);'
+  );
+};
 const LENGTH=100;const river=z=>-12+3.4*Math.sin(z/LENGTH*Math.PI*2)+.85*Math.sin(z/LENGTH*Math.PI*4+.5);const road=z=>-24+1.8*Math.sin(z/LENGTH*Math.PI*2+.9);
 function strip(fn,width,y,m,p){const vs=[],uv=[],ix=[];for(let i=0;i<=600;i++){const z=-50+i/6;const w=width*(1+.045*Math.sin(z*Math.PI*24/100)+.025*Math.sin(z*Math.PI*76/100));vs.push(fn(z)-w/2,y,z,fn(z)+w/2,y,z);uv.push(0,z,1,z);if(i<600){const k=i*2;ix.push(k,k+2,k+1,k+1,k+2,k+3)}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vs,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(ix);g.computeVertexNormals();const o=new THREE.Mesh(g,m);o.receiveShadow=true;p.add(o);return o}
 const water=new THREE.ShaderMaterial({uniforms:{time:{value:0}},vertexShader:`varying vec2 vUv; void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`varying vec2 vUv;uniform float time;void main(){float edge=abs(vUv.x-.5)*2.;float flow=sin(vUv.y*4.-time*2.+sin(vUv.x*42.+vUv.y*1.3))*sin(vUv.x*78.-vUv.y*3.+time);float wave=pow(max(0.,flow),14.);float current=sin(vUv.x*21.+sin(vUv.y*.8-time*.5))*0.5+0.5;vec3 col=mix(vec3(.24,.46,.52),vec3(.43,.64,.65),current*.5+edge*.5);col=mix(col,vec3(.63,.74,.68),smoothstep(.72,1.,edge));col+=vec3(.35,.45,.4)*wave*.65;float foam=pow(edge,20.)*(.5+.5*sin(vUv.y*18.+time));col+=foam*.23;gl_FragColor=vec4(col,1.);}`});

@@ -13,7 +13,6 @@
   <div id="scene"></div>
   <div id="atmosphere"></div>
 </div>
-<div id="scene-extra" aria-hidden="true"></div>
 
 <nav class="sidebar" aria-label="站点导航">
   <span class="side-logo">AITCH</span>
@@ -29,12 +28,6 @@
       <span class="header-note">一个不断生长的个人空间</span>
       <button id="motion" aria-pressed="false">暂停风景</button>
     </header>
-    <div id="scene-tabs" aria-label="场景切换">
-      <button class="active" data-scene="0">草原河流</button>
-      <button data-scene="1">蓝金田野</button>
-      <button data-scene="2">赤土荒野</button>
-      <button data-scene="3">碧海沙洲</button>
-    </div>
     <div class="scene-note"><span class="line"></span><p>飞过旷野<small>循着风的方向，去探索世界</small></p></div>
     <div class="intro">
       <p class="eyebrow"><i></i> HELLO, I'M AITCH</p>
@@ -92,6 +85,5 @@
 <script type="module">import('./scene.js').catch(()=>{document.getElementById('loading').textContent='风景加载失败，请刷新重试';document.getElementById('motion').disabled=true;document.getElementById('explore').disabled=true;document.getElementById('hint').textContent='三维资源加载失败，个人介绍仍可阅读';});</script>
 <script type="module" src="app.js"></script>
 <script type="module" src="lanyard-setup.js"></script>
-<script type="module" src="scenes.js"></script>
 </body>
 </html>

@@ -42,8 +42,6 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:5px}
 #atmosphere{z-index:2;pointer-events:none}
 #atmosphere canvas{filter:saturate(.72) contrast(.92)}
 canvas{width:100%;height:100%;display:block}
-#scene-extra{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0}
-#scene-extra canvas{width:100%;height:100%;display:block}
 
 /* 飞机层：永远浮在 UI 之上 */
 #plane-layer{position:fixed;inset:0;z-index:35;pointer-events:none}
@@ -78,16 +76,6 @@ header{
   border:1px solid #516f3966;color:#33532c;background:#f3f5d535;
   backdrop-filter:blur(8px);padding:10px 16px;border-radius:30px;font-size:11px;
 }
-#scene-tabs{
-  position:absolute;z-index:6;top:74px;left:50%;transform:translateX(-50%);
-  display:flex;gap:26px;
-}
-#scene-tabs button{
-  background:none;border:0;cursor:pointer;padding:6px 2px;
-  font:500 12px var(--serif);letter-spacing:2px;color:#4b6536;opacity:.6;
-  border-bottom:1px solid transparent;transition:opacity .2s,border-color .2s;
-}
-#scene-tabs button.active{opacity:1;color:#2f5026;border-bottom-color:#2f5026}
 
 /* ===== 第 1 页 · 介绍 ===== */
 .scene-note{
@@ -266,7 +254,6 @@ footer i{display:inline-block;width:6px;height:6px;border-radius:50%;background:
   <div id="scene"></div>
   <div id="atmosphere"></div>
 </div>
-<div id="scene-extra" aria-hidden="true"></div>
 
 <nav class="sidebar" aria-label="站点导航">
   <span class="side-logo">AITCH</span>
@@ -282,12 +269,6 @@ footer i{display:inline-block;width:6px;height:6px;border-radius:50%;background:
       <span class="header-note">一个不断生长的个人空间</span>
       <button id="motion" aria-pressed="false">暂停风景</button>
     </header>
-    <div id="scene-tabs" aria-label="场景切换">
-      <button class="active" data-scene="0">草原河流</button>
-      <button data-scene="1">蓝金田野</button>
-      <button data-scene="2">赤土荒野</button>
-      <button data-scene="3">碧海沙洲</button>
-    </div>
     <div class="scene-note"><span class="line"></span><p>飞过旷野<small>循着风的方向，去探索世界</small></p></div>
     <div class="intro">
       <p class="eyebrow"><i></i> HELLO, I'M AITCH</p>
@@ -54940,6 +54921,25 @@ for(let i=0;i<26000;i++){
 }
 for(let i=0;i<95000;i++){ctx.fillStyle=i%2?'#fff4ce26':'#485d3920';ctx.fillRect(rand(0,2048),rand(0,2048),rand(.6,2),rand(.6,2))}
 const texture=new THREE.CanvasTexture(texCanvas);texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(3,2);texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());const grass=material('#efe8c5',{map:texture});
+// 沿飞行方向连续变化地貌配色（草原→蓝金田野→赤土→碧海），像第一页一样一直往前飞
+grass.onBeforeCompile=(shader)=>{
+  shader.vertexShader='varying float vObjY;\n'+shader.vertexShader.replace(
+    '#include <begin_vertex>',
+    '#include <begin_vertex>\nvObjY=position.y;'
+  );
+  shader.fragmentShader='varying float vObjY;\n'+shader.fragmentShader.replace(
+    '#include <color_fragment>',
+    '#include <color_fragment>\n'+
+    'float bz=clamp(vObjY/100.0+0.5,0.0,1.0)*4.0;\n'+
+    'vec3 cG=vec3(0.62,0.74,0.34), cB=vec3(0.22,0.48,0.80), cY=vec3(0.95,0.80,0.30), cR=vec3(0.90,0.46,0.18);\n'+
+    'vec3 bio;\n'+
+    'if(bz<1.0) bio=mix(cG,cB,smoothstep(0.0,1.0,bz));\n'+
+    'else if(bz<2.0) bio=mix(cB,cY,smoothstep(0.0,1.0,bz-1.0));\n'+
+    'else if(bz<3.0) bio=mix(cY,cR,smoothstep(0.0,1.0,bz-2.0));\n'+
+    'else bio=mix(cR,cG,smoothstep(0.0,1.0,bz-3.0));\n'+
+    'diffuseColor.rgb=mix(diffuseColor.rgb, diffuseColor.rgb*bio*1.7, 0.72);'
+  );
+};
 const LENGTH=100;const river=z=>-12+3.4*Math.sin(z/LENGTH*Math.PI*2)+.85*Math.sin(z/LENGTH*Math.PI*4+.5);const road=z=>-24+1.8*Math.sin(z/LENGTH*Math.PI*2+.9);
 function strip(fn,width,y,m,p){const vs=[],uv=[],ix=[];for(let i=0;i<=600;i++){const z=-50+i/6;const w=width*(1+.045*Math.sin(z*Math.PI*24/100)+.025*Math.sin(z*Math.PI*76/100));vs.push(fn(z)-w/2,y,z,fn(z)+w/2,y,z);uv.push(0,z,1,z);if(i<600){const k=i*2;ix.push(k,k+2,k+1,k+1,k+2,k+3)}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vs,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(ix);g.computeVertexNormals();const o=new THREE.Mesh(g,m);o.receiveShadow=true;p.add(o);return o}
 const water=new THREE.ShaderMaterial({uniforms:{time:{value:0}},vertexShader:`varying vec2 vUv; void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`varying vec2 vUv;uniform float time;void main(){float edge=abs(vUv.x-.5)*2.;float flow=sin(vUv.y*4.-time*2.+sin(vUv.x*42.+vUv.y*1.3))*sin(vUv.x*78.-vUv.y*3.+time);float wave=pow(max(0.,flow),14.);float current=sin(vUv.x*21.+sin(vUv.y*.8-time*.5))*0.5+0.5;vec3 col=mix(vec3(.24,.46,.52),vec3(.43,.64,.65),current*.5+edge*.5);col=mix(col,vec3(.63,.74,.68),smoothstep(.72,1.,edge));col+=vec3(.35,.45,.4)*wave*.65;float foam=pow(edge,20.)*(.5+.5*sin(vUv.y*18.+time));col+=foam*.23;gl_FragColor=vec4(col,1.);}`});
@@ -55209,192 +55209,5 @@ if (lanyard && badge) {
 }
 </script>
 
-<script type="module">// 俯视程序化场景：草原河流(=原 3D 场景) / 蓝金田野 / 赤土荒野 / 碧海沙洲
-// 4 个场景自动轮播 + 顶部 tab 手动切换
-const host = document.querySelector('#scene-extra');
-if (host) {
-  const canvas = document.createElement('canvas');
-  canvas.className = 'scene-extra-canvas';
-  host.appendChild(canvas);
-  const gl = canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false });
-
-  const VS = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
-  const FS = `
-precision highp float;
-uniform vec2 uRes;
-uniform float uTime;
-uniform float uScene;
-
-float hash21(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
-float noise(vec2 p){
-  vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
-  float a=hash21(i), b=hash21(i+vec2(1.,0.)), c=hash21(i+vec2(0.,1.)), d=hash21(i+vec2(1.,1.));
-  return mix(mix(a,b,f.x), mix(c,d,f.x), f.y);
-}
-float fbm(vec2 p){ float v=0., a=.5; for(int i=0;i<4;i++){ v+=a*noise(p); p*=2.03; a*=.5; } return v; }
-
-// 蓝金田野：绿/蓝/黄田块拼贴 + 蓝色河流
-vec3 fields(vec2 p){
-  vec2 g = p*0.9;
-  vec2 id = floor(g), f = fract(g);
-  float h = hash21(id);
-  vec3 c = h<0.30 ? vec3(0.14,0.50,0.86) : (h<0.55 ? vec3(0.96,0.75,0.16) : (h<0.80 ? vec3(0.27,0.62,0.25) : vec3(0.10,0.44,0.64)));
-  float e = min(min(f.x,1.-f.x), min(f.y,1.-f.y));
-  c = mix(c, vec3(0.78,0.68,0.47), 1.0 - smoothstep(0.014,0.034,e));
-  return c;
-}
-vec3 riverBand(vec3 base, vec2 p, float t){
-  float cx = 0.45*sin(p.y*0.55+1.2) + 0.12*sin(p.y*1.8);
-  float d = abs(p.x - cx);
-  float m = smoothstep(0.30,0.20,d);
-  vec3 w = mix(vec3(0.10,0.45,0.72), vec3(0.22,0.64,0.86), 0.5+0.5*sin(p.y*8.0+t*1.5));
-  return mix(base, w, m);
-}
-
-// 赤土荒野：橙红地 + 白色土路
-vec3 desert(vec2 p, float t){
-  float n = fbm(p*0.7);
-  vec3 c = mix(vec3(0.84,0.36,0.14), vec3(0.96,0.52,0.20), n);
-  float cx = 0.5*sin(p.y*0.5+0.6) + 0.15*sin(p.y*1.4);
-  float d = abs(p.x - cx);
-  c = mix(c, vec3(0.93,0.87,0.74), smoothstep(0.10,0.055,d));
-  return c;
-}
-
-// 碧海沙洲：青绿海 + 沙洲小岛
-vec3 sea(vec2 p, float t){
-  float n = fbm(p*0.8 + 10.0);
-  vec3 water = mix(vec3(0.10,0.58,0.62), vec3(0.18,0.72,0.74), n);
-  float sand = smoothstep(0.56,0.48, fbm(p*0.5 + 2.0));
-  vec3 c = mix(water, vec3(0.90,0.83,0.64), sand);
-  float isl = smoothstep(0.64,0.55, fbm(p*0.65 + 5.0));
-  c = mix(c, vec3(0.24,0.54,0.27), isl);
-  return c;
-}
-
-vec3 biome(vec2 p, float t, float k){
-  if (k < 0.5) return riverBand(fields(p), p, t);
-  if (k < 1.5) return desert(p, t);
-  return sea(p, t);
-}
-
-void main(){
-  vec2 uv = gl_FragCoord.xy / uRes;
-  float aspect = uRes.x / uRes.y;
-  vec2 p = vec2((uv.x-0.5)*aspect, uv.y-0.5) * 5.0;
-  float t = uTime;
-  float b = clamp(uScene, 0.0, 2.0);
-
-  vec3 c0 = biome(p, t, 0.0);
-  vec3 c1 = biome(p, t, 1.0);
-  vec3 c2 = biome(p, t, 2.0);
-  float w0 = max(0.0, 1.0 - abs(b-0.0));
-  float w1 = max(0.0, 1.0 - abs(b-1.0));
-  float w2 = max(0.0, 1.0 - abs(b-2.0));
-  vec3 col = c0*w0 + c1*w1 + c2*w2;
-
-  // 树（随机点 + 阴影）
-  float tn = hash21(floor(p*3.5));
-  vec2 tf = fract(p*3.5) - 0.5;
-  float tree = tn > 0.84 ? smoothstep(0.16, 0.10, length(tf)) : 0.0;
-  float tsh = tn > 0.84 ? smoothstep(0.22, 0.12, length(tf - vec2(0.10,0.10))) : 0.0;
-  col = mix(col, vec3(0.12,0.10,0.06), tsh*0.35);
-  col = mix(col, vec3(0.10,0.32,0.15), tree);
-
-  // 云 + 云影
-  float cn = fbm(p*0.5 + vec2(t*0.02, 0.0));
-  float cloud = smoothstep(0.58, 0.86, cn);
-  float cn2 = fbm(p*0.5 + vec2(0.28,0.22) + vec2(t*0.02, 0.0));
-  float sh = smoothstep(0.58, 0.86, cn2) * 0.22;
-  col *= (1.0 - sh);
-  col = mix(col, vec3(1.0,0.99,0.96), cloud*0.85);
-
-  gl_FragColor = vec4(col, 1.0);
-}`;
-
-  function compile(type, src) {
-    const sh = gl.createShader(type);
-    gl.shaderSource(sh, src);
-    gl.compileShader(sh);
-    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
-      console.error('scene shader:', gl.getShaderInfoLog(sh));
-      return null;
-    }
-    return sh;
-  }
-
-  const vs = compile(gl.VERTEX_SHADER, VS);
-  const fs = compile(gl.FRAGMENT_SHADER, FS);
-  if (!vs || !fs) {
-    host.style.display = 'none';
-  } else {
-    const prog = gl.createProgram();
-    gl.attachShader(prog, vs);
-    gl.attachShader(prog, fs);
-    gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      console.error('scene program:', gl.getProgramInfoLog(prog));
-      host.style.display = 'none';
-    } else {
-      gl.useProgram(prog);
-      const buf = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-      const loc = gl.getAttribLocation(prog, 'a');
-      gl.enableVertexAttribArray(loc);
-      gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      const uRes = gl.getUniformLocation(prog, 'uRes');
-      const uTime = gl.getUniformLocation(prog, 'uTime');
-      const uScene = gl.getUniformLocation(prog, 'uScene');
-
-      const tabs = document.querySelectorAll('#scene-tabs button');
-      let sceneIdx = 0, alpha = 0, targetAlpha = 0, bi = 0, targetBi = 0;
-      let nextAt = performance.now() + 12000;
-      const N = 4;
-
-      function setScene(i) {
-        sceneIdx = i;
-        targetAlpha = i === 0 ? 0 : 1;
-        targetBi = Math.max(0, i - 1);
-        tabs.forEach((b, k) => b.classList.toggle('active', k === i));
-      }
-      tabs.forEach((b, i) => b.addEventListener('click', () => {
-        setScene(i);
-        nextAt = performance.now() + 12000;
-      }));
-      setScene(0);
-
-      function resize() {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        const w = Math.round(innerWidth * dpr), h = Math.round(innerHeight * dpr);
-        if (canvas.width !== w || canvas.height !== h) {
-          canvas.width = w;
-          canvas.height = h;
-          gl.viewport(0, 0, w, h);
-        }
-      }
-      window.addEventListener('resize', resize);
-      resize();
-
-      const start = performance.now();
-      function tick(now) {
-        requestAnimationFrame(tick);
-        if (now > nextAt) {
-          setScene((sceneIdx + 1) % N);
-          nextAt = now + 12000;
-        }
-        alpha += (targetAlpha - alpha) * 0.045;
-        bi += (targetBi - bi) * 0.045;
-        host.style.opacity = Math.max(0, Math.min(1, alpha)).toFixed(3);
-        gl.uniform2f(uRes, canvas.width, canvas.height);
-        gl.uniform1f(uTime, (now - start) / 1000);
-        gl.uniform1f(uScene, bi);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
-      }
-      requestAnimationFrame(tick);
-    }
-  }
-}
-</script>
 </body>
 </html>
