@@ -77,7 +77,7 @@ if (area) {
       backImage: drawFace('back', exp),
       size: 0.6,
       strapLength: 0.5,
-      anchor: 'center',
+      anchor: 'left',
       strapColor: '#2e3b28',
       cardColor: '#f7f4ea',
       finish: 'glossy'
