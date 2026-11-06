@@ -54949,45 +54949,49 @@ const pages = document.querySelector('#pages');
 const cc = document.querySelector('#cloud-cover');
 const nav = document.querySelectorAll('.sidebar a[href^="#"]');
 const order = ['home', 'works', 'experience'];
-let page = 0, animating = false, pending = 0, lastWheel = 0, touchY = 0;
+let page = 0, animating = false, pendingTarget = null, lastWheel = 0, touchY = 0;
+let peekTimer = 0, peeking = false, leftZone = 260;
 
-// 生成蓬松云朵：多个球状云团拼成不规则大团（参照首页 3D 云）
+// 生成铺满全屏的球状云团（参照首页 3D 云）
 function buildCloud() {
   if (!cc) return;
   cc.querySelectorAll('.puff').forEach(n => n.remove());
   const W = window.innerWidth, H = window.innerHeight;
-  const centers = [
-    [0.20, 0.34, 0.24], [0.56, 0.27, 0.24], [0.86, 0.40, 0.20],
-    [0.34, 0.70, 0.26], [0.70, 0.66, 0.24], [0.10, 0.64, 0.18],
-    [0.46, 0.50, 0.22], [0.88, 0.76, 0.16]
-  ];
-  centers.forEach(([cx, cy, cr], ci) => {
-    const n = 13 + ((Math.random() * 5) | 0);
-    for (let i = 0; i < n; i++) {
-      const ang = i * 2.39996;
-      const rad = Math.sqrt(i / n) * cr;
-      const x = (cx + Math.cos(ang) * rad) * W;
-      const y = (cy + Math.sin(ang) * rad * 0.72) * H;
-      const d = (0.055 + Math.random() * 0.055) * W * (0.8 + cr * 1.6);
-      const el = document.createElement('div');
-      el.className = 'puff';
-      el.style.width = el.style.height = d.toFixed(0) + 'px';
-      el.style.left = (x - d / 2).toFixed(0) + 'px';
-      el.style.top = (y - d / 2).toFixed(0) + 'px';
-      el.style.zIndex = String(ci * 30 + i + 1);
-      cc.appendChild(el);
+  const cols = 10, rows = 7;
+  const cw = W / cols, ch = H / rows;
+  for (let gy = 0; gy < rows; gy++) {
+    for (let gx = 0; gx < cols; gx++) {
+      const n = 1 + (Math.random() > 0.45 ? 1 : 0);
+      for (let k = 0; k < n; k++) {
+        const x = (gx + 0.5 + (Math.random() - 0.5) * 0.9) * cw;
+        const y = (gy + 0.5 + (Math.random() - 0.5) * 0.9) * ch;
+        const d = Math.min(cw, ch) * (1.25 + Math.random() * 0.55);
+        const el = document.createElement('div');
+        el.className = 'puff';
+        el.style.width = el.style.height = d.toFixed(0) + 'px';
+        el.style.left = (x - d / 2).toFixed(0) + 'px';
+        el.style.top = (y - d / 2).toFixed(0) + 'px';
+        el.style.zIndex = String(1 + gy * 60 + gx * 3 + k);
+        cc.appendChild(el);
+      }
     }
-  });
+  }
 }
 
 function setActive(i) {
   nav.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + order[i]));
 }
 
+function updateSidebar() {
+  document.body.classList.toggle('alt', page > 0 || peeking);
+}
+
 function setPage(i) {
   page = i;
   pages.scrollTo({ top: i * pages.clientHeight, behavior: 'auto' });
-  document.body.classList.toggle('alt', i > 0);
+  peeking = false;
+  if (peekTimer) { clearTimeout(peekTimer); peekTimer = 0; }
+  updateSidebar();
   setActive(i);
 }
 
@@ -55013,23 +55017,33 @@ function cloudScatter(done) {
   }, 1100);
 }
 
-function runFlip(dir) {
-  const target = page + dir;
-  if (target < 0 || target >= order.length) return;
+function transitionTo(target) {
+  if (target < 0 || target >= order.length || target === page) return;
+  if (animating) { pendingTarget = target; return; }
   animating = true;
   cloudRise(() => {
     setPage(target);
     cloudScatter(() => {
       animating = false;
-      if (pending) { const d = pending; pending = 0; runFlip(d); }
+      const pt = pendingTarget;
+      pendingTarget = null;
+      if (pt !== null && pt !== page) transitionTo(pt);
     });
   });
 }
 
 function flip(dir) {
-  if (animating) { pending = dir; return; }
-  runFlip(dir);
+  transitionTo(page + dir);
 }
+
+// 导航链接走受控翻页（而不是浏览器默认的锚点跳转）
+nav.forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = order.indexOf(a.getAttribute('href').slice(1));
+    if (target >= 0) transitionTo(target);
+  });
+});
 
 window.addEventListener('wheel', (e) => {
   e.preventDefault();
@@ -55052,14 +55066,37 @@ pages.addEventListener('touchend', (e) => {
   if (Math.abs(dy) > 40) flip(dy > 0 ? 1 : -1);
 }, { passive: true });
 
+// 首页：鼠标停留在左侧导航区超过 3 秒则滑出侧边栏
+window.addEventListener('mousemove', (e) => {
+  if (page > 0) {
+    if (peeking) { peeking = false; updateSidebar(); }
+    if (peekTimer) { clearTimeout(peekTimer); peekTimer = 0; }
+    return;
+  }
+  if (e.clientX < leftZone) {
+    if (!peeking && !peekTimer) {
+      peekTimer = setTimeout(() => {
+        peekTimer = 0;
+        peeking = true;
+        updateSidebar();
+      }, 3000);
+    }
+  } else {
+    if (peekTimer) { clearTimeout(peekTimer); peekTimer = 0; }
+    if (peeking) { peeking = false; updateSidebar(); }
+  }
+}, { passive: true });
+
 let resizeTimer = 0;
 window.addEventListener('resize', () => {
+  leftZone = Math.min(280, innerWidth * 0.32);
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
     pages.scrollTo({ top: page * pages.clientHeight, behavior: 'auto' });
     if (!animating) buildCloud();
   }, 180);
 });
+leftZone = Math.min(280, innerWidth * 0.32);
 
 buildCloud();
 setActive(0);
