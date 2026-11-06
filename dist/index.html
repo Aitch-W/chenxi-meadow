@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#b5bb76"><meta name="description" content="王宸曦的个人空间 · 河南大学软件工程"><title>王宸曦 · 飞过旷野</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><a class="brand" href="./" aria-label="回到首页">宸曦<span>CHENXI WANG</span></a><span class="header-note">一个不断生长的个人空间</span><button id="motion" aria-pressed="false">暂停风景</button></header>
+<main><div id="atmosphere" aria-hidden="true"></div>
+<section class="landscape" aria-label="油画绘本风格的飞行旷野"><div id="scene"></div><div class="scene-fade"></div><div class="scene-note"><span class="line"></span><p>飞过旷野<small>循着风的方向，去探索世界</small></p></div><div id="loading" role="status">风景正在展开…</div></section>
+<section class="intro"><p class="eyebrow"><i></i> HELLO, I'M CHENXI</p><h1>你好，我是<br><span>王宸曦</span><b>。</b></h1><p class="school">河南大学<span>/</span>软件工程</p><div class="rule"></div><p class="description">在代码与想象之间<br>探索自己的方向</p><p class="subtext">这里记录我的学习、创作，<br>以及一路遇见的风景。</p><div class="interests" aria-label="我的兴趣"><span>编程</span><span>AI 探索</span><span>创作</span></div><button class="flight" id="explore">一起乘风<span aria-hidden="true">↗</span></button><p class="hint" id="hint" aria-live="polite">移动鼠标，和小飞机一起兜兜风</p></section>
+</main><footer><span>© 2026 王宸曦</span><span class="footer-center">保持好奇，继续生长</span><span><i></i> 此刻，正在探索</span></footer>
+<script type="module">import('./scene.js').catch(()=>{document.getElementById('loading').textContent='风景暂未加载，请联网后刷新';document.getElementById('motion').disabled=true;document.getElementById('explore').disabled=true;document.getElementById('hint').textContent='三维资源加载失败，个人介绍仍可阅读';});</script>
+</body></html>
