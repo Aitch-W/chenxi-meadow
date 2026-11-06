@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+import * as THREE from './vendor/three.module.js';
 
 // Terrain is below the biography; the second transparent renderer carries clouds and airplane above it.
 const scene=new THREE.Scene(),sky=new THREE.Scene();scene.background=new THREE.Color('#b5bb76');
