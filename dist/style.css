@@ -1,5 +1,11 @@
 @charset "UTF-8";
 
+/* ===== 字体：Playfair Display（本地） ===== */
+@font-face{font-family:"Playfair Display";font-style:normal;font-weight:400;font-display:swap;src:url("fonts/playfair-400.woff2") format("woff2")}
+@font-face{font-family:"Playfair Display";font-style:normal;font-weight:500;font-display:swap;src:url("fonts/playfair-500.woff2") format("woff2")}
+@font-face{font-family:"Playfair Display";font-style:normal;font-weight:700;font-display:swap;src:url("fonts/playfair-700.woff2") format("woff2")}
+@font-face{font-family:"Playfair Display";font-style:italic;font-weight:400;font-display:swap;src:url("fonts/playfair-400i.woff2") format("woff2")}
+
 /* ===== 基础 ===== */
 :root{
   --bg:#b5bb76;
@@ -9,7 +15,9 @@
   --green-mid:#3d6b2e;
   --green-leaf:#658744;
   --cream:#f7f7ef;
+  --paper:#f6f4ec;
   --side-w:min(230px,26vw);
+  --serif:"Playfair Display","Songti SC","SimSun",Georgia,serif;
   font-family:"Microsoft YaHei","PingFang SC",sans-serif;
   color:#233f21;
   background:#b5bb76;
@@ -26,6 +34,10 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:5px}
 #atmosphere{z-index:2;pointer-events:none}
 #atmosphere canvas{filter:saturate(.72) contrast(.92)}
 canvas{width:100%;height:100%;display:block}
+
+/* 飞机层：永远浮在 UI 之上 */
+#plane-layer{position:fixed;inset:0;z-index:35;pointer-events:none}
+#plane-layer canvas{pointer-events:none}
 
 /* 纸纹颗粒，覆盖全局 */
 body::after{
@@ -51,7 +63,7 @@ header{
   position:absolute;z-index:6;top:0;left:0;width:100%;
   padding:28px 4%;display:flex;align-items:center;justify-content:space-between;
 }
-.brand{text-decoration:none;color:#2f5026;font:700 26px Georgia,"SimSun",serif;letter-spacing:7px}
+.brand{text-decoration:none;color:#2f5026;font:700 30px var(--serif);letter-spacing:9px}
 .header-note{color:#456530;font-size:11px;letter-spacing:3px}
 #motion{
   border:1px solid #516f3966;color:#33532c;background:#f3f5d535;
@@ -77,14 +89,14 @@ header{
   background:radial-gradient(ellipse,#f4e8c184,transparent 70%);pointer-events:none;
 }
 .intro button{pointer-events:auto}
-.eyebrow{font:10px Arial;letter-spacing:3px;color:#345b2b;font-weight:600;margin:0 0 24px}
-.eyebrow i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#3d6b2e;margin-right:9px}
-.name{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin:0 0 20px}
-.name .en{font:600 clamp(46px,4.6vw,78px)/1 "Arial","Helvetica",sans-serif;letter-spacing:6px;color:#2f5026}
-.name .zh{font:400 clamp(22px,2vw,32px)/1.3 "Songti SC","SimSun",serif;letter-spacing:4px;color:#4b6536}
+.eyebrow{font:500 11px var(--serif);letter-spacing:4px;color:#345b2b;margin:0 0 26px;text-transform:uppercase}
+.eyebrow i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#3d6b2e;margin-right:10px}
+.name{display:flex;align-items:baseline;gap:22px;flex-wrap:wrap;margin:0 0 22px}
+.name .en{font:500 clamp(52px,5vw,86px)/1 var(--serif);letter-spacing:2px;color:#2f5026}
+.name .zh{font:400 clamp(20px,1.9vw,30px)/1.3 "Songti SC","SimSun",serif;letter-spacing:5px;color:#4b6536}
 .school{font-size:12px;letter-spacing:2px;color:#3f5d31;margin:0}
 .school span{margin:0 14px;color:#617e45}
-.rule{height:1px;width:40px;background:#658744;margin:24px 0}
+.rule{height:1px;width:44px;background:#658744;margin:24px 0}
 .description{font:20px/1.9 "Songti SC","SimSun",serif;letter-spacing:2px;color:#36582a;margin:0 0 12px}
 .subtext{color:#4b6536;font-size:12px;line-height:2;letter-spacing:1px;margin:0}
 .interests{display:flex;gap:19px;margin:22px 0 28px;color:#42612f;font-size:10px;letter-spacing:2px}
@@ -109,7 +121,7 @@ header{
 /* ===== 侧边栏导航（第 2、3 页） ===== */
 .sidebar{
   position:fixed;top:0;bottom:0;left:0;z-index:12;width:var(--side-w);
-  background:linear-gradient(90deg,rgba(43,47,44,.88),rgba(43,47,44,.6));
+  background:linear-gradient(90deg,rgba(43,47,44,.9),rgba(43,47,44,.62));
   backdrop-filter:blur(3px);
   display:flex;flex-direction:column;justify-content:center;gap:2px;
   padding:90px 30px 60px;
@@ -117,7 +129,7 @@ header{
   transition:transform .55s cubic-bezier(.22,.9,.24,1);
 }
 body.alt .sidebar{transform:translateX(0)}
-.side-logo{position:absolute;top:28px;left:30px;font:700 22px Georgia,serif;letter-spacing:7px;color:#f3f1e6}
+.side-logo{position:absolute;top:28px;left:30px;font:700 24px var(--serif);letter-spacing:8px;color:#f3f1e6}
 .sidebar a{
   color:#d6dbcf;text-decoration:none;font-size:13px;letter-spacing:3px;
   padding:15px 4px;border-bottom:1px solid rgba(255,255,255,.09);
@@ -127,23 +139,26 @@ body.alt .sidebar{transform:translateX(0)}
 .sidebar a.active{color:#fff}
 .sidebar a.active::before{content:'· ';color:#a8b98a}
 
-/* ===== 第 2、3 页正文 ===== */
+/* ===== 第 2、3 页正文（纸质面板，遮住右侧原背景） ===== */
 .page-body{
-  margin-left:var(--side-w);height:100vh;height:100svh;padding:0 6% 0 5%;
+  margin-left:var(--side-w);height:100vh;height:100svh;padding:40px 6% 40px 6%;
   display:flex;flex-direction:column;justify-content:center;
   color:#384936;
+  background:linear-gradient(180deg,#f7f5ee 0%,#eff1e7 100%);
+  box-shadow:inset 1px 0 0 rgba(60,80,40,.08);
 }
 .page-body .eyebrow{margin-bottom:18px}
-.page-body h2{font:500 clamp(34px,3.6vw,56px)/1.2 "Songti SC","SimSun",serif;letter-spacing:4px;color:#2f5026;margin:0 0 34px}
+.page-body h2{font:500 clamp(38px,3.8vw,60px)/1.15 var(--serif);letter-spacing:2px;color:#2f5026;margin:0 0 38px}
 .placeholder-note{font-size:14px;letter-spacing:3px;color:#4b6536;margin:0}
 
-.works-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;max-width:980px}
+.works-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;max-width:1000px}
 .work-slot{
-  aspect-ratio:4/3;border-radius:8px;background:rgba(247,247,239,.85);
-  box-shadow:0 10px 34px rgba(40,50,30,.2);
+  aspect-ratio:4/3;border-radius:10px;background:#ffffff;
+  border:1px solid rgba(60,80,40,.1);
+  box-shadow:0 12px 30px rgba(40,50,30,.07);
   display:grid;place-items:center;
 }
-.work-slot .ph{font-size:12px;letter-spacing:3px;color:#9aa48a}
+.work-slot .ph{font:400 12px var(--serif);letter-spacing:3px;color:#a3ab94}
 
 /* ===== 页脚 ===== */
 footer{
@@ -154,41 +169,48 @@ footer{
 footer i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#3d6b2e;margin-right:9px}
 .footer-center{letter-spacing:3px}
 
-/* ===== 云层转场 ===== */
+/* ===== 云层转场（由滚动进度驱动） ===== */
 #cloud-cover{
   position:fixed;inset:0;z-index:40;pointer-events:none;
-  opacity:0;transform:translateY(102%);
+  opacity:0;transform:translateY(106%);
+  will-change:opacity,transform;
   background:
-    radial-gradient(280px 150px at 10% 86%, #ffffff 0 62%, transparent 74%),
-    radial-gradient(320px 170px at 32% 80%, #fdfdfb 0 62%, transparent 74%),
-    radial-gradient(300px 160px at 54% 90%, #ffffff 0 62%, transparent 74%),
-    radial-gradient(340px 180px at 76% 82%, #fdfdfb 0 62%, transparent 74%),
-    radial-gradient(280px 150px at 94% 88%, #ffffff 0 62%, transparent 74%),
-    radial-gradient(420px 220px at 18% 94%, #f2f4ee 0 64%, transparent 78%),
-    radial-gradient(400px 210px at 64% 96%, #f2f4ee 0 64%, transparent 78%),
-    linear-gradient(0deg, #eef0ea 0%, #f8f9f5 60%, #ffffff 100%);
+    radial-gradient(440px 250px at 3% 30%, #ffffff 0 58%, transparent 80%),
+    radial-gradient(560px 300px at 20% 20%, #fdfdfb 0 58%, transparent 80%),
+    radial-gradient(480px 270px at 38% 36%, #ffffff 0 58%, transparent 80%),
+    radial-gradient(620px 320px at 56% 22%, #fdfdfb 0 58%, transparent 80%),
+    radial-gradient(500px 280px at 74% 34%, #ffffff 0 58%, transparent 80%),
+    radial-gradient(620px 330px at 93% 20%, #fdfdfb 0 58%, transparent 80%),
+    radial-gradient(720px 380px at 10% 62%, #fbfcf8 0 58%, transparent 80%),
+    radial-gradient(780px 400px at 48% 68%, #fbfcf8 0 58%, transparent 80%),
+    radial-gradient(720px 380px at 86% 64%, #fbfcf8 0 58%, transparent 80%),
+    radial-gradient(900px 520px at 16% 100%, #f0f2eb 0 60%, transparent 84%),
+    radial-gradient(980px 560px at 62% 104%, #f0f2eb 0 60%, transparent 84%),
+    radial-gradient(900px 520px at 100% 100%, #f0f2eb 0 60%, transparent 84%),
+    linear-gradient(0deg, #e6e9e1 0%, #f0f2eb 55%, #fafbf8 84%, #ffffff 100%);
 }
-#cloud-cover.covering{opacity:1;transform:translateY(0);transition:transform .7s cubic-bezier(.5,.1,.3,1),opacity .45s ease}
-#cloud-cover.dissipating{opacity:0;transition:opacity 1s ease .05s}
 
 /* ===== 响应式 ===== */
 @media(max-width:800px){
   :root{--side-w:200px}
   header{padding:22px 6%}
   .header-note{display:none}
+  .brand{font-size:26px;letter-spacing:6px}
   .intro{left:49%;width:46%;transform:translateY(-45%)}
   .intro::before{inset:-50px -20px}
-  .name .en{font-size:clamp(34px,7vw,50px)}
-  .name .zh{font-size:clamp(16px,3.4vw,22px)}
+  .name{gap:12px}
+  .name .en{font-size:clamp(38px,8vw,54px)}
+  .name .zh{font-size:clamp(16px,3.4vw,22px);letter-spacing:3px}
   .description{font-size:15px;letter-spacing:0}
   .subtext{font-size:11px;letter-spacing:0}
   .interests{gap:10px;letter-spacing:0}
   .flight{padding:12px 16px;gap:16px;font-size:11px}
   .scene-note{left:6%;bottom:9%}
+  .page-body{padding:30px 6%}
   .works-grid{grid-template-columns:repeat(2,1fr);gap:14px}
 }
 @media(max-height:650px) and (min-width:801px){
-  .name .en{font-size:44px}
+  .name .en{font-size:48px}
   .name .zh{font-size:22px}
   .eyebrow{margin-bottom:12px}
   .rule{margin:15px 0}
