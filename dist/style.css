@@ -70,6 +70,16 @@ header{
   border:1px solid #516f3966;color:#33532c;background:#f3f5d535;
   backdrop-filter:blur(8px);padding:10px 16px;border-radius:30px;font-size:11px;
 }
+#scene-tabs{
+  position:absolute;z-index:6;top:74px;left:50%;transform:translateX(-50%);
+  display:flex;gap:26px;
+}
+#scene-tabs button{
+  background:none;border:0;cursor:pointer;padding:6px 2px;
+  font:500 12px var(--serif);letter-spacing:2px;color:#4b6536;opacity:.6;
+  border-bottom:1px solid transparent;transition:opacity .2s,border-color .2s;
+}
+#scene-tabs button.active{opacity:1;color:#2f5026;border-bottom-color:#2f5026}
 
 /* ===== 第 1 页 · 介绍 ===== */
 .scene-note{
