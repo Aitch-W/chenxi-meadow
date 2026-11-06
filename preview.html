@@ -178,25 +178,16 @@ footer i{display:inline-block;width:6px;height:6px;border-radius:50%;background:
 
 /* ===== 云层转场（由滚动进度驱动） ===== */
 #cloud-cover{
-  position:fixed;inset:0;z-index:40;pointer-events:none;
+  position:fixed;inset:0;z-index:40;pointer-events:none;overflow:hidden;
   opacity:0;transform:translateY(106%) scale(1);
   transform-origin:50% 60%;
   will-change:opacity,transform,filter;
-  background:
-    radial-gradient(300px 180px at 6% 34%, #ffffff 0 52%, transparent 84%),
-    radial-gradient(360px 210px at 22% 22%, #fefefc 0 52%, transparent 84%),
-    radial-gradient(320px 190px at 38% 32%, #ffffff 0 52%, transparent 84%),
-    radial-gradient(380px 220px at 54% 20%, #fefefc 0 52%, transparent 84%),
-    radial-gradient(330px 195px at 70% 30%, #ffffff 0 52%, transparent 84%),
-    radial-gradient(390px 225px at 86% 20%, #fefefc 0 52%, transparent 84%),
-    radial-gradient(460px 260px at 12% 52%, #fdfdfb 0 54%, transparent 84%),
-    radial-gradient(520px 290px at 36% 58%, #fdfdfb 0 54%, transparent 84%),
-    radial-gradient(500px 280px at 62% 54%, #fdfdfb 0 54%, transparent 84%),
-    radial-gradient(500px 280px at 88% 58%, #fdfdfb 0 54%, transparent 84%),
-    radial-gradient(760px 420px at 16% 92%, #f2f4ee 0 56%, transparent 86%),
-    radial-gradient(840px 460px at 50% 98%, #f2f4ee 0 56%, transparent 86%),
-    radial-gradient(760px 420px at 86% 92%, #f2f4ee 0 56%, transparent 86%),
-    linear-gradient(0deg, #dfe3d9 0%, #eceee7 24%, #f6f8f2 52%, #ffffff 82%);
+  background:linear-gradient(0deg,#edefe8 0%,#f4f5f0 50%,#fbfbf8 100%);
+}
+.puff{
+  position:absolute;border-radius:50%;
+  background:radial-gradient(circle at 36% 30%, #ffffff 0%, #fcfcfb 42%, #f1f1ef 74%, #e6e6e2 94%, #dfdfdb 100%);
+  box-shadow:inset -8px -10px 16px rgba(150,158,145,.16), inset 6px 8px 14px rgba(255,255,255,.85);
 }
 
 /* ===== 响应式 ===== */
@@ -54960,6 +54951,35 @@ const nav = document.querySelectorAll('.sidebar a[href^="#"]');
 const order = ['home', 'works', 'experience'];
 let page = 0, animating = false, pending = 0, lastWheel = 0, touchY = 0;
 
+// 生成蓬松云朵：多个球状云团拼成不规则大团（参照首页 3D 云）
+function buildCloud() {
+  if (!cc) return;
+  cc.querySelectorAll('.puff').forEach(n => n.remove());
+  const W = window.innerWidth, H = window.innerHeight;
+  const centers = [
+    [0.20, 0.34, 0.24], [0.56, 0.27, 0.24], [0.86, 0.40, 0.20],
+    [0.34, 0.70, 0.26], [0.70, 0.66, 0.24], [0.10, 0.64, 0.18],
+    [0.46, 0.50, 0.22], [0.88, 0.76, 0.16]
+  ];
+  centers.forEach(([cx, cy, cr], ci) => {
+    const n = 13 + ((Math.random() * 5) | 0);
+    for (let i = 0; i < n; i++) {
+      const ang = i * 2.39996;
+      const rad = Math.sqrt(i / n) * cr;
+      const x = (cx + Math.cos(ang) * rad) * W;
+      const y = (cy + Math.sin(ang) * rad * 0.72) * H;
+      const d = (0.055 + Math.random() * 0.055) * W * (0.8 + cr * 1.6);
+      const el = document.createElement('div');
+      el.className = 'puff';
+      el.style.width = el.style.height = d.toFixed(0) + 'px';
+      el.style.left = (x - d / 2).toFixed(0) + 'px';
+      el.style.top = (y - d / 2).toFixed(0) + 'px';
+      el.style.zIndex = String(ci * 30 + i + 1);
+      cc.appendChild(el);
+    }
+  });
+}
+
 function setActive(i) {
   nav.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + order[i]));
 }
@@ -54971,7 +54991,6 @@ function setPage(i) {
   setActive(i);
 }
 
-// 云升起盖屏
 function cloudRise(done) {
   cc.style.transition = 'transform .45s cubic-bezier(.45,.05,.3,1), opacity .4s ease, filter .4s ease';
   cc.style.transform = 'translateY(0) scale(1)';
@@ -54980,7 +54999,6 @@ function cloudRise(done) {
   setTimeout(done, 520);
 }
 
-// 云向四周散开（放大 + 模糊 + 淡出）
 function cloudScatter(done) {
   cc.style.transition = 'transform 1.05s cubic-bezier(.3,.65,.3,1), opacity 1.05s ease, filter 1.05s ease';
   cc.style.transform = 'translateY(-4%) scale(1.9)';
@@ -55034,10 +55052,16 @@ pages.addEventListener('touchend', (e) => {
   if (Math.abs(dy) > 40) flip(dy > 0 ? 1 : -1);
 }, { passive: true });
 
+let resizeTimer = 0;
 window.addEventListener('resize', () => {
-  pages.scrollTo({ top: page * pages.clientHeight, behavior: 'auto' });
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    pages.scrollTo({ top: page * pages.clientHeight, behavior: 'auto' });
+    if (!animating) buildCloud();
+  }, 180);
 });
 
+buildCloud();
 setActive(0);
 </script>
 </body>
