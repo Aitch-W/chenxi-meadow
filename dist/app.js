@@ -5,6 +5,8 @@ const nav = document.querySelectorAll('.sidebar a[href^="#"]');
 const order = ['home', 'works', 'experience'];
 let page = 0, animating = false, pendingTarget = null, lastWheel = 0, touchY = 0;
 let peekTimer = 0, peeking = false, leftZone = 260;
+let scrollTarget=null,scrollFrame=0,scrollStamp=0;
+function stopSmoothScroll(){cancelAnimationFrame(scrollFrame);scrollFrame=0;scrollTarget=null;}
 
 // 生成铺满全屏的球状云团（参照首页 3D 云）
 function buildCloud() {
@@ -38,9 +40,13 @@ function setActive(i) {
 
 function updateSidebar() {
   document.body.classList.toggle('alt', page > 0 || peeking);
+  const inFooter=page===2&&pages.scrollTop>2*pages.clientHeight+25;
+  document.body.classList.toggle('at-contact',inFooter);
+  document.querySelector('.sidebar').inert=inFooter;
 }
 
 function setPage(i) {
+  stopSmoothScroll();
   page = i;
   pages.scrollTo({ top: i * pages.clientHeight, behavior: 'auto' });
   peeking = false;
@@ -86,8 +92,25 @@ function transitionTo(target) {
   });
 }
 
+function scrollExperience(delta){
+ if(page!==2||animating)return false;
+ const base=2*pages.clientHeight;
+ if(delta<=0&&pages.scrollTop<=base+2&&(scrollTarget===null||scrollTarget<=base+2))return false;
+ scrollTarget=Math.max(base,Math.min(pages.scrollHeight-pages.clientHeight,(scrollTarget??pages.scrollTop)+delta));
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches){pages.scrollTop=scrollTarget;scrollTarget=null;updateSidebar();return true;}
+ if(!scrollFrame){scrollStamp=performance.now();scrollFrame=requestAnimationFrame(easeScroll);}return true;
+}
+function easeScroll(now){
+ if(scrollTarget===null||page!==2){stopSmoothScroll();return;}
+ const dt=Math.min(50,now-scrollStamp);scrollStamp=now;
+ const diff=scrollTarget-pages.scrollTop;
+ if(Math.abs(diff)<1){pages.scrollTop=scrollTarget;scrollTarget=null;scrollFrame=0;return;}
+ pages.scrollTop+=diff*(1-Math.exp(-dt/95));scrollFrame=requestAnimationFrame(easeScroll);
+}
+pages.addEventListener('scroll',updateSidebar,{passive:true});
 function flip(dir) {
-  transitionTo(page + dir);
+ if(scrollExperience(dir*Math.min(220,pages.clientHeight*.3)))return;
+ transitionTo(page + dir);
 }
 
 // 导航链接走受控翻页（而不是浏览器默认的锚点跳转）
@@ -101,6 +124,7 @@ nav.forEach(a => {
 
 window.addEventListener('wheel', (e) => {
   e.preventDefault();
+  if(scrollExperience(e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?pages.clientHeight:1)))return;
   if (Math.abs(e.deltaY) < 6) return;
   const now = performance.now();
   if (now - lastWheel < 80) return;
@@ -109,6 +133,7 @@ window.addEventListener('wheel', (e) => {
 }, { passive: false });
 
 window.addEventListener('keydown', (e) => {
+  if(e.target.closest('button,a,input,textarea,select'))return;
   const k = e.key;
   if (k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); flip(1); }
   else if (k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); flip(-1); }
@@ -146,7 +171,7 @@ window.addEventListener('resize', () => {
   leftZone = Math.min(280, innerWidth * 0.32);
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
-    pages.scrollTo({ top: page * pages.clientHeight, behavior: 'auto' });
+    stopSmoothScroll();pages.scrollTo({ top: page * pages.clientHeight, behavior: 'auto' });
     if (!animating) buildCloud();
   }, 180);
 });
@@ -211,3 +236,8 @@ if (lanyard && badge) {
 
   lanyardTick();
 }
+
+
+
+const nextHint=document.createElement('button');nextHint.className='next-page-hint';nextHint.type='button';nextHint.setAttribute('aria-label','向下探索下一页');nextHint.innerHTML='<span>向下探索</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg>';document.body.appendChild(nextHint);
+nextHint.addEventListener('click',()=>flip(1));

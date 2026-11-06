@@ -247,6 +247,29 @@ footer i{display:inline-block;width:6px;height:6px;border-radius:50%;background:
 @media(prefers-reduced-motion:reduce){
   *{transition:none!important;scroll-behavior:auto!important}
 }
+
+/* Foreground clouds drift over home copy without capturing clicks. */
+body>#atmosphere{position:fixed;inset:0;z-index:20;pointer-events:none}
+
+
+/* Contact footer belongs to the experience page, not a fourth slide. */
+#experience{height:auto;min-height:100svh;background:#f3f1e7}
+body.at-contact .sidebar{transform:translateX(-105%);opacity:0;pointer-events:none}
+
+
+#contact.contact-footer{position:relative;inset:auto;z-index:auto;width:100%;margin:0;padding:38px max(7vw,24px) 18px;display:block;background:#52643e;color:#f6f5e9;text-shadow:none;letter-spacing:normal;font-size:12px;box-sizing:border-box}
+.footer-content{max-width:1080px;margin:auto;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:50px}
+.footer-brand>strong{font:600 34px var(--serif);letter-spacing:6px}
+.social-links{display:flex;gap:10px;margin-top:18px}.social-links a{width:33px;height:33px;border-radius:50%;display:grid;place-items:center;background:#ffffff16;color:#fff;text-decoration:none;font:12px Georgia,serif}
+.footer-column{display:flex;flex-direction:column;gap:12px;overflow-wrap:anywhere}.footer-column h3{font:500 14px var(--serif);margin:3px 0 7px;color:#fff}.footer-column a,.footer-column span{color:#e0e6cf;text-decoration:none;font-size:11px}.footer-column a:hover{color:#fff;text-decoration:underline}.social-links a:hover{background:#ffffff30}
+.footer-bottom{max-width:1080px;margin:30px auto 0;padding-top:14px;border-top:1px solid #ffffff18;font-size:10px;color:#c8d2b7}
+@media(max-width:600px){.footer-content{grid-template-columns:1fr 1fr;gap:24px}.footer-brand{grid-column:1/-1}.footer-brand>strong{font-size:28px}#contact.contact-footer{padding:25px 7% 16px}.footer-bottom{margin-top:24px}}
+
+.next-page-hint{position:fixed;z-index:22;bottom:15px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;border:0;padding:7px 18px;background:transparent;color:#3f5933;transition:opacity .25s,visibility .25s;font-size:10px;letter-spacing:2px;text-shadow:0 1px 5px #fff9}
+.next-page-hint svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;animation:hint-bob 1.8s ease-in-out infinite}
+body.at-contact .next-page-hint{opacity:0;visibility:hidden;pointer-events:none}
+@keyframes hint-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+@media(prefers-reduced-motion:reduce){.next-page-hint svg{animation:none}}
 </style>
 </head>
 <body>
@@ -317,13 +340,25 @@ footer i{display:inline-block;width:6px;height:6px;border-radius:50%;background:
         </div>
       </div>
     </div>
-  </section>
+  <footer class="contact-footer" id="contact" aria-label="联系我">
+ <div class="footer-content"><div class="footer-brand"><strong>AITCH</strong><div class="social-links">
+ <a href="https://github.com/Aitch-W/chenxi-meadow" target="_blank" rel="noopener noreferrer" aria-label="GitHub 项目仓库" title="GitHub">GH</a>
+ <a href="mailto:wcx1973505510@163.com" aria-label="发送邮件" title="邮箱">@</a>
+ <a href="tel:+8618074662167" aria-label="拨打电话" title="电话">☎</a></div></div>
+ <div class="footer-column"><h3>作品与代码</h3><a href="https://github.com/Aitch-W/chenxi-meadow" target="_blank" rel="noopener noreferrer">GitHub ↗</a><span>Aitch-W / chenxi-meadow</span></div>
+ <div class="footer-column"><h3>联系我</h3><a href="mailto:wcx1973505510@163.com">wcx1973505510@163.com</a><a href="tel:+8618074662167">18074662167</a></div></div>
+ <div class="footer-bottom">© 2026 AITCH · 王宸曦</div>
+ </footer>
+ </section>
 </main>
 
 <div id="plane-layer" aria-hidden="true"></div>
 <div id="cloud-cover" aria-hidden="true"></div>
 
-<script type="module">try {/**
+
+
+
+<script type="module">const THREE=(()=>{/**
  * @license
  * Copyright 2010-2024 Three.js Authors
  * SPDX-License-Identifier: MIT
@@ -54893,14 +54928,15 @@ if ( typeof window !== 'undefined' ) {
 
 }
 
-
-const THREE = { ACESFilmicToneMapping, AddEquation, AddOperation, AdditiveAnimationBlendMode, AdditiveBlending, AgXToneMapping, AlphaFormat, AlwaysCompare, AlwaysDepth, AlwaysStencilFunc, AmbientLight, AnimationAction, AnimationClip, AnimationLoader, AnimationMixer, AnimationObjectGroup, AnimationUtils, ArcCurve, ArrayCamera, ArrowHelper, AttachedBindMode, Audio, AudioAnalyser, AudioContext, AudioListener, AudioLoader, AxesHelper, BackSide, BasicDepthPacking, BasicShadowMap, BatchedMesh, Bone, BooleanKeyframeTrack, Box2, Box3, Box3Helper, BoxGeometry, BoxHelper, BufferAttribute, BufferGeometry, BufferGeometryLoader, ByteType, Cache, Camera, CameraHelper, CanvasTexture, CapsuleGeometry, CatmullRomCurve3, CineonToneMapping, CircleGeometry, ClampToEdgeWrapping, Clock, Color, ColorKeyframeTrack, ColorManagement, CompressedArrayTexture, CompressedCubeTexture, CompressedTexture, CompressedTextureLoader, ConeGeometry, ConstantAlphaFactor, ConstantColorFactor, Controls, CubeCamera, CubeReflectionMapping, CubeRefractionMapping, CubeTexture, CubeTextureLoader, CubeUVReflectionMapping, CubicBezierCurve, CubicBezierCurve3, CubicInterpolant, CullFaceBack, CullFaceFront, CullFaceFrontBack, CullFaceNone, Curve, CurvePath, CustomBlending, CustomToneMapping, CylinderGeometry, Cylindrical, Data3DTexture, DataArrayTexture, DataTexture, DataTextureLoader, DataUtils, DecrementStencilOp, DecrementWrapStencilOp, DefaultLoadingManager, DepthFormat, DepthStencilFormat, DepthTexture, DetachedBindMode, DirectionalLight, DirectionalLightHelper, DiscreteInterpolant, DodecahedronGeometry, DoubleSide, DstAlphaFactor, DstColorFactor, DynamicCopyUsage, DynamicDrawUsage, DynamicReadUsage, EdgesGeometry, EllipseCurve, EqualCompare, EqualDepth, EqualStencilFunc, EquirectangularReflectionMapping, EquirectangularRefractionMapping, Euler, EventDispatcher, ExtrudeGeometry, FileLoader, Float16BufferAttribute, Float32BufferAttribute, FloatType, Fog, FogExp2, FramebufferTexture, FrontSide, Frustum, GLBufferAttribute, GLSL1, GLSL3, GreaterCompare, GreaterDepth, GreaterEqualCompare, GreaterEqualDepth, GreaterEqualStencilFunc, GreaterStencilFunc, GridHelper, Group, HalfFloatType, HemisphereLight, HemisphereLightHelper, IcosahedronGeometry, ImageBitmapLoader, ImageLoader, ImageUtils, IncrementStencilOp, IncrementWrapStencilOp, InstancedBufferAttribute, InstancedBufferGeometry, InstancedInterleavedBuffer, InstancedMesh, Int16BufferAttribute, Int32BufferAttribute, Int8BufferAttribute, IntType, InterleavedBuffer, InterleavedBufferAttribute, Interpolant, InterpolateDiscrete, InterpolateLinear, InterpolateSmooth, InvertStencilOp, KeepStencilOp, KeyframeTrack, LOD, LatheGeometry, Layers, LessCompare, LessDepth, LessEqualCompare, LessEqualDepth, LessEqualStencilFunc, LessStencilFunc, Light, LightProbe, Line, Line3, LineBasicMaterial, LineCurve, LineCurve3, LineDashedMaterial, LineLoop, LineSegments, LinearFilter, LinearInterpolant, LinearMipMapLinearFilter, LinearMipMapNearestFilter, LinearMipmapLinearFilter, LinearMipmapNearestFilter, LinearSRGBColorSpace, LinearToneMapping, LinearTransfer, Loader, LoaderUtils, LoadingManager, LoopOnce, LoopPingPong, LoopRepeat, LuminanceAlphaFormat, LuminanceFormat, MOUSE, Material, MaterialLoader, MathUtils, Matrix2, Matrix3, Matrix4, MaxEquation, Mesh, MeshBasicMaterial, MeshDepthMaterial, MeshDistanceMaterial, MeshLambertMaterial, MeshMatcapMaterial, MeshNormalMaterial, MeshPhongMaterial, MeshPhysicalMaterial, MeshStandardMaterial, MeshToonMaterial, MinEquation, MirroredRepeatWrapping, MixOperation, MultiplyBlending, MultiplyOperation, NearestFilter, NearestMipMapLinearFilter, NearestMipMapNearestFilter, NearestMipmapLinearFilter, NearestMipmapNearestFilter, NeutralToneMapping, NeverCompare, NeverDepth, NeverStencilFunc, NoBlending, NoColorSpace, NoToneMapping, NormalAnimationBlendMode, NormalBlending, NotEqualCompare, NotEqualDepth, NotEqualStencilFunc, NumberKeyframeTrack, Object3D, ObjectLoader, ObjectSpaceNormalMap, OctahedronGeometry, OneFactor, OneMinusConstantAlphaFactor, OneMinusConstantColorFactor, OneMinusDstAlphaFactor, OneMinusDstColorFactor, OneMinusSrcAlphaFactor, OneMinusSrcColorFactor, OrthographicCamera, PCFShadowMap, PCFSoftShadowMap, PMREMGenerator, Path, PerspectiveCamera, Plane, PlaneGeometry, PlaneHelper, PointLight, PointLightHelper, Points, PointsMaterial, PolarGridHelper, PolyhedronGeometry, PositionalAudio, PropertyBinding, PropertyMixer, QuadraticBezierCurve, QuadraticBezierCurve3, Quaternion, QuaternionKeyframeTrack, QuaternionLinearInterpolant, RED_GREEN_RGTC2_Format, RED_RGTC1_Format, REVISION, RGBADepthPacking, RGBAFormat, RGBAIntegerFormat, RGBA_ASTC_10x10_Format, RGBA_ASTC_10x5_Format, RGBA_ASTC_10x6_Format, RGBA_ASTC_10x8_Format, RGBA_ASTC_12x10_Format, RGBA_ASTC_12x12_Format, RGBA_ASTC_4x4_Format, RGBA_ASTC_5x4_Format, RGBA_ASTC_5x5_Format, RGBA_ASTC_6x5_Format, RGBA_ASTC_6x6_Format, RGBA_ASTC_8x5_Format, RGBA_ASTC_8x6_Format, RGBA_ASTC_8x8_Format, RGBA_BPTC_Format, RGBA_ETC2_EAC_Format, RGBA_PVRTC_2BPPV1_Format, RGBA_PVRTC_4BPPV1_Format, RGBA_S3TC_DXT1_Format, RGBA_S3TC_DXT3_Format, RGBA_S3TC_DXT5_Format, RGBDepthPacking, RGBFormat, RGBIntegerFormat, RGB_BPTC_SIGNED_Format, RGB_BPTC_UNSIGNED_Format, RGB_ETC1_Format, RGB_ETC2_Format, RGB_PVRTC_2BPPV1_Format, RGB_PVRTC_4BPPV1_Format, RGB_S3TC_DXT1_Format, RGDepthPacking, RGFormat, RGIntegerFormat, RawShaderMaterial, Ray, Raycaster, RectAreaLight, RedFormat, RedIntegerFormat, ReinhardToneMapping, RenderTarget, RepeatWrapping, ReplaceStencilOp, ReverseSubtractEquation, RingGeometry, SIGNED_RED_GREEN_RGTC2_Format, SIGNED_RED_RGTC1_Format, SRGBColorSpace, SRGBTransfer, Scene, ShaderChunk, ShaderLib, ShaderMaterial, ShadowMaterial, Shape, ShapeGeometry, ShapePath, ShapeUtils, ShortType, Skeleton, SkeletonHelper, SkinnedMesh, Source, Sphere, SphereGeometry, Spherical, SphericalHarmonics3, SplineCurve, SpotLight, SpotLightHelper, Sprite, SpriteMaterial, SrcAlphaFactor, SrcAlphaSaturateFactor, SrcColorFactor, StaticCopyUsage, StaticDrawUsage, StaticReadUsage, StereoCamera, StreamCopyUsage, StreamDrawUsage, StreamReadUsage, StringKeyframeTrack, SubtractEquation, SubtractiveBlending, TOUCH, TangentSpaceNormalMap, TetrahedronGeometry, Texture, TextureLoader, TextureUtils, TorusGeometry, TorusKnotGeometry, Triangle, TriangleFanDrawMode, TriangleStripDrawMode, TrianglesDrawMode, TubeGeometry, UVMapping, Uint16BufferAttribute, Uint32BufferAttribute, Uint8BufferAttribute, Uint8ClampedBufferAttribute, Uniform, UniformsGroup, UniformsLib, UniformsUtils, UnsignedByteType, UnsignedInt248Type, UnsignedInt5999Type, UnsignedIntType, UnsignedShort4444Type, UnsignedShort5551Type, UnsignedShortType, VSMShadowMap, Vector2, Vector3, Vector4, VectorKeyframeTrack, VideoTexture, WebGL3DRenderTarget, WebGLArrayRenderTarget, WebGLCoordinateSystem, WebGLCubeRenderTarget, WebGLMultipleRenderTargets, WebGLRenderTarget, WebGLRenderer, WebGLUtils, WebGPUCoordinateSystem, WireframeGeometry, WrapAroundEnding, ZeroCurvatureEnding, ZeroFactor, ZeroSlopeEnding, ZeroStencilOp, createCanvasElement };
+;return {ACESFilmicToneMapping,AddEquation,AddOperation,AdditiveAnimationBlendMode,AdditiveBlending,AgXToneMapping,AlphaFormat,AlwaysCompare,AlwaysDepth,AlwaysStencilFunc,AmbientLight,AnimationAction,AnimationClip,AnimationLoader,AnimationMixer,AnimationObjectGroup,AnimationUtils,ArcCurve,ArrayCamera,ArrowHelper,AttachedBindMode,Audio,AudioAnalyser,AudioContext,AudioListener,AudioLoader,AxesHelper,BackSide,BasicDepthPacking,BasicShadowMap,BatchedMesh,Bone,BooleanKeyframeTrack,Box2,Box3,Box3Helper,BoxGeometry,BoxHelper,BufferAttribute,BufferGeometry,BufferGeometryLoader,ByteType,Cache,Camera,CameraHelper,CanvasTexture,CapsuleGeometry,CatmullRomCurve3,CineonToneMapping,CircleGeometry,ClampToEdgeWrapping,Clock,Color,ColorKeyframeTrack,ColorManagement,CompressedArrayTexture,CompressedCubeTexture,CompressedTexture,CompressedTextureLoader,ConeGeometry,ConstantAlphaFactor,ConstantColorFactor,Controls,CubeCamera,CubeReflectionMapping,CubeRefractionMapping,CubeTexture,CubeTextureLoader,CubeUVReflectionMapping,CubicBezierCurve,CubicBezierCurve3,CubicInterpolant,CullFaceBack,CullFaceFront,CullFaceFrontBack,CullFaceNone,Curve,CurvePath,CustomBlending,CustomToneMapping,CylinderGeometry,Cylindrical,Data3DTexture,DataArrayTexture,DataTexture,DataTextureLoader,DataUtils,DecrementStencilOp,DecrementWrapStencilOp,DefaultLoadingManager,DepthFormat,DepthStencilFormat,DepthTexture,DetachedBindMode,DirectionalLight,DirectionalLightHelper,DiscreteInterpolant,DodecahedronGeometry,DoubleSide,DstAlphaFactor,DstColorFactor,DynamicCopyUsage,DynamicDrawUsage,DynamicReadUsage,EdgesGeometry,EllipseCurve,EqualCompare,EqualDepth,EqualStencilFunc,EquirectangularReflectionMapping,EquirectangularRefractionMapping,Euler,EventDispatcher,ExtrudeGeometry,FileLoader,Float16BufferAttribute,Float32BufferAttribute,FloatType,Fog,FogExp2,FramebufferTexture,FrontSide,Frustum,GLBufferAttribute,GLSL1,GLSL3,GreaterCompare,GreaterDepth,GreaterEqualCompare,GreaterEqualDepth,GreaterEqualStencilFunc,GreaterStencilFunc,GridHelper,Group,HalfFloatType,HemisphereLight,HemisphereLightHelper,IcosahedronGeometry,ImageBitmapLoader,ImageLoader,ImageUtils,IncrementStencilOp,IncrementWrapStencilOp,InstancedBufferAttribute,InstancedBufferGeometry,InstancedInterleavedBuffer,InstancedMesh,Int16BufferAttribute,Int32BufferAttribute,Int8BufferAttribute,IntType,InterleavedBuffer,InterleavedBufferAttribute,Interpolant,InterpolateDiscrete,InterpolateLinear,InterpolateSmooth,InvertStencilOp,KeepStencilOp,KeyframeTrack,LOD,LatheGeometry,Layers,LessCompare,LessDepth,LessEqualCompare,LessEqualDepth,LessEqualStencilFunc,LessStencilFunc,Light,LightProbe,Line,Line3,LineBasicMaterial,LineCurve,LineCurve3,LineDashedMaterial,LineLoop,LineSegments,LinearFilter,LinearInterpolant,LinearMipMapLinearFilter,LinearMipMapNearestFilter,LinearMipmapLinearFilter,LinearMipmapNearestFilter,LinearSRGBColorSpace,LinearToneMapping,LinearTransfer,Loader,LoaderUtils,LoadingManager,LoopOnce,LoopPingPong,LoopRepeat,LuminanceAlphaFormat,LuminanceFormat,MOUSE,Material,MaterialLoader,MathUtils,Matrix2,Matrix3,Matrix4,MaxEquation,Mesh,MeshBasicMaterial,MeshDepthMaterial,MeshDistanceMaterial,MeshLambertMaterial,MeshMatcapMaterial,MeshNormalMaterial,MeshPhongMaterial,MeshPhysicalMaterial,MeshStandardMaterial,MeshToonMaterial,MinEquation,MirroredRepeatWrapping,MixOperation,MultiplyBlending,MultiplyOperation,NearestFilter,NearestMipMapLinearFilter,NearestMipMapNearestFilter,NearestMipmapLinearFilter,NearestMipmapNearestFilter,NeutralToneMapping,NeverCompare,NeverDepth,NeverStencilFunc,NoBlending,NoColorSpace,NoToneMapping,NormalAnimationBlendMode,NormalBlending,NotEqualCompare,NotEqualDepth,NotEqualStencilFunc,NumberKeyframeTrack,Object3D,ObjectLoader,ObjectSpaceNormalMap,OctahedronGeometry,OneFactor,OneMinusConstantAlphaFactor,OneMinusConstantColorFactor,OneMinusDstAlphaFactor,OneMinusDstColorFactor,OneMinusSrcAlphaFactor,OneMinusSrcColorFactor,OrthographicCamera,PCFShadowMap,PCFSoftShadowMap,PMREMGenerator,Path,PerspectiveCamera,Plane,PlaneGeometry,PlaneHelper,PointLight,PointLightHelper,Points,PointsMaterial,PolarGridHelper,PolyhedronGeometry,PositionalAudio,PropertyBinding,PropertyMixer,QuadraticBezierCurve,QuadraticBezierCurve3,Quaternion,QuaternionKeyframeTrack,QuaternionLinearInterpolant,RED_GREEN_RGTC2_Format,RED_RGTC1_Format,REVISION,RGBADepthPacking,RGBAFormat,RGBAIntegerFormat,RGBA_ASTC_10x10_Format,RGBA_ASTC_10x5_Format,RGBA_ASTC_10x6_Format,RGBA_ASTC_10x8_Format,RGBA_ASTC_12x10_Format,RGBA_ASTC_12x12_Format,RGBA_ASTC_4x4_Format,RGBA_ASTC_5x4_Format,RGBA_ASTC_5x5_Format,RGBA_ASTC_6x5_Format,RGBA_ASTC_6x6_Format,RGBA_ASTC_8x5_Format,RGBA_ASTC_8x6_Format,RGBA_ASTC_8x8_Format,RGBA_BPTC_Format,RGBA_ETC2_EAC_Format,RGBA_PVRTC_2BPPV1_Format,RGBA_PVRTC_4BPPV1_Format,RGBA_S3TC_DXT1_Format,RGBA_S3TC_DXT3_Format,RGBA_S3TC_DXT5_Format,RGBDepthPacking,RGBFormat,RGBIntegerFormat,RGB_BPTC_SIGNED_Format,RGB_BPTC_UNSIGNED_Format,RGB_ETC1_Format,RGB_ETC2_Format,RGB_PVRTC_2BPPV1_Format,RGB_PVRTC_4BPPV1_Format,RGB_S3TC_DXT1_Format,RGDepthPacking,RGFormat,RGIntegerFormat,RawShaderMaterial,Ray,Raycaster,RectAreaLight,RedFormat,RedIntegerFormat,ReinhardToneMapping,RenderTarget,RepeatWrapping,ReplaceStencilOp,ReverseSubtractEquation,RingGeometry,SIGNED_RED_GREEN_RGTC2_Format,SIGNED_RED_RGTC1_Format,SRGBColorSpace,SRGBTransfer,Scene,ShaderChunk,ShaderLib,ShaderMaterial,ShadowMaterial,Shape,ShapeGeometry,ShapePath,ShapeUtils,ShortType,Skeleton,SkeletonHelper,SkinnedMesh,Source,Sphere,SphereGeometry,Spherical,SphericalHarmonics3,SplineCurve,SpotLight,SpotLightHelper,Sprite,SpriteMaterial,SrcAlphaFactor,SrcAlphaSaturateFactor,SrcColorFactor,StaticCopyUsage,StaticDrawUsage,StaticReadUsage,StereoCamera,StreamCopyUsage,StreamDrawUsage,StreamReadUsage,StringKeyframeTrack,SubtractEquation,SubtractiveBlending,TOUCH,TangentSpaceNormalMap,TetrahedronGeometry,Texture,TextureLoader,TextureUtils,TorusGeometry,TorusKnotGeometry,Triangle,TriangleFanDrawMode,TriangleStripDrawMode,TrianglesDrawMode,TubeGeometry,UVMapping,Uint16BufferAttribute,Uint32BufferAttribute,Uint8BufferAttribute,Uint8ClampedBufferAttribute,Uniform,UniformsGroup,UniformsLib,UniformsUtils,UnsignedByteType,UnsignedInt248Type,UnsignedInt5999Type,UnsignedIntType,UnsignedShort4444Type,UnsignedShort5551Type,UnsignedShortType,VSMShadowMap,Vector2,Vector3,Vector4,VectorKeyframeTrack,VideoTexture,WebGL3DRenderTarget,WebGLArrayRenderTarget,WebGLCoordinateSystem,WebGLCubeRenderTarget,WebGLMultipleRenderTargets,WebGLRenderTarget,WebGLRenderer,WebGLUtils,WebGPUCoordinateSystem,WireframeGeometry,WrapAroundEnding,ZeroCurvatureEnding,ZeroFactor,ZeroSlopeEnding,ZeroStencilOp,createCanvasElement};})();
+try{
 
 // Terrain is below the biography; the second transparent renderer carries clouds and airplane above it.
 const scene=new THREE.Scene(),sky=new THREE.Scene(),planeScene=new THREE.Scene();scene.background=new THREE.Color('#b5bb76');
 const renderer=new THREE.WebGLRenderer({antialias:true}),air=new THREE.WebGLRenderer({antialias:true,alpha:true}),top=new THREE.WebGLRenderer({antialias:true,alpha:true});
 for(const r of [renderer,air,top]){r.setPixelRatio(Math.min(devicePixelRatio,1.75));r.outputColorSpace=THREE.SRGBColorSpace;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.0;}
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const atmosphere=document.querySelector('#atmosphere');document.body.appendChild(atmosphere);
 document.querySelector('#scene').appendChild(renderer.domElement);document.querySelector('#atmosphere').appendChild(air.domElement);document.querySelector('#plane-layer').appendChild(top.domElement);
 const camera=new THREE.OrthographicCamera(-40,40,24,-24,.1,180);camera.position.set(0,65,20);camera.lookAt(0,0,0);
 for(const s of [scene,sky,planeScene]){s.add(new THREE.HemisphereLight('#fff1d7','#758263',2.0));const light=new THREE.DirectionalLight('#fff0d5',1.5);light.position.set(-23,45,-22);if(s===scene){light.castShadow=true;light.shadow.mapSize.set(2048,2048);Object.assign(light.shadow.camera,{left:-65,right:65,top:85,bottom:-85,near:1,far:140});light.shadow.normalBias=.045;light.shadow.bias=-.0001;light.shadow.radius=3;}s.add(light)}
@@ -54909,7 +54945,7 @@ const material=(color,extra={})=>new THREE.MeshStandardMaterial({color,roughness
 const sand=material('#dbc18b'),pathMat=material('#dfb77b'),trunkMat=material('#71603c'),rockMat=material('#d5d7c5'),cream=material('#fff9e8');
 const sphere=new THREE.IcosahedronGeometry(1,2),smallSphere=new THREE.IcosahedronGeometry(1,1),box=new THREE.BoxGeometry(1,1,1);
 function add(g,m,p,x,y,z,sx=1,sy=sx,sz=sx){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;o.receiveShadow=true;p.add(o);return o}
-const texCanvas=document.createElement('canvas');texCanvas.width=texCanvas.height=2048;const ctx=texCanvas.getContext('2d');ctx.fillStyle='#a8b677';ctx.fillRect(0,0,2048,2048);
+const texCanvas=document.createElement('canvas');texCanvas.width=texCanvas.height=2048;const ctx=texCanvas.getContext('2d');ctx.fillStyle='#e4e6b5';ctx.fillRect(0,0,2048,2048);
 for(let i=0;i<1800;i++){const x=rand(0,2048),y=rand(0,2048),r=rand(10,100);const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,i%2?'#b2d63830':'#5e971b20');g.addColorStop(1,'#91bd2100');ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2)}
 // Broken, overlapping pigment marks: the grain travels with the land.
 const pigments=['#d6cf91','#bfc080','#8eaa71','#789570','#e4d5a0','#a4b782'];
@@ -54920,34 +54956,15 @@ for(let i=0;i<26000;i++){
  ctx.globalAlpha=.16;ctx.fillStyle='#f5e6bc';ctx.fillRect(-w/2,-h/2,w,1);ctx.restore();
 }
 for(let i=0;i<95000;i++){ctx.fillStyle=i%2?'#fff4ce26':'#485d3920';ctx.fillRect(rand(0,2048),rand(0,2048),rand(.6,2),rand(.6,2))}
-const texture=new THREE.CanvasTexture(texCanvas);texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(3,2);texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());const grass=material('#efe8c5',{map:texture});
+const texture=new THREE.CanvasTexture(texCanvas);texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(3,2);texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());const grass=material('#ffffff',{map:texture});
 // 沿飞行方向连续变化地貌配色（草原→蓝金田野→赤土→碧海），像第一页一样一直往前飞
-grass.onBeforeCompile=(shader)=>{
-  shader.vertexShader='varying float vObjY;\n'+shader.vertexShader.replace(
-    '#include <begin_vertex>',
-    '#include <begin_vertex>\nvObjY=position.y;'
-  );
-  shader.fragmentShader='varying float vObjY;\n'+shader.fragmentShader.replace(
-    '#include <color_fragment>',
-    '#include <color_fragment>\n'+
-    'float wz=-vObjY;\n'+
-    'float bz=clamp(wz/100.0+0.5,0.0,1.0)*4.0;\n'+
-    'vec3 cG=vec3(0.62,0.74,0.34), cY=vec3(0.95,0.80,0.30), cR=vec3(0.90,0.46,0.18), cS=vec3(0.22,0.60,0.62);\n'+
-    'vec3 bio;\n'+
-    'if(bz<1.0) bio=mix(cG,cY,smoothstep(0.0,1.0,bz));\n'+
-    'else if(bz<2.0) bio=mix(cY,cR,smoothstep(0.0,1.0,bz-1.0));\n'+
-    'else if(bz<3.0) bio=mix(cR,cS,smoothstep(0.0,1.0,bz-2.0));\n'+
-    'else bio=mix(cS,cG,smoothstep(0.0,1.0,bz-3.0));\n'+
-    'diffuseColor.rgb=mix(diffuseColor.rgb, diffuseColor.rgb*bio*1.7, 0.72);'
-  );
-};
-const LENGTH=100;const river=z=>-12+3.4*Math.sin(z/LENGTH*Math.PI*2)+.85*Math.sin(z/LENGTH*Math.PI*4+.5);const road=z=>-24+1.8*Math.sin(z/LENGTH*Math.PI*2+.9);
+const LENGTH=100;const river=z=>-12+5.2*Math.sin(z/LENGTH*Math.PI*2)+.85*Math.sin(z/LENGTH*Math.PI*4+.5);const road=z=>-24+1.8*Math.sin(z/LENGTH*Math.PI*2+.9);
 function strip(fn,width,y,m,p){const vs=[],uv=[],ix=[];for(let i=0;i<=600;i++){const z=-50+i/6;const w=width*(1+.045*Math.sin(z*Math.PI*24/100)+.025*Math.sin(z*Math.PI*76/100));vs.push(fn(z)-w/2,y,z,fn(z)+w/2,y,z);uv.push(0,z,1,z);if(i<600){const k=i*2;ix.push(k,k+2,k+1,k+1,k+2,k+3)}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vs,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(ix);g.computeVertexNormals();const o=new THREE.Mesh(g,m);o.receiveShadow=true;p.add(o);return o}
-const water=new THREE.ShaderMaterial({uniforms:{time:{value:0}},vertexShader:`varying vec2 vUv; void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`varying vec2 vUv;uniform float time;void main(){float edge=abs(vUv.x-.5)*2.;float flow=sin(vUv.y*4.-time*2.+sin(vUv.x*42.+vUv.y*1.3))*sin(vUv.x*78.-vUv.y*3.+time);float wave=pow(max(0.,flow),14.);float current=sin(vUv.x*21.+sin(vUv.y*.8-time*.5))*0.5+0.5;vec3 col=mix(vec3(.24,.46,.52),vec3(.43,.64,.65),current*.5+edge*.5);col=mix(col,vec3(.63,.74,.68),smoothstep(.72,1.,edge));col+=vec3(.35,.45,.4)*wave*.65;float foam=pow(edge,20.)*(.5+.5*sin(vUv.y*18.+time));col+=foam*.23;gl_FragColor=vec4(col,1.);}`});
-function forest(p){const leaves=new THREE.InstancedMesh(smallSphere,material('#598f2e'),18000);const stems=new THREE.InstancedMesh(new THREE.CylinderGeometry(.07,.12,1,5),trunkMat,700);let count=0,n=0;const d=new THREE.Object3D(),color=new THREE.Color();
-function tree(x,z,s){if(n>=690)return;d.position.set(x,.65*s,z);d.scale.set(s,1.3*s,s);d.rotation.set(0,0,0);d.updateMatrix();stems.setMatrixAt(n++,d.matrix);for(let j=0;j<26;j++){const a=j*2.39996,r=Math.sqrt(j/26)*.85*s;d.position.set(x+Math.cos(a)*r,1.2*s+Math.sqrt(Math.max(0,1-r*r/(s*s)))*.65*s+rand(-.2,.2)*s,z+Math.sin(a)*r);const size=rand(.23,.45)*s;d.scale.set(size,rand(.8,1.3)*size,size);d.rotation.set(rand(0,3),rand(0,3),0);d.updateMatrix();leaves.setMatrixAt(count,d.matrix);color.setHSL(rand(.22,.29),rand(.20,.38),rand(.28,.47));leaves.setColorAt(count++,color)}}
-for(let i=0;i<430;i++){let x=rand(-55,55),z=rand(-50,50);if(z>24||Math.abs(x-river(z))<3.7||Math.abs(x-road(z))<1.3)continue;if(x>5&&x<28&&Math.abs(z)<17&&random()<.93)continue;if(x>4&&random()<.45)x=rand(27,48);tree(x,z,rand(.35,.95))}
-for(let i=0;i<125;i++){const z=rand(-50,50);if(z>24)continue;tree(river(z)+(random()>.5?1:-1)*rand(3.3,4.7),z,rand(.18,.5))}leaves.count=count;stems.count=n;leaves.castShadow=leaves.receiveShadow=true;stems.castShadow=true;p.add(leaves,stems)}
+const water=new THREE.ShaderMaterial({uniforms:{time:{value:0}},vertexShader:`varying vec2 vUv; void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`varying vec2 vUv;uniform float time;void main(){float edge=abs(vUv.x-.5)*2.;float flow=sin(vUv.y*4.-time*2.+sin(vUv.x*42.+vUv.y*1.3))*sin(vUv.x*78.-vUv.y*3.+time);float wave=pow(max(0.,flow),14.);float current=sin(vUv.x*21.+sin(vUv.y*.8-time*.5))*0.5+0.5;vec3 col=mix(vec3(.025,.39,.66),vec3(.045,.66,.79),current*.5+edge*.5);col=mix(col,vec3(.32,.83,.84),smoothstep(.72,1.,edge));col+=vec3(.35,.45,.4)*wave*.65;float foam=pow(edge,20.)*(.5+.5*sin(vUv.y*18.+time));col+=foam*.23;gl_FragColor=vec4(col,1.);}`});
+function forest(p,tileIndex=0){const homes=settlementPlan(tileIndex);const leaves=new THREE.InstancedMesh(smallSphere,material('#ffffff'),18000);const stems=new THREE.InstancedMesh(new THREE.CylinderGeometry(.07,.12,1,5),trunkMat,700);let count=0,n=0;const d=new THREE.Object3D(),color=new THREE.Color();
+function tree(x,z,s){const region=biome(tileIndex,z);if(homes.some(h=>Math.abs(x-h.x)<1.5&&Math.abs(z-h.z)<1.5))return;if(n>=690||region>255||seaAt(region)>.01)return;if(region>175)s*=.72;d.position.set(x,.65*s,z);d.scale.set(s,1.3*s,s);d.rotation.set(0,0,0);d.updateMatrix();stems.setMatrixAt(n++,d.matrix);for(let j=0;j<26;j++){const a=j*2.39996,r=Math.sqrt(j/26)*.85*s;d.position.set(x+Math.cos(a)*r,1.2*s+Math.sqrt(Math.max(0,1-r*r/(s*s)))*.65*s+rand(-.2,.2)*s,z+Math.sin(a)*r);const size=rand(.23,.45)*s;d.scale.set(size,rand(.8,1.3)*size,size);d.rotation.set(rand(0,3),rand(0,3),0);d.updateMatrix();leaves.setMatrixAt(count,d.matrix);if(region>175){color.setHSL(rand(.25,.30),rand(.48,.66),rand(.18,.29));color.multiply(new THREE.Color('#496e29'));}else {color.setHSL(rand(.22,.29),rand(.48,.66),rand(.24,.43));color.multiply(new THREE.Color('#598f2e'));}leaves.setColorAt(count++,color)}}
+for(let i=0;i<430;i++){let x=rand(-55,55),z=rand(-50,50);if(Math.abs(x-river(z))<3.7||Math.abs(x-road(z))<1.3)continue;if(x>5&&x<28&&Math.abs(z)<17&&random()<.93)continue;if(x>4&&random()<.45)x=rand(27,48);if(biome(tileIndex,z)>80&&biome(tileIndex,z)<175)continue;tree(x,z,rand(.35,.95))}
+for(let i=0;i<125;i++){const z=rand(-50,50);tree(river(z)+(random()>.5?1:-1)*rand(3.3,4.7),z,rand(.18,.5))}for(let j=0;j<100;j++){const z=-49+j*.98;if(biome(tileIndex,z)>90&&biome(tileIndex,z)<170)tree(road(z)+(j%2?1:-1)*1.5,z,.4)}leaves.count=count;stems.count=n;leaves.castShadow=leaves.receiveShadow=true;stems.castShadow=true;p.add(leaves,stems)}
 const roofMat=material('#a65337'),wallMat=material('#f0dfbb'),windowMat=material('#6d9090'),doorMat=material('#574b35');
 function house(x,z,p){const h=new THREE.Group();h.position.set(x,0,z);h.rotation.y=rand(-.3,.3);p.add(h);add(box,wallMat,h,0,.6,0,1.8,1.2,1.5);const roof=new THREE.BufferGeometry();roof.setAttribute('position',new THREE.Float32BufferAttribute([-1,.6,-.95,1,.6,-.95,0,1.3,-.95,-1,.6,.95,0,1.3,.95,1,.6,.95,-1,.6,-.95,0,1.3,-.95,0,1.3,.95,-1,.6,-.95,0,1.3,.95,-1,.6,.95,1,.6,-.95,1,.6,.95,0,1.3,.95,1,.6,-.95,0,1.3,.95,0,1.3,-.95],3));roof.computeVertexNormals();add(roof,roofMat,h,0,.6,0);add(box,doorMat,h,0,.35,.756,.3,.7,.025);for(const xx of [-.55,.55])add(box,windowMat,h,xx,.7,.76,.25,.3,.03);add(box,rockMat,h,.55,1.65,-.3,.22,.7,.22)}
 function makeTile(offset){const p=new THREE.Group();p.position.z=offset;scene.add(p);add(new THREE.PlaneGeometry(140,LENGTH),grass,p,0,-.04,0).rotation.x=-Math.PI/2;strip(river,6.7,0,sand,p);strip(river,5.65,.025,water,p);strip(road,1.65,.01,sand,p);strip(road,1.18,.018,pathMat,p);forest(p);
@@ -54960,18 +54977,210 @@ function addBiomeOverlays(p){
   q(140,25,12.5,'#c86a2c');
   q(140,25,37.5,'#2a9aa6');
 }
-const tiles=[makeTile(-LENGTH),makeTile(0),makeTile(LENGTH)];
-for(const t of tiles) addBiomeOverlays(t);
+// One continuous route: every tile evaluates the same periodic terrain functions.
+const smooth=(a,b,x)=>{const t=THREE.MathUtils.clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)};
+function biome(i,z){return ((i*100-z)%400+400)%400}
+function dryAt(d){return smooth(175,205,d)*(1-smooth(245,275,d))}
+function seaAt(d){return smooth(267,295,d)*(1-smooth(378,400,d))}
+function groundColor(d,x,z){
+ const green=new THREE.Color('#a6cf27'),gold=new THREE.Color('#eed02d'),red=new THREE.Color('#e67b35'),beach=new THREE.Color('#f9ebcf'),sea=new THREE.Color('#66d8c6');
+ let c=green.clone().lerp(gold,smooth(60,95,d)).lerp(red,smooth(170,200,d)).lerp(beach,smooth(245,275,d));
+ c.lerp(sea,smooth(275,295,d));c.lerp(beach,smooth(378,390,d));c.lerp(green,smooth(390,400,d));
+return c;
+}
+// Clipped Voronoi parcels: straight shared embankments, irregular field sizes.
+function addFields(parent,tile){
+ const seeds=[];for(let r=0;r<7;r++)for(let c=0;c<9;c++)seeds.push({x:-70+c*17+rand(-5,5),d:80+r*16+rand(-4,4)});
+ for(let index=0;index<seeds.length;index++){
+ const a=seeds[index];let poly=[[-70,80],[70,80],[70,175],[-70,175]];
+ for(const b of seeds){if(a===b)continue;const nx=b.x-a.x,ny=b.d-a.d,limit=(b.x*b.x+b.d*b.d-a.x*a.x-a.d*a.d)/2;const result=[];
+ for(let j=0;j<poly.length;j++){const u=poly[j],v=poly[(j+1)%poly.length],du=u[0]*nx+u[1]*ny-limit,dv=v[0]*nx+v[1]*ny-limit;if(du<=0)result.push(u);if((du<=0)!=(dv<=0)){const t=du/(du-dv);result.push([u[0]+(v[0]-u[0])*t,u[1]+(v[1]-u[1])*t])}}poly=result;if(!poly.length)break;}
+ // Clip the same parcel against each tile boundary, preserving colors and edges.
+ for(const [sign,limit] of [[1,tile*100+50],[-1,-tile*100+50]]){const result=[];for(let j=0;j<poly.length;j++){const u=poly[j],v=poly[(j+1)%poly.length],du=sign*u[1]-limit,dv=sign*v[1]-limit;if(du<=0)result.push(u);if((du<=0)!=(dv<=0)){const t=du/(du-dv);result.push([u[0]+(v[0]-u[0])*t,u[1]+(v[1]-u[1])*t])}}poly=result;}
+ if(poly.length<3)continue;const shape=new THREE.Shape();poly.forEach(([x,d],j)=>{if(j)shape.lineTo(x,d-tile*100);else shape.moveTo(x,d-tile*100)});shape.closePath();const mesh=new THREE.Mesh(new THREE.ShapeGeometry(shape),material(['#f6d51b','#459e38','#1688d4','#fbe02c','#337c43'][index%5]));mesh.rotation.x=-Math.PI/2;mesh.position.y=-.012;mesh.receiveShadow=true;parent.add(mesh);
+ for(let j=0;j<poly.length;j++){const a=poly[j],b=poly[(j+1)%poly.length],length=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let t=0;t<length;t+=.55){const x=a[0]+(b[0]-a[0])*t/length,z=tile*100-a[1]-(b[1]-a[1])*t/length;if(Math.abs(x-river(z))<3.8||Math.abs(x-road(z))<1.4)continue;const ridge=add(box,material('#82953e'),parent,x,.003,z,.10,.025,.58);ridge.rotation.y=Math.atan2(b[0]-a[0],a[1]-b[1]);if(Math.round(t/.55)%5===0){add(sphere,material('#4f922f'),parent,x,.35,z,.28,.4,.28);add(smallSphere,material('#8cb635'),parent,x-.1,.58,z-.08,.2,.22,.2)}}}
+ }
+}
+// Stilt villas: closed thick roofs, shaded verandas and structural timber.
+const villaWood=material('#795039'),deckWood=material('#b08c61'),railWood=material('#765539'),glassBlue=material('#3e7779',{roughness:.32});
+function beam(parent,a,b,width,mat=railWood){const start=new THREE.Vector3(...a),end=new THREE.Vector3(...b),dir=end.clone().sub(start);const m=add(box,mat,parent,...start.clone().add(end).multiplyScalar(.5).toArray(),width,dir.length(),width);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());return m}
+function boardwalk(parent,a,b,width=.55){const length=Math.hypot(b[0]-a[0],b[1]-a[1]),group=new THREE.Group();group.position.set(a[0],0,a[1]);group.rotation.y=Math.atan2(b[0]-a[0],b[1]-a[1]);parent.add(group);
+ for(let d=0;d<length;d+=.16)add(box,deckWood,group,0,.72,d,width,.09,.145);
+ for(const side of [-1,1]){beam(group,[side*width/2,1.08,0],[side*width/2,1.08,length],.035);for(let d=0;d<=length;d+=.7){beam(group,[side*width/2,-.3,d],[side*width/2,1.12,d],.045);if(d+.7<length){beam(group,[side*width/2,.78,d],[side*width/2,1.06,d+.7],.025);beam(group,[side*width/2,1.06,d],[side*width/2,.78,d+.7],.025)}}}
+}
+function waterVilla(parent,x,z,variant){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=z<0?Math.PI:0;parent.add(g);
+ add(box,deckWood,g,0,.73,.2,2.25,.13,2.8);
+ for(const xx of [-.95,.95])for(const zz of [-.95,1.45])beam(g,[xx,-.5,zz],[xx,.8,zz],.095);
+ for(const xx of [-.95,.95]){beam(g,[xx,-.35,-.95],[xx,.7,1.45],.045);beam(g,[xx,.7,-.95],[xx,-.35,1.45],.045)}
+ add(box,villaWood,g,0,1.24,-.3,1.8,1.0,1.6);
+ for(let j=0;j<7;j++)add(box,deckWood,g,0,.83+j*.14,.507,1.8,.018,.012);
+ for(const xx of [-.53,.53]){add(box,railWood,g,xx,1.29,.53,.53,.7,.04);add(box,glassBlue,g,xx,1.29,.56,.44,.6,.025)}
+ add(box,railWood,g,0,1.18,.56,.24,.82,.06);
+ // Each roof half has a sealed underside and visible fascia thickness.
+ const roofColors=['#a58b52','#7c7256','#b79a60'];const roofMat=material(roofColors[variant%3]);
+ for(const sign of [-1,1]){for(let section=0;section<8;section++){const u=section/8,v=(section+1)/8;const height=t=>2.65-1.05*Math.sin(t*Math.PI/2)+.12*Math.pow(t,8);const x1=sign*u*1.16,x2=sign*v*1.16,y1=height(u),y2=height(v),t=.08;const points=[x1,y1,-1.3,x2,y2,-1.3,x2,y2, .8,x1,y1,.8,x1,y1-t,-1.3,x2,y2-t,-1.3,x2,y2-t,.8,x1,y1-t,.8];const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(points,3));geo.setIndex([0,2,1,0,3,2,4,5,6,4,6,7,0,1,5,0,5,4,3,7,6,3,6,2,0,4,7,0,7,3,1,2,6,1,6,5]);geo.computeVertexNormals();const roof=new THREE.Mesh(geo,roofMat);roof.material.side=THREE.DoubleSide;roof.castShadow=true;roof.receiveShadow=true;g.add(roof);
+ beam(g,[x2,y2+.012,-1.32],[x2,y2+.012,.82],.025,deckWood);
+ for(let z=-1.28;z<.8;z+=.13)beam(g,[x1,y1+.015,z],[x2,y2+.015,z+.035],.012,railWood);
+ }}beam(g,[0,2.67,-1.36],[0,2.67,.86],.09,railWood);
+ for(const xx of [-1.04,1.04]){beam(g,[xx,.8,.6],[xx,1.18,.6],.04);beam(g,[xx,.8,1.48],[xx,1.18,1.48],.04);beam(g,[xx,1.15,.6],[xx,1.15,1.48],.035)}
+ for(const xx of [-.55,.55]){add(box,deckWood,g,xx,.89,1.05,.34,.09,.52);const back=add(box,deckWood,g,xx,1.03,.83,.34,.35,.06);back.rotation.x=-.25;}
+}
+function settlementPlan(tile){
+ const plan=[];
+ for(const center of [24,67]){const z=tile*100-center;if(z< -40||z>40)continue;
+  for(const side of [-1,1])for(let k=0;k<4;k++){
+   const hz=z+(k-1.5)*3.1,hx=river(hz)+side*(5.6+(k%2)*2.4);
+   if(Math.abs(hx-road(hz))<2)continue;plan.push({x:hx,z:hz,type:k%3});
+  }
+ }
+ if(tile===0)plan.push({x:20,z:-12,type:1},{x:30,z:-37,type:0});
+ return plan;
+}
+function cottage(parent,x,z,type){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=(type-1)*.12;parent.add(g);
+ const plaster=material(type===1?'#6b5039':'#efe4c8'),roof=material(type===0?'#997345':type===1?'#675848':'#a44f35');
+ add(box,rockMat,g,0,.12,0,1.9,.24,1.65);add(box,plaster,g,0,.83,0,1.8,1.3,1.5);
+ // Solid gable prism with two thick pitched roof halves.
+ const shape=new THREE.Shape();shape.moveTo(-.9,0);shape.lineTo(.9,0);shape.lineTo(0,.75);shape.closePath();const cap=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:1.5,bevelEnabled:false}),plaster);cap.position.set(0,1.48,-.75);cap.castShadow=true;g.add(cap);
+ for(const side of [-1,1]){const panel=add(box,roof,g,side*.53,1.83,0,1.42,.12,1.95);panel.rotation.z=-side*.69;
+ for(let row=0;row<7;row++){const t=(row+.5)/7;beam(g,[side*t*1.08,2.28-t*.9,-.99],[side*t*1.08,2.28-t*.9,.99],.018,railWood)}}
+ add(box,material('#9a7961'),g,.53,2.18,-.35,.24,.82,.27);add(box,rockMat,g,.53,2.61,-.35,.31,.08,.33);
+ add(box,railWood,g,0,.57,.77,.35,.9,.055);
+ for(const side of [-1,1]){add(box,cream,g,side*.56,.95,.78,.39,.48,.05);add(box,glassBlue,g,side*.56,.95,.815,.29,.37,.025);beam(g,[side*.56,.77,.84],[side*.56,1.13,.84],.026,cream);beam(g,[side*.7,.95,.84],[side*.42,.95,.84],.026,cream)}
+ if(type===2){for(const xx of [-.87,0,.87])beam(g,[xx,.25,.83],[xx,1.49,.83],.045);beam(g,[-.9,1.43,.83],[.9,1.43,.83],.045);beam(g,[-.82,1.5,.83],[0,2.18,.83],.045);beam(g,[.82,1.5,.83],[0,2.18,.83],.045)}
+}
+function stoneBridge(parent,cx,z){
+ const bridge=new THREE.Group();bridge.position.set(cx,0,z);parent.add(bridge);
+ const masonry=['#777263','#8c8471','#66665c','#a0967f','#737363'].map(c=>material(c));
+ const top=x=>.22+1.6*Math.sqrt(Math.max(0,1-(x/4)**2));
+ const underside=x=>Math.abs(x)<3.35?.06+1.25*Math.sqrt(Math.max(0,1-(x/3.35)**2)):-.18;
+ function archSlice(x1,x2,front,depth,mat,low,high){const steps=Math.max(4,Math.ceil((x2-x1)*12));const shape=new THREE.Shape();shape.moveTo(x1,low(x1));for(let k=1;k<=steps;k++){const x=x1+(x2-x1)*k/steps;shape.lineTo(x,low(x));}for(let k=steps;k>=0;k--){const x=x1+(x2-x1)*k/steps;shape.lineTo(x,high(x));}shape.closePath();const geo=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:false,curveSegments:4});const mesh=new THREE.Mesh(geo,mat);mesh.position.z=front;mesh.castShadow=mesh.receiveShadow=true;bridge.add(mesh);}
+ // Solid arch barrel; no slab fills the opening underneath.
+ archSlice(-4,4,-.8,1.6,masonry[2],underside,top);
+ for(let k=0;k<32;k++){const x1=-4+k*.25+.008,x2=x1+.234;
+  for(const side of [-1,1]){
+   archSlice(x1,x2,side<0?-.83:.8,.03,masonry[k%5],underside,top);
+   archSlice(x1,x2,side<0?-.82:.62,.2,masonry[(k+2)%5],x=>top(x)+.02,x=>top(x)+.42);
+   archSlice(x1,x2,side<0?-.86:.6,.26,masonry[(k+3)%5],x=>top(x)+.42,x=>top(x)+.49);
+  }
+  const x=(x1+x2)/2;for(let row=0;row<4;row++){const slab=add(box,masonry[(k+row)%5],bridge,x,top(x)+.015,-.48+row*.32,.24,.035,.30);slab.rotation.z=Math.atan2(top(x2)-top(x1),x2-x1);}
+ }
+ for(const side of [-1,1]){
+  add(box,masonry[2],bridge,side*3.66,.05,0,.65,.5,1.9);
+  const approach=add(box,sand,parent,cx+side*5.4,.01,z,2.8,.025,1.6);approach.castShadow=false;
+  for(let k=0;k<10;k++){const x=side*rand(3.4,3.95);add(smallSphere,material('#677047'),bridge,x,rand(.03,.25),rand(-.92,.92),rand(.045,.1),.025,.06);}
+ }
+}
+function addSettlement(parent,tile){for(const h of settlementPlan(tile))cottage(parent,h.x,h.z,h.type);
+ for(const d of [24,67,112,159]){const z=tile*100-d;if(z< -45||z>45)continue;stoneBridge(parent,river(z),z);}
+}
+function windmill(parent,x,z){const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=.25;parent.add(g);
+ add(new THREE.CylinderGeometry(.6,.95,2.7,12),material('#8c7961'),g,0,1.35,0);
+ add(new THREE.ConeGeometry(.77,.85,12),material('#414a3b'),g,0,3.03,0);
+ add(box,material('#334d3d'),g,0,.5,.94,.33,.85,.04);
+ for(const y of [1.3,2.1]){add(box,cream,g,0,y,.69,.24,.35,.04);add(box,glassBlue,g,0,y,.72,.16,.25,.02)}
+ const rotor=new THREE.Group();rotor.position.set(0,2.65,.8);rotor.rotation.x=-.2;g.add(rotor);
+ add(sphere,material('#8c4d35'),rotor,0,0,0,.16);
+ for(let n=0;n<4;n++){const blade=new THREE.Group();blade.rotation.z=n*Math.PI/2;rotor.add(blade);beam(blade,[0,.12,0],[0,2.3,0],.065,railWood);beam(blade,[.46,.55,0],[.46,2.3,0],.035,cream);for(let j=0;j<11;j++){const y=.55+j*.17;beam(blade,[0,y,0],[.46,y,0],.025,deckWood)}add(box,material('#9a593c'),blade,.14,1.5,-.02,.23,1.5,.025)}
+ windRotors.push(rotor);
+}
+function sandstone(parent,x,z,size,height){const g=new THREE.Group();g.position.set(x,0,z);parent.add(g);const palette=['#a25935','#bb7147','#cb8859','#955032','#d59a69'];
+ const outline=Array.from({length:11},(_,k)=>{const a=k/11*Math.PI*2;return [Math.cos(a)*(1+rand(-.15,.15)),Math.sin(a)*(1+rand(-.15,.15))]});
+ for(let layer=0;layer<10;layer++){const t=layer/10,r=size*(1-.36*t)*(layer%3===0?1.07:1);const shape=new THREE.Shape();outline.forEach(([a,b],k)=>{if(k)shape.lineTo(a*r,b*r*.68);else shape.moveTo(a*r,b*r*.68)});shape.closePath();const geo=new THREE.ExtrudeGeometry(shape,{depth:height/10*.96,bevelEnabled:true,bevelSize:.035,bevelThickness:.025,bevelSegments:1});geo.rotateX(-Math.PI/2);const mesh=new THREE.Mesh(geo,material(palette[layer%5]));mesh.position.y=layer*height/10;mesh.rotation.y=Math.sin(layer*.6)*.018;mesh.castShadow=mesh.receiveShadow=true;g.add(mesh);}
+ for(let k=0;k<8;k++){const a=rand(0,7),r=rand(size,size*1.7);add(smallSphere,material(palette[k%5]),g,Math.cos(a)*r,.1,Math.sin(a)*r*.7,rand(.15,.4),rand(.1,.25),rand(.15,.35));}
+}
+function makeRouteTile(i){
+ const p=new THREE.Group();scene.add(p);
+ const geo=new THREE.PlaneGeometry(140,100,140,200);geo.rotateX(-Math.PI/2);const pos=geo.attributes.position,colors=[];
+ for(let k=0;k<pos.count;k++){const x=pos.getX(k),z=pos.getZ(k),c=groundColor(biome(i,z),x,z);colors.push(c.r,c.g,c.b)}geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
+ const land=new THREE.Mesh(geo,material('#ffffff',{map:texture,vertexColors:true}));land.position.y=-.04;land.receiveShadow=true;p.add(land);
+ function ribbon(fn,width,y,mat){const vs=[],uv=[],ix=[];for(let k=0;k<=600;k++){let z=-50+k/6,d=biome(i,z),w=width(d,z);const mud=dryAt(d)*(.16*Math.sin(z*5.7)+.10*Math.sin(z*13.1));vs.push(fn(z)-w/2-mud,y,z,fn(z)+w/2+mud*.8,y,z);uv.push(0,z,1,z);if(k<600){let n=k*2;ix.push(n,n+2,n+1,n+1,n+2,n+3)}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vs,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(ix);g.computeVertexNormals();const m=new THREE.Mesh(g,mat);m.receiveShadow=true;p.add(m)}
+ ribbon(river,d=>6.7-2.8*dryAt(d)+seaAt(d)*155,0,sand);
+ const localWater=water.clone();localWater.uniforms.time=water.uniforms.time;
+ localWater.uniforms.route={value:i*100};
+ localWater.fragmentShader=localWater.fragmentShader.replace('uniform float time;','uniform float time;uniform float route;').replace('gl_FragColor=vec4(col,1.);',`float d=mod(route-vUv.y+400.,400.);float dry=smoothstep(175.,205.,d)*(1.-smoothstep(245.,275.,d));float bed=.5+.5*sin(vUv.y*9.+sin(vUv.x*45.));vec3 sandbed=mix(vec3(.36,.49,.40),vec3(.66,.65,.45),bed*.3+edge*.6);vec3 clearwater=mix(sandbed,vec3(.12,.52,.55),.52*(1.-edge));col=mix(col,clearwater+wave*.07,dry);float ocean=smoothstep(275.,295.,d)*(1.-smoothstep(378.,400.,d));vec3 depth=mix(vec3(.015,.28,.53),vec3(.22,.83,.78),smoothstep(.1,.86,edge));col=mix(col,depth+wave*.1,ocean);gl_FragColor=vec4(col,1.);`);
+ ribbon(river,d=>5.65-3.3*dryAt(d)+seaAt(d)*155,.025,localWater);
+ ribbon(road,d=>1.65*(1-smooth(255,285,d)+smooth(382,400,d)),.01,sand);
+ const roadPaint=pathMat.clone();roadPaint.onBeforeCompile=shader=>{shader.vertexShader='varying float roadZ;\n'+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nroadZ=position.z;');shader.fragmentShader='varying float roadZ;\n'+shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
+ float rd=mod(${(i*100).toFixed(1)}-roadZ+400.,400.);float arid=smoothstep(170.,205.,rd)*(1.-smoothstep(245.,275.,rd));diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.51,.29,.10),arid*.65);`)};roadPaint.customProgramCacheKey=()=>`road-${i}`;
+ ribbon(road,d=>1.18*(1-smooth(255,285,d)+smooth(382,400,d)),.018,roadPaint);
+ // Thin stratified silt marks beside both banks and dusty wheel tracks.
+ for(const route of [river,road])for(const side of [-1,1])for(let band=0;band<5;band++){
+  const vertices=[],indices=[];let previous=false;
+  for(let k=0;k<=600;k++){const z=-50+k/6,d=biome(i,z),dry=dryAt(d);if(dry<.05){previous=false;continue;}const edge=route===river?(5.65-3.3*dry)/2:.72;
+   const offset=edge+.12+band*.17+Math.sin(z*1.7+band)*.065+Math.sin(z*5.1+band)*.025;
+   const x=route(z)+side*offset,w=(.025+band*.008)*dry*(.65+.35*Math.sin(z*2.5+band));const n=vertices.length/3;
+   vertices.push(x-w,.029,z,x+w,.029,z);if(previous)indices.push(n-2,n,n-1,n-1,n,n+1);previous=true;
+  }const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));g.setIndex(indices);g.computeVertexNormals();const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:['#8f542e','#ddb17b','#a56d42','#efc18a','#b67a49'][band],transparent:true,opacity:.65,depthWrite:false}));p.add(m);
+ }
+ for(const [x,d,size,height] of [[-36,191,2.5,1.5],[8,208,2.1,3.4],[28,225,4.2,1.8],[-32,240,2.8,2.7],[16,246,1.5,2.9]]){const z=i*100-d;if(z>-44&&z<44&&Math.abs(x-river(z))>size+4&&Math.abs(x-road(z))>size+2)sandstone(p,x,z,size,height);}
+ addSettlement(p,i);
+ forest(p,i);
+ addFields(p,i);
+ for(const [x,d] of [[-34,102],[3,126],[28,149],[-30,165]]){const z=i*100-d;if(z>-46&&z<46&&Math.abs(x-river(z))>5&&Math.abs(x-road(z))>3)windmill(p,x,z);}
+ for(let j=0;j<300;j++){const z=rand(-49,49),d=biome(i,z);if(seaAt(d)>.05)continue;const x=river(z)+(j%2?1:-1)*rand(2.9,3.6);add(smallSphere,rockMat,p,x,.11,z,rand(.08,.22),.12,rand(.12,.3))}
+ for(let j=0;j<110;j++){const z=rand(-48,48),d=biome(i,z);if(d>90)continue;let x=rand(-35,34);if(settlementPlan(i).some(h=>Math.abs(x-h.x)<1.6&&Math.abs(z-h.z)<1.6))continue;if(Math.abs(x-river(z))<4||Math.abs(x-road(z))<2)continue;const sheep=new THREE.Group();sheep.position.set(x,0,z);sheep.rotation.y=rand(0,6.28);p.add(sheep);add(sphere,cream,sheep,0,.21,0,.17,.17,.27);add(smallSphere,trunkMat,sheep,0,.21,-.25,.085,.09,.1);for(const xx of [-.1,.1])for(const zz of [-.13,.13])add(box,trunkMat,sheep,xx,.07,zz,.035,.14,.035)}
+ // Asymmetric sand spits, nested shoals, palms and stilt bungalows.
+ for(const [x,z,scale,angle,kind] of [[-38,-34,1.0,.2,0],[-22,-18,1.0,0,1],[24,-28,1.1,.8,2],[40,-7,.9,-.4,3],[-35,3,1.05,-.5,2],[0,-25,2.3,.25,0],[-18,35,1.1,.2,3],[25,32,1.2,.7,1],[-30,-43,.55,.35,0],[-14,-42,.60,-.4,1],[14,-44,.55,.6,0],[34,-42,.60,-.2,3],[-32,-12,.55,.8,1],[32,-12,.55,-.5,0]]){
+  const islandPhase=biome(i,z);const coastRadius=(kind===2?10:kind===1?8:7)*scale*1.48;
+  // Reserve open water beyond the complete beach/reef footprint, not just its center.
+  if(islandPhase-coastRadius<300||islandPhase+coastRadius>370)continue;
+  const island=new THREE.Group();island.position.set(x,0,z);island.rotation.y=angle;p.add(island);
+  // Three individually drawn coastlines from the reference composition, not scaled clones.
+  const outlines=[
+   [[-4,-3],[-3,-5],[0,-5.5],[3,-4],[4,-1],[3.5,2],[1,4],[-2,4],[-4,2]],
+   [[-4,-6],[0,-7],[4,-5],[5,-1],[3,4],[-1,6],[-4,4],[-1,3],[1,1],[1,-2],[-1,-4]],
+   [[-1.5,-9],[.4,-8],[1.5,-4],[2,0],[1.2,5],[-.4,9],[-1.6,6],[-2.1,1],[-2,-4]],
+   [[-6,-3],[-4,-5],[0,-6],[5,-4],[6,0],[4,4],[0,5],[-4,3],[-6,0]]
+  ];
+  const outline=outlines[kind];
+  const coast=new THREE.CatmullRomCurve3(outline.map(([a,b])=>new THREE.Vector3(a,0,b)),true,'centripetal');
+  const points=coast.getPoints(180);
+  // Many fine translucent shoal bands replace the conspicuous polygon rings.
+  for(let band=30;band>=0;band--){const t=band/30,size=1+t*.48;const shape=new THREE.Shape();points.forEach((v,k)=>{const a=v.x*size*scale,b=-v.z*size*scale;if(k)shape.lineTo(a,b);else shape.moveTo(a,b)});shape.closePath();if(kind===3){const lagoon=new THREE.Path();lagoon.absellipse(0,0,3.4*scale,2.5*scale,0,Math.PI*2,true,0);shape.holes.push(lagoon);}const col=new THREE.Color('#fae9c2').lerp(new THREE.Color('#62d8c7'),Math.min(1,t*1.6));const mat=material(col,{transparent:true,opacity:band===0?1:.19,depthWrite:false});const mesh=new THREE.Mesh(new THREE.ShapeGeometry(shape,180),mat);mesh.rotation.x=-Math.PI/2;mesh.position.y=.045+(30-band)*.0004;mesh.renderOrder=31-band;mesh.receiveShadow=true;island.add(mesh);}
+  // Vegetation follows the broad headland; the sand spit remains exposed.
+  const head=[[0,-.5,2.6,3],[2,-2,1.3,2.5],[-.2,-1,1.1,4.8],[-4,-.5,1.0,2.0]][kind];
+  // Continuous turf beneath every plant, inside the broad island head.
+  const turfShape=new THREE.Shape();for(let n=0;n<=80;n++){const a=n/80*Math.PI*2,r=1+.06*Math.sin(a*5)+.04*Math.cos(a*7);const tx=(head[0]+Math.cos(a)*head[2]*1.12*r)*scale,tz=-(head[1]+Math.sin(a)*head[3]*1.12*r)*scale;if(n)turfShape.lineTo(tx,tz);else turfShape.moveTo(tx,tz)}
+  const turf=new THREE.Mesh(new THREE.ShapeGeometry(turfShape),material('#86a835',{map:texture}));turf.rotation.x=-Math.PI/2;turf.position.y=.08;turf.receiveShadow=true;island.add(turf);
+  for(let k=0;k<55;k++){const a=rand(0,Math.PI*2),r=Math.sqrt(random()),px=(head[0]+Math.cos(a)*r*head[2])*scale,pz=(head[1]+Math.sin(a)*r*head[3])*scale;add(smallSphere,material(['#729b2c','#87aa30','#58892d','#a1be3c'][k%4]),island,px,.13,pz,rand(.18,.38),rand(.12,.27),rand(.2,.42));if(k%7===0)add(smallSphere,rockMat,island,px*1.12,.08,pz*1.08,.13,.08,.16);}
+  for(let k=0;k<4;k++){const px=(head[0]+rand(-1,1))*scale,pz=(head[1]+rand(-1.6,1.6))*scale;add(new THREE.CylinderGeometry(.05,.1,1.7,6),trunkMat,island,px,.9,pz);for(let n=0;n<8;n++){const leaf=add(sphere,material(n%2?'#648e29':'#3e732c'),island,px+Math.cos(n*Math.PI/4)*.42,1.75,pz+Math.sin(n*Math.PI/4)*.42,.7,.07,.17);leaf.rotation.y=-n*Math.PI/4}}
+  if(x===0){
+   for(const side of [-1,1]){let previous=[side*5.5,0];for(let step=1;step<=24;step++){const t=step/24,point=[side*(5.5+7*Math.sin(t*Math.PI*.85)), -1+15*t];boardwalk(island,previous,point,.65);if(step%5===0){const hx=point[0]+side*2.2,hz=point[1];boardwalk(island,point,[hx,hz],.45);waterVilla(island,hx,hz,step/5);}previous=point;}}
+  }else if(x===25){boardwalk(island,[1,0],[9,0],.6);for(let k=0;k<2;k++){const hx=4+k*3.2;boardwalk(island,[hx,0],[hx,1.3],.45);waterVilla(island,hx,2.8,k);}}
+
+
+ }
+ // Sparse arid plants: branching cactus silhouettes and ochre scrub.
+ for(let k=0;k<110;k++){
+  const z=rand(-48,48),d=biome(i,z),x=rand(-48,48);if(d<185||d>250||Math.abs(x-river(z))<4||Math.abs(x-road(z))<2)continue;
+  const cactus=material('#7d8550'),h=rand(.55,1.2);add(new THREE.CylinderGeometry(.08,.11,h,7),cactus,p,x,h/2,z);add(sphere,cactus,p,x,h,z,.08,.1,.08);
+  for(const sign of [-1,1]){add(box,cactus,p,x+sign*.17,h*.45,z,.34,.12,.12);add(new THREE.CylinderGeometry(.055,.07,h*.38,6),cactus,p,x+sign*.3,h*.64,z);add(sphere,cactus,p,x+sign*.3,h*.83,z,.055,.07,.055)}
+  for(let j=0;j<3;j++)add(smallSphere,material('#a48c50'),p,x+rand(-.8,.8),.08,z+rand(-.8,.8),.12,.09,.14);
+ }
+ if(i===2){const car=new THREE.Group();p.add(car);add(box,material('#f5e7cd'),car,0,.24,0,.5,.24,.9);add(box,material('#537c86'),car,0,.43,0,.42,.22,.43);for(const x of [-.26,.26])for(const z of [-.28,.28])add(sphere,trunkMat,car,x,.12,z,.09,.12,.12);cars.push({car,tile:i});}
+ return p;
+}
+const cars=[],windRotors=[];
+const tiles=[0,1,2,3].map(makeRouteTile);
 const plane=new THREE.Group();planeScene.add(plane);const white=material('#fafaf2',{roughness:1,metalness:0}),blue=material('#537882',{roughness:1}),dark=material('#4e5850');
 add(sphere,white,plane,0,0,0,.13,.11,.62);add(sphere,white,plane,0,-.005,-.05,1.02,.035,.15);add(sphere,white,plane,0,.03,.43,.36,.025,.09);add(box,white,plane,0,.12,.43,.035,.26,.21);add(sphere,blue,plane,0,.1,-.16,.09,.055,.19);const red=material('#b54531');add(box,red,plane,-.84,.025,-.05,.08,.02,.2);add(box,red,plane,.84,.025,-.05,.08,.02,.2);const prop=new THREE.Group();prop.position.z=-.65;plane.add(prop);add(box,dark,prop,0,0,0,.42,.025,.035);
 const shadowCanvas=document.createElement('canvas');shadowCanvas.width=shadowCanvas.height=128;const sc=shadowCanvas.getContext('2d'),sg=sc.createRadialGradient(64,64,1,64,64,63);sg.addColorStop(0,'rgba(34,55,17,.24)');sg.addColorStop(.5,'rgba(34,55,17,.17)');sg.addColorStop(1,'rgba(34,55,17,0)');sc.fillStyle=sg;sc.fillRect(0,0,128,128);const shadowTexture=new THREE.CanvasTexture(shadowCanvas);
-const cloudMat=material('#ffffff',{roughness:1});const clouds=[];for(let i=0;i<9;i++){const c=new THREE.Group();const size=rand(1.3,2.4);for(let j=0;j<13;j++){const a=j*2.399,r=Math.sqrt(j/13);add(sphere,cloudMat,c,Math.cos(a)*r*1.5,rand(-.15,.3),Math.sin(a)*r,.85,.5,rand(.7,1.1))}c.scale.setScalar(size);c.position.set([-31,-8,21,40,-43,8,30,-19,48][i],8.5,-48+i*12);sky.add(c);const sh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:shadowTexture,transparent:true,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.scale.set(7*size,5*size,1);sh.position.y=.065;scene.add(sh);clouds.push({cloud:c,shadow:sh,speed:rand(.55,.9)})}
+const cloudMat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{time:water.uniforms.time,alpha:{value:.85}},vertexShader:`varying vec2 v;void main(){v=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`varying vec2 v;uniform float time;uniform float alpha;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+void main(){vec2 p=(v-.5)*2.;float n=noise(v*5.+time*.035)*.55+noise(v*13.-time*.02)*.3+noise(v*29.)*.15;float density=1.-smoothstep(.25,1.,length(p*vec2(.85,1.1))+.28*(n-.5));float a=density*alpha;gl_FragColor=vec4(mix(vec3(.83,.87,.86),vec3(1.),n*.55+.4),a);}`});
+const solidCloud=material('#ffffff',{roughness:1,transparent:true,depthWrite:false});
+const cloudLobes=[];
+const clouds=[];for(let i=0;i<15;i++){const c=new THREE.Group();const size=i%5===0?rand(3.0,3.8):rand(1.3,2.4);for(let j=0;j<13;j++){const a=j*2.399,r=Math.sqrt(j/13);const lobe=add(sphere,solidCloud.clone(),c,Math.cos(a)*r*1.5,rand(-.15,.3),Math.sin(a)*r,.85,.5,rand(.7,1.1));
+ const mistMaterial=cloudMat.clone();mistMaterial.uniforms.time=water.uniforms.time;mistMaterial.uniforms.alpha.value=0;
+ const mist=new THREE.Mesh(new THREE.PlaneGeometry(2.1,1.6),mistMaterial);mist.quaternion.copy(camera.quaternion);c.add(mist);
+ cloudLobes.push({lobe,mist,home:lobe.position.clone(),scale:lobe.scale.clone(),amount:0,phase:rand(0,6.28)});}c.scale.setScalar(size);c.position.set([-31,-8,21,40,-43,8,30,-19,48,15,-25,28,-5,38,-38][i],8.5,-78+i*12);sky.add(c);const sh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:shadowTexture,transparent:true,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.scale.set(7*size,5*size,1);sh.position.y=.065;scene.add(sh);clouds.push({cloud:c,shadow:sh,speed:rand(.55,.9)})}
 const planeShadow=new THREE.Group();scene.add(planeShadow);const sm=new THREE.MeshBasicMaterial({color:'#34451c',transparent:true,opacity:.23,depthWrite:false});add(new THREE.PlaneGeometry(1.9,.19),sm,planeShadow,0,.08,0).rotation.x=-Math.PI/2;add(new THREE.PlaneGeometry(.16,1.2),sm,planeShadow,0,.08,0).rotation.x=-Math.PI/2;
-let paused=matchMedia('(prefers-reduced-motion: reduce)').matches,time=0,last=0,travel=0,boost=0;
+let paused=matchMedia('(prefers-reduced-motion: reduce)').matches,time=0,last=0,travel=0,boost=0,flightJump=null;
 const pointer=new THREE.Vector2(-.38,0),target=new THREE.Vector3(-15,6,0),ray=new THREE.Raycaster(),flightLevel=new THREE.Plane(new THREE.Vector3(0,1,0),-6);
 const motion=document.querySelector('#motion');const sync=()=>{motion.textContent=paused?'继续飞行':'暂停飞行';motion.setAttribute('aria-pressed',String(paused))};sync();motion.onclick=()=>{paused=!paused;sync()};
 window.addEventListener('pointermove',e=>{pointer.set(e.clientX/innerWidth*2-1,1-e.clientY/innerHeight*2);document.body.classList.add('piloting')});document.documentElement.addEventListener('pointerleave',()=>document.body.classList.remove('piloting'));
-window.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();pointer.x=THREE.MathUtils.clamp(pointer.x+(e.key==='ArrowRight'?.05:e.key==='ArrowLeft'?-.05:0),-.94,.94);pointer.y=THREE.MathUtils.clamp(pointer.y+(e.key==='ArrowUp'?.05:e.key==='ArrowDown'?-.05:0),-.9,.9)});document.querySelector('#explore').onclick=()=>{paused=false;boost=4;sync()};
+window.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();pointer.x=THREE.MathUtils.clamp(pointer.x+(e.key==='ArrowRight'?.05:e.key==='ArrowLeft'?-.05:0),-.94,.94);pointer.y=THREE.MathUtils.clamp(pointer.y+(e.key==='ArrowUp'?.05:e.key==='ArrowDown'?-.05:0),-.9,.9)});document.querySelector('#explore').onclick=()=>{paused=false;const current=flightJump?flightJump.end:travel;const phase=((current%400)+400)%400;const stops=[120,220,335,420];const target=stops.find(v=>v>phase+8);flightJump={start:travel,end:current-phase+target,elapsed:0};sync()};
 const paintTarget=new THREE.WebGLRenderTarget(1,1);
 const paintScene=new THREE.Scene(),paintCamera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
 const paintMaterial=new THREE.ShaderMaterial({uniforms:{picture:{value:paintTarget.texture},resolution:{value:new THREE.Vector2(1,1)}},vertexShader:`varying vec2 v;void main(){v=uv;gl_Position=vec4(position.xy,0.,1.);}`,fragmentShader:`
@@ -54998,18 +55207,38 @@ void main(){
 }`});
 paintScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),paintMaterial));
 function resize(){const w=innerWidth,h=innerHeight;for(const r of [renderer,air,top])r.setSize(w,h);paintTarget.setSize(Math.round(w*renderer.getPixelRatio()),Math.round(h*renderer.getPixelRatio()));paintMaterial.uniforms.resolution.value.set(paintTarget.width,paintTarget.height);const width=w<h?58:80;camera.left=-width/2;camera.right=width/2;camera.top=width*h/w/2;camera.bottom=-width*h/w/2;camera.updateProjectionMatrix()}window.addEventListener('resize',resize);resize();ray.setFromCamera(pointer,camera);ray.ray.intersectPlane(flightLevel,target);plane.position.copy(target);
-function tick(ms){requestAnimationFrame(tick);const dt=Math.min((ms-last)/1000,.04);last=ms;if(!document.hidden&&!paused){time+=dt;boost=Math.max(0,boost-dt);travel+=dt*(0.85+boost*.4);for(let i=0;i<tiles.length;i++)tiles[i].position.z=((i*LENGTH+travel+LENGTH*1.5)%(LENGTH*3))-LENGTH*1.5;water.uniforms.time.value=time;
+function tick(ms){requestAnimationFrame(tick);const dt=Math.min((ms-last)/1000,.04);last=ms;if(!document.hidden&&!paused){time+=dt;boost=Math.max(0,boost-dt);if(flightJump){flightJump.elapsed+=dt;const t=Math.min(1,flightJump.elapsed/2.8);travel=THREE.MathUtils.lerp(flightJump.start,flightJump.end,t*t*(3-2*t));if(t===1)flightJump=null;}else travel+=dt*1.8;for(let i=0;i<tiles.length;i++)tiles[i].position.z=((travel-i*LENGTH+LENGTH*5.5)%(LENGTH*4))-LENGTH*1.5;water.uniforms.time.value=time;for(const rotor of windRotors)rotor.rotation.z+=dt*.32;for(const {car} of cars){const z=20*Math.sin(time*.06);car.position.set(road(z),0,z);car.rotation.y=Math.atan2(road(z+.05)-road(z-.05),.1)+(Math.cos(time*.06)<0?Math.PI:0);}
 for(const {cloud,shadow,speed} of clouds){cloud.position.z+=dt*speed;if(cloud.position.z>100)cloud.position.z=-100;shadow.position.x=cloud.position.x+3.4;shadow.position.z=cloud.position.z+3.1}planeShadow.position.set(plane.position.x+2.3,0,plane.position.z+2.5);planeShadow.rotation.y=plane.rotation.y;}ray.setFromCamera(pointer,camera);ray.ray.intersectPlane(flightLevel,target);const dx=target.x-plane.position.x;plane.position.lerp(target,1-Math.exp(-dt*9));plane.position.y=6+Math.sin(ms*.001*3.1)*.045+Math.sin(ms*.001*8.3)*.012;plane.rotation.z=THREE.MathUtils.clamp(-dx*.08,-.3,.3)+Math.sin(ms*.001*2.3)*.035;plane.rotation.x=Math.sin(ms*.001*2.7)*.018;plane.rotation.y=Math.sin(ms*.001*1.5)*.025;prop.rotation.z+=dt*65;
 planeShadow.position.set(plane.position.x+2.3,0,plane.position.z+2.5);
-renderer.setRenderTarget(paintTarget);renderer.render(scene,camera);renderer.setRenderTarget(null);renderer.render(paintScene,paintCamera);air.render(sky,camera);top.render(planeScene,camera)}requestAnimationFrame(tick);document.body.classList.add('loaded');
-} catch(error) { console.error(error);document.getElementById('loading').textContent='风景加载失败，请刷新重试';document.getElementById('motion').disabled=true;document.getElementById('explore').disabled=true;document.body.classList.remove('piloting');}</script>
-<script type="module">// 受控翻页器：滚轮/键盘/触摸 → 云升起盖屏 → 翻页 → 云向四周散开
+// Disturb individual lobes in screen space so contact matches the visible airplane.
+const aircraftScreen=plane.position.clone().project(camera);
+for(const state of cloudLobes){
+ const {lobe,mist,home,scale}=state;
+ const restWorld=home.clone();lobe.parent.localToWorld(restWorld);const screen=restWorld.clone().project(camera);
+ const dx=(screen.x-aircraftScreen.x)*(camera.right-camera.left)/2;
+ const dy=(screen.y-aircraftScreen.y)*(camera.top-camera.bottom)/2;
+ const contact=1-smooth(.4,2.0,Math.hypot(dx,dy));
+ state.amount=THREE.MathUtils.lerp(state.amount,contact,1-Math.exp(-dt*(contact>state.amount?8:1.25)));
+ const a=state.amount,angle=Math.atan2(dy,dx),drift=.5*a;
+ lobe.position.copy(home);lobe.position.x+=Math.cos(angle)*drift;lobe.position.z-=Math.sin(angle)*drift;
+ lobe.scale.copy(scale).multiplyScalar(1+a*.26);lobe.material.opacity=1-a*.96;
+ // Broken, drifting wisps occupy the displaced lobe; no airplane-attached overlay.
+ mist.position.copy(lobe.position);mist.position.x+=Math.sin(ms*.001*1.4+state.phase)*a*.12;
+ mist.scale.set(1+a*.7,1+a*.35,1);mist.material.uniforms.alpha.value=a*.18;
+ mist.visible=a>.015;
+}
+atmosphere.style.opacity=String(1-THREE.MathUtils.clamp(document.querySelector('#pages').scrollTop/innerHeight,0,1));
+if(document.querySelector('#pages').scrollTop<innerHeight){renderer.setRenderTarget(paintTarget);renderer.render(scene,camera);renderer.setRenderTarget(null);renderer.render(paintScene,paintCamera);air.render(sky,camera);}top.render(planeScene,camera)}requestAnimationFrame(tick);document.body.classList.add('loaded');
+}catch(error){console.error(error);document.getElementById('loading').textContent='风景加载失败：'+error.message;document.body.classList.remove('piloting');}
+{// 受控翻页器：滚轮/键盘/触摸 → 云升起盖屏 → 翻页 → 云向四周散开
 const pages = document.querySelector('#pages');
 const cc = document.querySelector('#cloud-cover');
 const nav = document.querySelectorAll('.sidebar a[href^="#"]');
 const order = ['home', 'works', 'experience'];
 let page = 0, animating = false, pendingTarget = null, lastWheel = 0, touchY = 0;
 let peekTimer = 0, peeking = false, leftZone = 260;
+let scrollTarget=null,scrollFrame=0,scrollStamp=0;
+function stopSmoothScroll(){cancelAnimationFrame(scrollFrame);scrollFrame=0;scrollTarget=null;}
 
 // 生成铺满全屏的球状云团（参照首页 3D 云）
 function buildCloud() {
@@ -55043,9 +55272,13 @@ function setActive(i) {
 
 function updateSidebar() {
   document.body.classList.toggle('alt', page > 0 || peeking);
+  const inFooter=page===2&&pages.scrollTop>2*pages.clientHeight+25;
+  document.body.classList.toggle('at-contact',inFooter);
+  document.querySelector('.sidebar').inert=inFooter;
 }
 
 function setPage(i) {
+  stopSmoothScroll();
   page = i;
   pages.scrollTo({ top: i * pages.clientHeight, behavior: 'auto' });
   peeking = false;
@@ -55091,8 +55324,25 @@ function transitionTo(target) {
   });
 }
 
+function scrollExperience(delta){
+ if(page!==2||animating)return false;
+ const base=2*pages.clientHeight;
+ if(delta<=0&&pages.scrollTop<=base+2&&(scrollTarget===null||scrollTarget<=base+2))return false;
+ scrollTarget=Math.max(base,Math.min(pages.scrollHeight-pages.clientHeight,(scrollTarget??pages.scrollTop)+delta));
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches){pages.scrollTop=scrollTarget;scrollTarget=null;updateSidebar();return true;}
+ if(!scrollFrame){scrollStamp=performance.now();scrollFrame=requestAnimationFrame(easeScroll);}return true;
+}
+function easeScroll(now){
+ if(scrollTarget===null||page!==2){stopSmoothScroll();return;}
+ const dt=Math.min(50,now-scrollStamp);scrollStamp=now;
+ const diff=scrollTarget-pages.scrollTop;
+ if(Math.abs(diff)<1){pages.scrollTop=scrollTarget;scrollTarget=null;scrollFrame=0;return;}
+ pages.scrollTop+=diff*(1-Math.exp(-dt/95));scrollFrame=requestAnimationFrame(easeScroll);
+}
+pages.addEventListener('scroll',updateSidebar,{passive:true});
 function flip(dir) {
-  transitionTo(page + dir);
+ if(scrollExperience(dir*Math.min(220,pages.clientHeight*.3)))return;
+ transitionTo(page + dir);
 }
 
 // 导航链接走受控翻页（而不是浏览器默认的锚点跳转）
@@ -55106,6 +55356,7 @@ nav.forEach(a => {
 
 window.addEventListener('wheel', (e) => {
   e.preventDefault();
+  if(scrollExperience(e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?pages.clientHeight:1)))return;
   if (Math.abs(e.deltaY) < 6) return;
   const now = performance.now();
   if (now - lastWheel < 80) return;
@@ -55114,6 +55365,7 @@ window.addEventListener('wheel', (e) => {
 }, { passive: false });
 
 window.addEventListener('keydown', (e) => {
+  if(e.target.closest('button,a,input,textarea,select'))return;
   const k = e.key;
   if (k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); flip(1); }
   else if (k === 'ArrowUp' || k === 'PageUp') { e.preventDefault(); flip(-1); }
@@ -55151,7 +55403,7 @@ window.addEventListener('resize', () => {
   leftZone = Math.min(280, innerWidth * 0.32);
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
-    pages.scrollTo({ top: page * pages.clientHeight, behavior: 'auto' });
+    stopSmoothScroll();pages.scrollTo({ top: page * pages.clientHeight, behavior: 'auto' });
     if (!animating) buildCloud();
   }, 180);
 });
@@ -55216,7 +55468,1349 @@ if (lanyard && badge) {
 
   lanyardTick();
 }
-</script>
 
-</body>
+
+
+const nextHint=document.createElement('button');nextHint.className='next-page-hint';nextHint.type='button';nextHint.setAttribute('aria-label','向下探索下一页');nextHint.innerHTML='<span>向下探索</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg>';document.body.appendChild(nextHint);
+nextHint.addEventListener('click',()=>flip(1));
+}
+try{
+
+const CARD_SIZES = {
+  portrait: [1.6, 2.25],
+  landscape: [2.25, 1.6]
+};
+const ANCHORS = { left: 0.27, center: 0.5, right: 0.73 };
+const THICKNESS = 0.018;
+const BEVEL = 0.007;
+const JOINTS = 4;
+const NODE_WEIGHT = 1 / 0.05;
+const MAX_STEP = 1 / 960;
+const ITERATIONS = 2;
+const SAMPLES = 72;
+const FOV = 24;
+const STRAP_WIDTH = 0.36;
+const RING_RADIUS = 0.095;
+const RING_TUBE = 0.0135;
+const EYELET_RADIUS = 0.036;
+const CLAMP_BODY = 0.15;
+const FACE_WIDTH = 1024;
+
+const FINISHES = {
+  glossy: { roughness: 0.42, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.06, foil: 0, anisotropy: 0 },
+  matte: { roughness: 0.85, metalness: 0, clearcoat: 0, clearcoatRoughness: 0.6, foil: 0, anisotropy: 0 },
+  holographic: { roughness: 0.3, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.04, foil: 1, anisotropy: 0 },
+  metallic: { roughness: 0.36, metalness: 0.75, clearcoat: 0.5, clearcoatRoughness: 0.18, foil: 0, anisotropy: 0.7 }
+};
+
+const BAND_COLUMNS = [0, 0.07, 0.93, 1];
+const BAND_BEND = [-0.95, -0.28, 0.28, 0.95];
+const FLIP_SPIN = 9;
+
+const FOIL_VERTEX_HEAD = `
+varying vec2 vFoilUv;
+varying vec3 vFoilX;
+varying vec3 vFoilY;
+`;
+
+const FOIL_VERTEX_BODY = `
+vFoilUv = uv;
+vFoilX = normalize((modelViewMatrix * vec4(1.0, 0.0, 0.0, 0.0)).xyz);
+vFoilY = normalize((modelViewMatrix * vec4(0.0, 1.0, 0.0, 0.0)).xyz);
+`;
+
+const FOIL_FRAGMENT_HEAD = `
+uniform float foilStrength;
+uniform float foilAspect;
+uniform vec3 foilKey;
+uniform vec3 foilFill;
+uniform vec3 foilTop;
+varying vec2 vFoilUv;
+varying vec3 vFoilX;
+varying vec3 vFoilY;
+
+float foilHash(vec2 p) {
+  p = fract(p * vec2(234.34, 435.345));
+  p += dot(p, p + 34.23);
+  return fract(p.x * p.y);
+}
+
+float foilBump(float t, float center, float width) {
+  float x = (t - center) / width;
+  return max(0.0, 1.0 - x * x);
+}
+
+vec3 foilSpectrum(float t) {
+  return vec3(
+    foilBump(t, 0.82, 0.32) + 0.4 * foilBump(t, 0.02, 0.12),
+    foilBump(t, 0.5, 0.26),
+    foilBump(t, 0.18, 0.24)
+  );
+}
+
+vec3 foilGrating(float u, float spacing) {
+  vec3 color = vec3(0.0);
+  for (int m = 1; m <= 2; m++) {
+    float order = float(m);
+    float t = (spacing * abs(u) / order - 0.38) / 0.32;
+    color += foilSpectrum(t) / order;
+  }
+  return color;
+}
+
+vec3 foilShard(vec2 p) {
+  vec2 base = floor(p);
+  float best = 9.0;
+  float edge = 9.0;
+  vec2 id = base;
+  for (int j = -1; j <= 1; j++) {
+    for (int i = -1; i <= 1; i++) {
+      vec2 cell = base + vec2(float(i), float(j));
+      vec2 site = cell + vec2(foilHash(cell), foilHash(cell + 7.31)) * 0.9 + 0.05;
+      float d = length(site - p);
+      if (d < best) {
+        edge = best;
+        best = d;
+        id = cell;
+      } else if (d < edge) {
+        edge = d;
+      }
+    }
+  }
+  return vec3(foilHash(id + 3.17), foilHash(id + 11.73), edge - best);
+}
+`;
+
+const FOIL_FRAGMENT_BODY = `
+if (foilStrength > 0.0) {
+  vec3 foilView = normalize(vViewPosition);
+  vec3 foilNormal = normalize(normal);
+  vec2 foilP = vec2(vFoilUv.x, vFoilUv.y * foilAspect);
+  vec3 shard = foilShard(foilP * 26.0);
+  vec2 ray = foilP - vec2(-1.6, 2.6 * foilAspect);
+  float angle = atan(ray.y, ray.x) + (shard.x - 0.5) * 0.16;
+  vec3 grating = normalize(vFoilX * cos(angle) + vFoilY * sin(angle));
+  float spacing = 1.7 * (0.95 + shard.y * 0.1);
+  vec3 rainbow = foilGrating(dot(foilKey + foilView, grating), spacing);
+  rainbow += 0.6 * foilGrating(dot(foilTop + foilView, grating), spacing);
+  rainbow *= 0.8 + 0.2 * smoothstep(0.0, 0.04, shard.z);
+  rainbow = max(rainbow - 0.35 * min(rainbow.r, min(rainbow.g, rainbow.b)), 0.0);
+  vec2 grid = foilP * 64.0;
+  vec2 cell = floor(grid);
+  vec2 jitter = vec2(foilHash(cell + 1.7), foilHash(cell + 9.2));
+  float flake = smoothstep(0.32, 0.06, length(fract(grid) - jitter * 0.6 - 0.2)) * step(0.45, foilHash(cell + 4.4));
+  vec3 facet = normalize(foilNormal + (vFoilX * (jitter.x - 0.5) + vFoilY * (jitter.y - 0.5)) * 0.8);
+  float glint = pow(max(dot(reflect(-foilKey, facet), foilView), 0.0), 28.0);
+  glint += 0.7 * pow(max(dot(reflect(-foilTop, facet), foilView), 0.0), 28.0);
+  float fine = 1.0 - smoothstep(0.35, 0.9, max(fwidth(grid.x), fwidth(grid.y)));
+  vec3 sparkle = flake * glint * fine * (vec3(0.7) + foilGrating(dot(foilKey + foilView, grating) + jitter.x * 0.4, spacing));
+  float ink = dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+  float foil = foilStrength * (0.08 + 0.92 * smoothstep(0.04, 0.7, ink));
+  float facing = clamp(dot(foilNormal, foilView), 0.0, 1.0);
+  float tint = clamp(dot(rainbow, vec3(0.4)), 0.0, 1.0);
+  outgoingLight = outgoingLight * (1.0 - foil * (0.3 + 0.32 * tint)) + (rainbow * 0.62 * (0.4 + 0.6 * facing) + sparkle * 1.6) * foil;
+}
+`;
+
+const METALS = {
+  silver: { color: '#d9dce2', roughness: 0.16 },
+  gold: { color: '#e4b965', roughness: 0.2 },
+  graphite: { color: '#4d4f55', roughness: 0.28 }
+};
+
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+const mix = (a, b, t) => a + (b - a) * t;
+
+const parseColor = (value, fallback) => {
+  try {
+    const ctx = document.createElement('canvas').getContext('2d');
+    if (!ctx) return fallback;
+    ctx.fillStyle = '#000000';
+    ctx.fillStyle = value;
+    const resolved = ctx.fillStyle;
+    if (resolved.startsWith('#')) {
+      const n = parseInt(resolved.slice(1), 16);
+      return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+    }
+    const parts = resolved.match(/[\d.]+/g);
+    if (!parts || parts.length < 3) return fallback;
+    return [Number(parts[0]) / 255, Number(parts[1]) / 255, Number(parts[2]) / 255];
+  } catch {
+    return fallback;
+  }
+};
+
+const luminance = rgb => 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+const toCss = (rgb, alpha = 1) =>
+  `rgba(${Math.round(rgb[0] * 255)}, ${Math.round(rgb[1] * 255)}, ${Math.round(rgb[2] * 255)}, ${alpha})`;
+
+const seeded = start => {
+  let state = start >>> 0;
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+const traceRoundedRect = (path, x, y, width, height, radius) => {
+  const r = Math.max(0, Math.min(radius, width / 2, height / 2));
+  const k = r * 0.4477;
+  path.moveTo(x + r, y);
+  path.lineTo(x + width - r, y);
+  path.bezierCurveTo(x + width - k, y, x + width, y + k, x + width, y + r);
+  path.lineTo(x + width, y + height - r);
+  path.bezierCurveTo(x + width, y + height - k, x + width - k, y + height, x + width - r, y + height);
+  path.lineTo(x + r, y + height);
+  path.bezierCurveTo(x + k, y + height, x, y + height - k, x, y + height - r);
+  path.lineTo(x, y + r);
+  path.bezierCurveTo(x, y + k, x + k, y, x + r, y);
+};
+
+const loadImage = (cache, url) => {
+  if (!url) return Promise.resolve(null);
+  const cached = cache.get(url);
+  if (cached) return cached;
+  const promise = new Promise(resolve => {
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.decoding = 'async';
+    image.onload = () => resolve(image);
+    image.onerror = () => resolve(null);
+    image.src = url;
+  });
+  cache.set(url, promise);
+  return promise;
+};
+
+const cardLayout = (orientation, cornerRadius) => {
+  const [width, height] = CARD_SIZES[orientation] || CARD_SIZES.portrait;
+  const radius = mix(0.03, Math.min(width, height) * 0.2, clamp(cornerRadius, 0, 1));
+  const slot = { width: 0.34, height: 0.07, y: height / 2 - 0.13 };
+  const ringY = height / 2 - 0.055;
+  return { width, height, radius, slot, ringY, hangY: ringY + RING_RADIUS };
+};
+
+const buildCardGeometry = layout => {
+  const { width, height, radius, slot } = layout;
+  const outline = new THREE.Shape();
+  traceRoundedRect(
+    outline,
+    -width / 2 + BEVEL,
+    -height / 2 + BEVEL,
+    width - BEVEL * 2,
+    height - BEVEL * 2,
+    Math.max(radius - BEVEL, 0.005)
+  );
+  const hole = new THREE.Path();
+  traceRoundedRect(
+    hole,
+    -slot.width / 2 - BEVEL,
+    slot.y - slot.height / 2 - BEVEL,
+    slot.width + BEVEL * 2,
+    slot.height + BEVEL * 2,
+    slot.height / 2 + BEVEL
+  );
+  outline.holes.push(hole);
+  const body = new THREE.ExtrudeGeometry(outline, {
+    depth: THICKNESS,
+    bevelEnabled: true,
+    bevelThickness: BEVEL,
+    bevelSize: BEVEL,
+    bevelSegments: 5,
+    curveSegments: 24
+  });
+  body.translate(0, 0, -THICKNESS / 2);
+  const face = new THREE.ShapeGeometry(outline, 24);
+  const position = face.getAttribute('position');
+  const uv = face.getAttribute('uv');
+  for (let i = 0; i < position.count; i++) {
+    uv.setXY(i, (position.getX(i) + width / 2) / width, (position.getY(i) + height / 2) / height);
+  }
+  uv.needsUpdate = true;
+  return { body, face };
+};
+
+const buildClampGeometry = width => {
+  const shape = new THREE.Shape();
+  const w = width * 1.16;
+  traceRoundedRect(shape, -w / 2 + 0.014, -CLAMP_BODY / 2 + 0.014, w - 0.028, CLAMP_BODY - 0.028, 0.024);
+  const geometry = new THREE.ExtrudeGeometry(shape, {
+    depth: 0.02,
+    bevelEnabled: true,
+    bevelThickness: 0.014,
+    bevelSize: 0.014,
+    bevelSegments: 6,
+    curveSegments: 10
+  });
+  geometry.translate(0, 0, -0.01);
+  return geometry;
+};
+
+const buildBandGeometry = count => {
+  const columns = BAND_COLUMNS.length;
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(count * columns * 3), 3));
+  geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(count * columns * 3), 3));
+  geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(count * columns * 2), 2));
+  const index = [];
+  for (let i = 0; i < count - 1; i++) {
+    for (let c = 0; c < columns - 1; c++) {
+      const a = i * columns + c;
+      index.push(a, a + columns, a + 1, a + 1, a + columns, a + columns + 1);
+    }
+  }
+  geometry.setIndex(index);
+  return geometry;
+};
+
+const buildEnvironment = renderer => {
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0.035, 0.035, 0.04);
+  const geometry = new THREE.PlaneGeometry(1, 1);
+  const materials = [];
+  const panel = (intensity, position, scale, rotation = 0) => {
+    const material = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(intensity, intensity, intensity),
+      side: THREE.DoubleSide
+    });
+    materials.push(material);
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(...position);
+    mesh.scale.set(scale[0], scale[1], 1);
+    mesh.lookAt(0, 0, 0);
+    mesh.rotateZ(rotation);
+    scene.add(mesh);
+  };
+  panel(2.6, [0, 4.5, 8], [9, 4]);
+  panel(6, [-5.5, 0.5, 7], [0.9, 14]);
+  panel(4, [5, -0.5, 8], [0.6, 14]);
+  panel(3.5, [0, -1, 9], [24, 0.35], Math.PI / 3);
+  panel(2.5, [1, 2.5, 9], [24, 0.2], Math.PI / 3);
+  panel(1.4, [0, 6, -6], [12, 4]);
+  panel(0.5, [0, -7, 1], [16, 6]);
+  panel(0.9, [8, 0, -2], [4, 10]);
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const target = pmrem.fromScene(scene, 0.035);
+  pmrem.dispose();
+  geometry.dispose();
+  materials.forEach(material => material.dispose());
+  return target;
+};
+
+const makeCanvasTexture = (canvas, anisotropy) => {
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = anisotropy;
+  return texture;
+};
+
+const buildGrainTexture = () => {
+  const size = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return new THREE.CanvasTexture(canvas);
+  const random = seeded(7);
+  const field = Float32Array.from({ length: size * size }, () => random());
+  const height = (x, y) => {
+    let sum = 0;
+    for (let j = -1; j <= 1; j++) {
+      for (let i = -1; i <= 1; i++) sum += field[((y + j + size) % size) * size + ((x + i + size) % size)];
+    }
+    return (sum / 9) * 1.6;
+  };
+  const image = ctx.createImageData(size, size);
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const nx = height((x - 1 + size) % size, y) - height((x + 1) % size, y);
+      const ny = height(x, (y - 1 + size) % size) - height(x, (y + 1) % size);
+      const length = Math.hypot(nx, ny, 1);
+      const i = (y * size + x) * 4;
+      image.data[i] = ((nx / length) * 0.5 + 0.5) * 255;
+      image.data[i + 1] = ((ny / length) * 0.5 + 0.5) * 255;
+      image.data[i + 2] = ((1 / length) * 0.5 + 0.5) * 255;
+      image.data[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(image, 0, 0);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(5, 7);
+  return texture;
+};
+
+const buildWeaveTexture = () => {
+  const size = 128;
+  const threads = 8;
+  const random = seeded(19);
+  const fiber = Float32Array.from({ length: size * size }, () => random());
+  const profile = f => Math.sqrt(Math.max(0, 1 - 4 * f * f));
+  const height = (x, y) => {
+    const px = ((x % size) + size) % size;
+    const py = ((y % size) + size) % size;
+    const u = (px / size) * threads;
+    const v = (py / size) * threads;
+    const cu = Math.floor(u);
+    const cv = Math.floor(v);
+    const fu = u - cu - 0.5;
+    const fv = v - cv - 0.5;
+    const lift = (cu + cv) % 2 === 0;
+    const warp = profile(fu) * (0.55 + 0.45 * Math.cos(fv * Math.PI * (lift ? 1 : 0.6)));
+    const weft = profile(fv) * (0.55 + 0.45 * Math.cos(fu * Math.PI * (lift ? 0.6 : 1)));
+    return (lift ? Math.max(warp, weft * 0.7) : Math.max(weft, warp * 0.7)) + fiber[py * size + px] * 0.08;
+  };
+  const data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const nx = (height(x - 1, y) - height(x + 1, y)) * 1.6;
+      const ny = (height(x, y - 1) - height(x, y + 1)) * 1.6;
+      const length = Math.hypot(nx, ny, 1);
+      const i = (y * size + x) * 4;
+      data[i] = ((nx / length) * 0.5 + 0.5) * 255;
+      data[i + 1] = ((ny / length) * 0.5 + 0.5) * 255;
+      data[i + 2] = ((1 / length) * 0.5 + 0.5) * 255;
+      data[i + 3] = 255;
+    }
+  }
+  const texture = new THREE.DataTexture(data, size, size);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.magFilter = THREE.LinearFilter;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.generateMipmaps = true;
+  texture.needsUpdate = true;
+  return texture;
+};
+
+const drawFitted = (ctx, image, width, height, fit) => {
+  const scale = (fit === 'contain' ? Math.min : Math.max)(width / image.width, height / image.height);
+  const w = image.width * scale;
+  const h = image.height * scale;
+  ctx.drawImage(image, (width - w) / 2, (height - h) / 2, w, h);
+};
+
+const paintFace = (canvas, image, color, fit) => {
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  ctx.fillStyle = toCss(color);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  if (image) drawFitted(ctx, image, canvas.width, canvas.height, fit);
+};
+
+const paintStrap = (canvas, image, color) => {
+  const across = 192;
+  const along = image ? Math.max(64, Math.round((image.width / image.height) * across)) : across * 2;
+  canvas.width = across;
+  canvas.height = along;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return along / across;
+  ctx.fillStyle = toCss(color);
+  ctx.fillRect(0, 0, across, along);
+  if (image) {
+    ctx.save();
+    ctx.translate(across, 0);
+    ctx.rotate(Math.PI / 2);
+    ctx.drawImage(image, 0, 0, along, across);
+    ctx.restore();
+    return along / across;
+  }
+  const ink = luminance(color) > 0.5 ? [0, 0, 0] : [1, 1, 1];
+  ctx.fillStyle = toCss(ink, 0.05);
+  for (let y = 0; y < along; y += 4) ctx.fillRect(0, y, across, 1);
+  ctx.fillStyle = toCss(ink, 0.2);
+  for (let y = 0; y < along; y += 14) {
+    ctx.fillRect(across * 0.075, y, 2, 8);
+    ctx.fillRect(across * 0.925 - 2, y, 2, 8);
+  }
+  return along / across;
+};
+
+const createSimulation = () => {
+  const vectors = () => Array.from({ length: JOINTS + 1 }, () => new THREE.Vector3());
+  return {
+    nodes: vectors(),
+    previous: vectors(),
+    velocities: vectors(),
+    lengths: new Float64Array(JOINTS),
+    impulses: new Float64Array(JOINTS),
+    rest: 1,
+    anchor: new THREE.Vector3(),
+    body: {
+      position: new THREE.Vector3(),
+      previous: new THREE.Vector3(),
+      velocity: new THREE.Vector3(),
+      quaternion: new THREE.Quaternion(),
+      previousQuaternion: new THREE.Quaternion(),
+      angular: new THREE.Vector3(),
+      mass: 1,
+      inverseInertia: new THREE.Vector3(1, 1, 1),
+      hang: new THREE.Vector3()
+    },
+    grab: null,
+    turn: 0,
+    twist: 0,
+    twistRaw: 0,
+    calm: 0
+  };
+};
+
+const scratch = {
+  a: new THREE.Vector3(),
+  b: new THREE.Vector3(),
+  c: new THREE.Vector3(),
+  d: new THREE.Vector3(),
+  e: new THREE.Vector3(),
+  f: new THREE.Vector3(),
+  g: new THREE.Vector3(),
+  pin: new THREE.Vector3(),
+  q: new THREE.Quaternion(),
+  r: new THREE.Quaternion()
+};
+
+const applyInverseInertia = (body, vector, out) => {
+  scratch.r.copy(body.quaternion).invert();
+  out.copy(vector).applyQuaternion(scratch.r);
+  out.set(out.x * body.inverseInertia.x, out.y * body.inverseInertia.y, out.z * body.inverseInertia.z);
+  return out.applyQuaternion(body.quaternion);
+};
+
+const rotateBody = (q, w) => {
+  const { x: qx, y: qy, z: qz, w: qw } = q;
+  q.x += 0.5 * (w.x * qw + w.y * qz - w.z * qy);
+  q.y += 0.5 * (w.y * qw + w.z * qx - w.x * qz);
+  q.z += 0.5 * (w.z * qw + w.x * qy - w.y * qx);
+  q.w += 0.5 * (-w.x * qx - w.y * qy - w.z * qz);
+  q.normalize();
+};
+
+const bodyWeight = (body, r, normal) => {
+  const rn = scratch.c.crossVectors(r, normal);
+  return 1 / body.mass + rn.dot(applyInverseInertia(body, rn, scratch.d));
+};
+
+const pushBody = (body, r, impulse) => {
+  body.position.addScaledVector(impulse, 1 / body.mass);
+  rotateBody(body.quaternion, applyInverseInertia(body, scratch.e.crossVectors(r, impulse), scratch.f));
+};
+
+const solveSegment = (sim, i, h, physics) => {
+  const { nodes, body } = sim;
+  const a = nodes[i];
+  const wa = i === 0 ? 0 : NODE_WEIGHT;
+  const last = i === JOINTS - 1;
+  const r = scratch.g;
+  let b = nodes[i + 1];
+  if (last) {
+    r.copy(body.hang).applyQuaternion(body.quaternion);
+    b = scratch.b.copy(body.position).add(r);
+  }
+  const delta = scratch.a.subVectors(b, a);
+  const length = delta.length();
+  const stretch = length - sim.rest;
+  if (stretch <= 0 || length < 1e-9) return;
+  const normal = delta.divideScalar(length);
+  const wb = last ? bodyWeight(body, r, normal) : NODE_WEIGHT;
+  const rate = (length - sim.lengths[i]) / h;
+  const tension =
+    physics.hold * Math.tanh((physics.stiffness * stretch) / physics.hold) +
+    physics.spring * stretch +
+    physics.bandDamping * Math.max(0, rate);
+  const room = tension * h * h - sim.impulses[i];
+  if (room <= 0) return;
+  const lambda = Math.min(stretch / (wa + wb), room);
+  sim.impulses[i] += lambda;
+  if (wa) a.addScaledVector(normal, lambda * wa);
+  if (last) pushBody(body, r, normal.multiplyScalar(-lambda));
+  else b.addScaledVector(normal, -lambda * wb);
+};
+
+const solvePin = (body, grab, target) => {
+  const r = scratch.g.copy(grab.local).applyQuaternion(body.quaternion);
+  const delta = scratch.a.copy(target).sub(body.position).sub(r);
+  const distance = delta.length();
+  if (distance < 1e-9) return;
+  const normal = delta.divideScalar(distance);
+  const lambda = distance / bodyWeight(body, r, normal);
+  pushBody(body, r, normal.multiplyScalar(lambda));
+};
+
+const placeHanging = (sim, layout, intro) => {
+  const { nodes, previous, velocities, body, anchor } = sim;
+  nodes[0].copy(anchor);
+  for (let i = 1; i <= JOINTS; i++) {
+    nodes[i].copy(nodes[i - 1]);
+    if (intro) nodes[i].x += sim.rest;
+    else nodes[i].y -= sim.rest;
+  }
+  body.quaternion.identity();
+  if (intro) body.quaternion.setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2);
+  body.hang.set(0, layout.hangY, 0);
+  const offset = scratch.a.copy(body.hang).applyQuaternion(body.quaternion);
+  body.position.copy(nodes[JOINTS]).sub(offset);
+  body.previous.copy(body.position);
+  body.previousQuaternion.copy(body.quaternion);
+  body.velocity.set(0, 0, 0);
+  body.angular.set(0, 0, 0);
+  for (let i = 0; i <= JOINTS; i++) {
+    previous[i].copy(nodes[i]);
+    velocities[i].set(0, 0, 0);
+  }
+  sim.lengths.fill(sim.rest);
+  sim.turn = 0;
+  sim.twist = 0;
+  sim.twistRaw = 0;
+  sim.calm = 0;
+};
+
+const configureSimulation = (sim, layout, length) => {
+  sim.rest = length / JOINTS;
+  const { width, height } = layout;
+  const body = sim.body;
+  const t = THICKNESS + BEVEL * 2;
+  body.mass = 1;
+  body.inverseInertia.set(
+    12 / (height * height + t * t),
+    12 / (width * width + t * t),
+    12 / (width * width + height * height)
+  );
+  body.hang.set(0, layout.hangY, 0);
+};
+
+const stepSimulation = (sim, dt, physics, time) => {
+  const steps = Math.max(1, Math.ceil(dt / MAX_STEP - 1e-6));
+  const h = dt / steps;
+  const { nodes, previous, velocities, body } = sim;
+  const windX = physics.breeze * (Math.sin(time * 0.53) * 0.7 + Math.sin(time * 1.31 + 1.7) * 0.3) * 3;
+  const windZ = physics.breeze * Math.sin(time * 0.37 + 0.6) * 2;
+  const grab = sim.grab;
+  const pin = scratch.pin;
+  const nodeDrag = Math.exp(-physics.nodeDrag * h);
+  const linearDrag = Math.exp(-physics.linearDrag * h);
+  const angularDrag = Math.exp(-physics.angularDrag * h);
+
+  for (let s = 0; s < steps; s++) {
+    for (let i = 1; i < JOINTS; i++) {
+      const v = velocities[i];
+      v.y -= physics.gravity * h;
+      v.x += windX * h;
+      v.z += windZ * h;
+      previous[i].copy(nodes[i]);
+      nodes[i].addScaledVector(v, h);
+    }
+
+    body.previous.copy(body.position);
+    body.previousQuaternion.copy(body.quaternion);
+    const q = body.quaternion;
+    if (grab) {
+      const turn = scratch.q.copy(grab.rotation).multiply(scratch.r.copy(q).invert());
+      if (turn.w < 0) turn.set(-turn.x, -turn.y, -turn.z, -turn.w);
+      const torque = scratch.a.set(turn.x, turn.y, turn.z).multiplyScalar(2 * physics.grip);
+      torque.addScaledVector(body.angular, -physics.gripDamping);
+      body.angular.addScaledVector(applyInverseInertia(body, torque, scratch.b), h);
+    }
+    const up = scratch.a.set(0, 1, 0).applyQuaternion(q);
+    const front = scratch.b.set(-up.x * up.z, -up.y * up.z, 1 - up.z * up.z);
+    if (front.lengthSq() > 1e-3) {
+      const facing = scratch.d.set(0, 0, 1).applyQuaternion(q);
+      const raw = Math.atan2(scratch.e.crossVectors(front, facing).dot(up), front.dot(facing));
+      let turned = raw - sim.twistRaw;
+      if (turned > Math.PI) turned -= Math.PI * 2;
+      else if (turned < -Math.PI) turned += Math.PI * 2;
+      sim.twist += turned;
+      sim.twistRaw = raw;
+    }
+    if (!grab) {
+      const spin = body.angular.dot(up);
+      body.angular.addScaledVector(up, (physics.twist * (sim.turn - sim.twist) - physics.twistDamping * spin) * h);
+    }
+    body.velocity.y -= physics.gravity * h;
+    body.velocity.x += windX * 0.35 * h;
+    body.velocity.z += windZ * 0.35 * h;
+    body.position.addScaledVector(body.velocity, h);
+    rotateBody(body.quaternion, scratch.f.copy(body.angular).multiplyScalar(h));
+
+    sim.impulses.fill(0);
+    if (grab) pin.lerpVectors(grab.from, grab.target, (s + 1) / steps);
+    for (let iteration = 0; iteration < ITERATIONS; iteration++) {
+      for (let i = 0; i < JOINTS; i++) solveSegment(sim, i, h, physics);
+      if (grab) solvePin(body, grab, pin);
+    }
+
+    for (let i = 1; i < JOINTS; i++) {
+      const v = velocities[i].subVectors(nodes[i], previous[i]).divideScalar(h).multiplyScalar(nodeDrag);
+      v.multiplyScalar(1 / (1 + physics.nodeAir * v.length() * h));
+    }
+    body.velocity.subVectors(body.position, body.previous).divideScalar(h);
+    const dq = scratch.q.copy(body.previousQuaternion).invert().premultiply(body.quaternion);
+    body.angular.set(dq.x, dq.y, dq.z).multiplyScalar((2 / h) * (dq.w < 0 ? -1 : 1));
+
+    const normal = scratch.a.set(0, 0, 1).applyQuaternion(body.quaternion);
+    const across = body.velocity.dot(normal);
+    const along = scratch.b.copy(body.velocity).addScaledVector(normal, -across);
+    along.multiplyScalar(1 / (1 + physics.air * along.length() * h));
+    body.velocity
+      .copy(along)
+      .addScaledVector(normal, across / (1 + physics.broadside * Math.abs(across) * h))
+      .multiplyScalar(linearDrag);
+    body.angular.multiplyScalar(angularDrag / (1 + physics.spinAir * body.angular.length() * h));
+    if (body.velocity.lengthSq() > 3600) body.velocity.setLength(60);
+    if (body.angular.lengthSq() > 1600) body.angular.setLength(40);
+
+    nodes[JOINTS].copy(body.hang).applyQuaternion(body.quaternion).add(body.position);
+    for (let i = 0; i < JOINTS; i++) sim.lengths[i] = nodes[i].distanceTo(nodes[i + 1]);
+  }
+
+  if (grab) grab.from.copy(grab.target);
+
+  let energy = body.velocity.lengthSq() + body.angular.lengthSq() * 0.3;
+  for (let i = 1; i < JOINTS; i++) energy += velocities[i].lengthSq() * 0.05;
+  sim.calm = energy < 2e-4 ? sim.calm + dt : 0;
+};
+
+function initLanyard(container, opts = {}) {
+  const settings = {
+    frontImage: opts.frontImage,
+    backImage: opts.backImage,
+    imageFit: opts.imageFit === 'contain' ? 'contain' : 'cover',
+    cardColor: opts.cardColor ?? '#ffffff',
+    orientation: opts.orientation === 'landscape' ? 'landscape' : 'portrait',
+    finish: opts.finish ?? 'glossy',
+    cornerRadius: opts.cornerRadius ?? 0.3,
+    size: opts.size ?? 0.6,
+    anchor: opts.anchor ?? 'center',
+    strapLength: opts.strapLength ?? 0.5,
+    strapImage: opts.strapImage,
+    strapColor: opts.strapColor ?? '#111111',
+    strapWidth: opts.strapWidth ?? 0.65,
+    metal: opts.metal ?? 'silver',
+    gravity: opts.gravity ?? 1,
+    damping: opts.damping ?? 0.5,
+    elasticity: opts.elasticity ?? 0.5,
+    breeze: opts.breeze ?? 0.5,
+    interactive: opts.interactive ?? true,
+    intro: opts.intro ?? true
+  };
+
+  if (!container) return;
+
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    } catch {
+      return undefined;
+    }
+    renderer.setClearColor(0x000000, 0);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.NeutralToneMapping;
+    renderer.toneMappingExposure = 1;
+    const canvas = renderer.domElement;
+    canvas.className = 'lanyard-canvas';
+    canvas.setAttribute('aria-hidden', 'true');
+    container.appendChild(canvas);
+
+    const anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+    const scene = new THREE.Scene();
+    const environment = buildEnvironment(renderer);
+    scene.environment = environment.texture;
+    const camera = new THREE.PerspectiveCamera(FOV, 1, 0.1, 200);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.6);
+    keyLight.position.set(-2.5, 4, 6);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.35);
+    fillLight.position.set(3, -1, 4);
+    scene.add(keyLight, fillLight);
+
+    const imageCache = new Map();
+    const images = { front: null, back: null, strap: null };
+    const frontCanvas = document.createElement('canvas');
+    const backCanvas = document.createElement('canvas');
+    const strapCanvas = document.createElement('canvas');
+    const frontTexture = makeCanvasTexture(frontCanvas, anisotropy);
+    const backTexture = makeCanvasTexture(backCanvas, anisotropy);
+    const strapTexture = makeCanvasTexture(strapCanvas, anisotropy);
+    strapTexture.wrapS = THREE.ClampToEdgeWrapping;
+    strapTexture.wrapT = THREE.RepeatWrapping;
+    const grain = buildGrainTexture();
+    const weave = buildWeaveTexture();
+    const foilUniforms = {
+      foilStrength: { value: 0 },
+      foilAspect: { value: 1.4 },
+      foilKey: { value: new THREE.Vector3() },
+      foilFill: { value: new THREE.Vector3() },
+      foilTop: { value: new THREE.Vector3() }
+    };
+    const injectFoil = shader => {
+      Object.assign(shader.uniforms, foilUniforms);
+      shader.vertexShader = shader.vertexShader
+        .replace('#include <common>', `#include <common>\n${FOIL_VERTEX_HEAD}`)
+        .replace('#include <project_vertex>', `#include <project_vertex>\n${FOIL_VERTEX_BODY}`);
+      shader.fragmentShader = shader.fragmentShader
+        .replace('#include <common>', `#include <common>\n${FOIL_FRAGMENT_HEAD}`)
+        .replace('#include <opaque_fragment>', `${FOIL_FRAGMENT_BODY}\n#include <opaque_fragment>`);
+    };
+
+    const frontMaterial = new THREE.MeshPhysicalMaterial({
+      map: frontTexture,
+      normalMap: grain,
+      normalScale: new THREE.Vector2(0.06, 0.06)
+    });
+    const backMaterial = new THREE.MeshPhysicalMaterial({
+      map: backTexture,
+      normalMap: grain,
+      normalScale: new THREE.Vector2(0.06, 0.06)
+    });
+    frontMaterial.onBeforeCompile = injectFoil;
+    backMaterial.onBeforeCompile = injectFoil;
+    const edgeMaterial = new THREE.MeshPhysicalMaterial();
+    const metalMaterial = new THREE.MeshStandardMaterial({ metalness: 1 });
+    const bandMaterial = new THREE.MeshPhysicalMaterial({
+      map: strapTexture,
+      normalMap: weave,
+      normalScale: new THREE.Vector2(0.7, 0.7),
+      roughness: 0.68,
+      sheen: 1,
+      sheenRoughness: 0.42,
+      sheenColor: new THREE.Color(0.32, 0.32, 0.34),
+      side: THREE.DoubleSide
+    });
+
+    const cardGroup = new THREE.Group();
+    const bodyMesh = new THREE.Mesh(undefined, edgeMaterial);
+    const frontMesh = new THREE.Mesh(undefined, frontMaterial);
+    const backMesh = new THREE.Mesh(undefined, backMaterial);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(RING_RADIUS, RING_TUBE, 18, 72), metalMaterial);
+    ring.rotation.y = Math.PI / 2 - 0.7;
+    cardGroup.add(bodyMesh, frontMesh, backMesh, ring);
+    scene.add(cardGroup);
+
+    const bandGeometry = buildBandGeometry(SAMPLES);
+    const band = new THREE.Mesh(bandGeometry, bandMaterial);
+    band.frustumCulled = false;
+    scene.add(band);
+
+    const clampGroup = new THREE.Group();
+    const clampMesh = new THREE.Mesh(buildClampGeometry(STRAP_WIDTH), metalMaterial);
+    clampMesh.position.y = EYELET_RADIUS + CLAMP_BODY / 2 - 0.004;
+    const eyelet = new THREE.Mesh(new THREE.TorusGeometry(EYELET_RADIUS, 0.0105, 14, 40), metalMaterial);
+    clampGroup.add(clampMesh, eyelet);
+    scene.add(clampGroup);
+
+    const sim = createSimulation();
+    const controls = [];
+    const mouth = new THREE.Vector3();
+    const tuck = new THREE.Vector3();
+    const curve = new THREE.CatmullRomCurve3(controls, false, 'centripetal');
+    const view = { width: 1, height: 1 };
+    let layout = cardLayout('portrait', 0.3);
+    let applied = {};
+    let strapScale = STRAP_WIDTH;
+    let tileRatio = 2;
+    let raf = 0;
+    let last = performance.now();
+    let time = 0;
+    let visible = true;
+    let alive = true;
+    let placed = false;
+    let hovering = false;
+    let press = null;
+    let imageToken = 0;
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
+    const paintFaces = () => {
+      const s = settings;
+      const color = parseColor(s.cardColor, [1, 1, 1]);
+      const width = FACE_WIDTH;
+      const height = Math.round((FACE_WIDTH * layout.height) / layout.width);
+      if (frontCanvas.width !== width || frontCanvas.height !== height) {
+        frontCanvas.width = width;
+        frontCanvas.height = height;
+        backCanvas.width = width;
+        backCanvas.height = height;
+        frontTexture.dispose();
+        backTexture.dispose();
+      }
+      paintFace(frontCanvas, images.front, color, s.imageFit);
+      paintFace(backCanvas, images.back || images.front, color, s.imageFit);
+      frontTexture.needsUpdate = true;
+      backTexture.needsUpdate = true;
+      start();
+    };
+
+    const repaintStrap = () => {
+      const s = settings;
+      tileRatio = paintStrap(strapCanvas, images.strap, parseColor(s.strapColor, [0.07, 0.07, 0.07]));
+      weave.repeat.set(2, 2 * tileRatio);
+      strapTexture.dispose();
+      strapTexture.needsUpdate = true;
+      start();
+    };
+
+    const frameView = () => {
+      const s = settings;
+      const aspect = view.width / view.height;
+      let viewHeight = layout.height / clamp(s.size, 0.15, 0.9);
+      const minimumWidth = layout.width / 0.72;
+      if (viewHeight * aspect < minimumWidth) viewHeight = minimumWidth / aspect;
+      const viewWidth = viewHeight * aspect;
+      camera.aspect = aspect;
+      camera.position.set(0, 0, viewHeight / 2 / Math.tan((FOV * Math.PI) / 360));
+      camera.lookAt(0, 0, 0);
+      camera.updateProjectionMatrix();
+      camera.updateMatrixWorld();
+      foilUniforms.foilKey.value.set(-2.5, 4, 6).normalize().transformDirection(camera.matrixWorldInverse);
+      foilUniforms.foilFill.value.set(3, -1, 4).normalize().transformDirection(camera.matrixWorldInverse);
+      foilUniforms.foilTop.value.set(0.5, 4.5, 8).normalize().transformDirection(camera.matrixWorldInverse);
+      const anchorX = ((ANCHORS[s.anchor] ?? 0.5) - 0.5) * viewWidth;
+      const anchorY = viewHeight / 2 + 0.2;
+      const cardTop = viewHeight / 2 - viewHeight * mix(0.12, 0.42, clamp(s.strapLength, 0, 1));
+      const hangTop = cardTop + (layout.hangY - layout.height / 2);
+      sim.anchor.set(anchorX, anchorY, 0);
+      configureSimulation(sim, layout, anchorY - hangTop);
+      sim.nodes[0].copy(sim.anchor);
+      sim.previous[0].copy(sim.anchor);
+    };
+
+    const apply = () => {
+      const s = settings;
+      const layoutKey = `${s.orientation}|${s.cornerRadius}`;
+      if (layoutKey !== applied.layoutKey) {
+        layout = cardLayout(s.orientation, s.cornerRadius);
+        const geometry = buildCardGeometry(layout);
+        bodyMesh.geometry.dispose();
+        frontMesh.geometry.dispose();
+        backMesh.geometry.dispose();
+        bodyMesh.geometry = geometry.body;
+        frontMesh.geometry = geometry.face;
+        backMesh.geometry = geometry.face.clone();
+        frontMesh.position.z = THICKNESS / 2 + BEVEL + 0.0006;
+        backMesh.rotation.y = Math.PI;
+        backMesh.position.z = -(THICKNESS / 2 + BEVEL + 0.0006);
+        ring.position.set(0, layout.ringY, 0);
+        applied.framingKey = '';
+      }
+      const framingKey = `${layoutKey}|${s.size}|${s.anchor}|${s.strapLength}|${view.width}|${view.height}`;
+      if (framingKey !== applied.framingKey) {
+        frameView();
+        if (!placed) {
+          placeHanging(sim, layout, s.intro && !reducedMotion);
+          placed = true;
+        } else if (layoutKey !== applied.layoutKey) {
+          placeHanging(sim, layout, false);
+        }
+      }
+
+      const imageKey = `${s.frontImage}|${s.backImage}|${s.strapImage}`;
+      if (imageKey !== applied.imageKey) {
+        const token = ++imageToken;
+        Promise.all([
+          loadImage(imageCache, s.frontImage),
+          loadImage(imageCache, s.backImage),
+          loadImage(imageCache, s.strapImage)
+        ]).then(([front, back, strap]) => {
+          if (!alive || token !== imageToken) return;
+          images.front = front;
+          images.back = back;
+          images.strap = strap;
+          paintFaces();
+          repaintStrap();
+        });
+      }
+      const faceKey = `${layoutKey}|${s.cardColor}|${s.imageFit}`;
+      if (faceKey !== applied.faceKey) paintFaces();
+      if (s.strapColor !== applied.strapColor) repaintStrap();
+
+      const finish = FINISHES[s.finish] || FINISHES.glossy;
+      const card = parseColor(s.cardColor, [1, 1, 1]);
+      [frontMaterial, backMaterial].forEach(material => {
+        material.roughness = finish.roughness;
+        material.metalness = finish.metalness;
+        material.clearcoat = finish.clearcoat;
+        material.clearcoatRoughness = finish.clearcoatRoughness;
+        material.anisotropy = finish.anisotropy;
+      });
+      foilUniforms.foilStrength.value = finish.foil;
+      foilUniforms.foilAspect.value = layout.height / layout.width;
+      edgeMaterial.color.setRGB(card[0] * 0.92, card[1] * 0.92, card[2] * 0.92, THREE.SRGBColorSpace);
+      edgeMaterial.roughness = Math.min(finish.roughness, 0.35);
+      edgeMaterial.metalness = finish.metalness;
+      edgeMaterial.clearcoat = 1;
+      edgeMaterial.clearcoatRoughness = 0.08;
+      const metalLook = METALS[s.metal] || METALS.silver;
+      metalMaterial.color.set(metalLook.color);
+      metalMaterial.roughness = metalLook.roughness;
+      strapScale = STRAP_WIDTH * clamp(s.strapWidth, 0.4, 2);
+      if (strapScale !== applied.strapScale) {
+        clampMesh.geometry.dispose();
+        clampMesh.geometry = buildClampGeometry(strapScale);
+      }
+      canvas.style.touchAction = s.interactive ? 'pan-y' : 'auto';
+
+      applied = { layoutKey, framingKey, imageKey, faceKey, strapColor: s.strapColor, strapScale };
+      start();
+    };
+
+    const points = Array.from({ length: SAMPLES }, () => new THREE.Vector3());
+    const sides = Array.from({ length: SAMPLES }, () => new THREE.Vector3());
+    const bends = BAND_BEND.map(angle => [Math.cos(angle), Math.sin(angle)]);
+    const work = {
+      tangent: new THREE.Vector3(),
+      toCamera: new THREE.Vector3(),
+      basis: new THREE.Matrix4(),
+      up: new THREE.Vector3(),
+      across: new THREE.Vector3(),
+      facing: new THREE.Vector3(),
+      end: new THREE.Vector3()
+    };
+
+    const updateBand = () => {
+      const hang = sim.nodes[JOINTS];
+      const reach = EYELET_RADIUS + CLAMP_BODY + 0.05;
+      let guide = JOINTS - 1;
+      while (guide > 0 && sim.nodes[guide].distanceTo(hang) < reach * 1.1) guide--;
+      const axis = work.up.subVectors(sim.nodes[guide], hang);
+      if (axis.lengthSq() < 1e-8) axis.set(0, 1, 0).applyQuaternion(sim.body.quaternion);
+      axis.normalize();
+      mouth.copy(hang).addScaledVector(axis, reach);
+      tuck.copy(hang).addScaledVector(axis, EYELET_RADIUS + CLAMP_BODY * 0.35);
+      controls.length = 0;
+      for (let i = 0; i <= guide; i++) controls.push(sim.nodes[i]);
+      controls.push(mouth, tuck);
+      curve.updateArcLengths();
+      for (let i = 0; i < SAMPLES; i++) curve.getPointAt(i / (SAMPLES - 1), points[i]);
+      const length = curve.getLength();
+      const held = 1 - mouth.distanceTo(tuck) / Math.max(length, 0.001);
+      const position = bandGeometry.getAttribute('position');
+      const normal = bandGeometry.getAttribute('normal');
+      const uv = bandGeometry.getAttribute('uv');
+      const columns = BAND_COLUMNS.length;
+      const restLength = sim.rest * JOINTS;
+      const repeats = restLength / (strapScale * tileRatio);
+      const width = strapScale / Math.pow(Math.max(1, length / Math.max(restLength, 0.001)), 0.35);
+      const { tangent, toCamera, across, facing } = work;
+      for (let i = 0; i < SAMPLES; i++) {
+        tangent.subVectors(points[Math.min(SAMPLES - 1, i + 1)], points[Math.max(0, i - 1)]);
+        if (tangent.lengthSq() < 1e-12) tangent.set(0, -1, 0);
+        tangent.normalize();
+        toCamera.subVectors(camera.position, points[i]).normalize();
+        const side = sides[i].crossVectors(toCamera, tangent);
+        if (side.lengthSq() < 1e-10) side.copy(i > 0 ? sides[i - 1] : scratch.a.set(1, 0, 0));
+        side.normalize();
+        if (i > 0 && side.dot(sides[i - 1]) < 0) side.negate();
+        const angle = -sim.twist * Math.pow(Math.min(1, i / (SAMPLES - 1) / held), 1.3);
+        facing.crossVectors(tangent, side);
+        across.copy(side).multiplyScalar(Math.cos(angle)).addScaledVector(facing, Math.sin(angle));
+        facing.crossVectors(tangent, across);
+        const p = points[i];
+        const v = (1 - i / (SAMPLES - 1)) * repeats;
+        for (let c = 0; c < columns; c++) {
+          const k = i * columns + c;
+          const offset = (BAND_COLUMNS[c] - 0.5) * width;
+          const [bendCos, bendSin] = bends[c];
+          position.setXYZ(k, p.x + across.x * offset, p.y + across.y * offset, p.z + across.z * offset);
+          normal.setXYZ(
+            k,
+            facing.x * bendCos + across.x * bendSin,
+            facing.y * bendCos + across.y * bendSin,
+            facing.z * bendCos + across.z * bendSin
+          );
+          uv.setXY(k, BAND_COLUMNS[c], v);
+        }
+      }
+      work.end.copy(across);
+      position.needsUpdate = true;
+      normal.needsUpdate = true;
+      uv.needsUpdate = true;
+
+      across.copy(work.end).addScaledVector(axis, -work.end.dot(axis)).normalize();
+      facing.crossVectors(across, axis).normalize();
+      work.basis.makeBasis(across, axis, facing);
+      clampGroup.quaternion.setFromRotationMatrix(work.basis);
+      clampGroup.position.copy(hang);
+    };
+
+    const render = () => {
+      cardGroup.position.copy(sim.body.position);
+      cardGroup.quaternion.copy(sim.body.quaternion);
+      updateBand();
+      renderer.render(scene, camera);
+    };
+
+    const physics = () => {
+      const s = settings;
+      const gravity = 40 * clamp(s.gravity, 0, 3);
+      const weight = Math.max(gravity, 20);
+      const springy = clamp(s.elasticity, 0, 1);
+      const settle = clamp(s.damping, 0, 1);
+      return {
+        gravity,
+        hold: weight * mix(2.2, 5.5, springy),
+        stiffness: weight * 10 * JOINTS,
+        spring: weight * mix(0.1, 0.4, springy) * JOINTS,
+        bandDamping: weight * mix(0.3, 0.08, springy) * JOINTS,
+        linearDrag: 0.25 * Math.pow(16, settle),
+        angularDrag: 0.5 * Math.pow(12, settle),
+        air: 0.15,
+        broadside: 0.5,
+        spinAir: 0.03,
+        nodeDrag: 2,
+        nodeAir: 0.2,
+        twist: 30,
+        twistDamping: 3,
+        grip: 40,
+        gripDamping: 6,
+        breeze: reducedMotion ? 0 : clamp(s.breeze, 0, 1)
+      };
+    };
+
+    const tick = now => {
+      raf = 0;
+      if (!alive) return;
+      const dt = Math.min(1 / 30, Math.max(1 / 240, (now - last) / 1000));
+      last = now;
+      time += dt;
+      const current = physics();
+      stepSimulation(sim, dt, current, time);
+      const body = sim.body;
+      if (!Number.isFinite(body.position.x + body.position.y + body.position.z + body.quaternion.w)) {
+        sim.grab = null;
+        placeHanging(sim, layout, false);
+      }
+      render();
+      const resting = sim.calm > 1.2 && !sim.grab && current.breeze === 0;
+      if (visible && !resting) raf = requestAnimationFrame(tick);
+    };
+
+    const start = () => {
+      if (raf || !visible || !alive) return;
+      sim.calm = 0;
+      last = performance.now();
+      raf = requestAnimationFrame(tick);
+    };
+
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+
+    const toPointer = event => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.set(
+        ((event.clientX - rect.left) / rect.width) * 2 - 1,
+        -((event.clientY - rect.top) / rect.height) * 2 + 1
+      );
+      raycaster.setFromCamera(pointer, camera);
+    };
+
+    const pickCard = () => {
+      cardGroup.updateMatrixWorld();
+      const hits = raycaster.intersectObjects([bodyMesh, frontMesh, backMesh], false);
+      return hits[0] || null;
+    };
+
+    const setCursor = value => {
+      if (canvas.style.cursor !== value) canvas.style.cursor = value;
+    };
+
+    const flip = point => {
+      const body = sim.body;
+      const up = scratch.a.set(0, 1, 0).applyQuaternion(body.quaternion);
+      let direction = sim.turn > 0 ? -1 : 1;
+      if (sim.turn === 0) {
+        const away = scratch.c.subVectors(point, camera.position).normalize();
+        direction = scratch.b.subVectors(point, body.position).cross(away).dot(up) < 0 ? -1 : 1;
+      }
+      sim.turn = sim.turn === 0 ? Math.PI * direction : 0;
+      body.angular.addScaledVector(up, FLIP_SPIN * direction);
+    };
+
+    const onPointerDown = event => {
+      if (!settings.interactive || event.button > 0) return;
+      toPointer(event);
+      const hit = pickCard();
+      if (!hit) return;
+      sim.grab = {
+        local: hit.point.clone().sub(sim.body.position).applyQuaternion(sim.body.quaternion.clone().invert()),
+        rotation: sim.body.quaternion.clone(),
+        reach: hit.distance,
+        from: hit.point.clone(),
+        target: hit.point.clone()
+      };
+      press = { x: event.clientX, y: event.clientY, time: performance.now(), point: hit.point.clone() };
+      canvas.setPointerCapture?.(event.pointerId);
+      setCursor('grabbing');
+      event.preventDefault();
+      start();
+    };
+
+    const onPointerMove = event => {
+      if (!settings.interactive) return;
+      toPointer(event);
+      if (sim.grab) {
+        if (press && Math.hypot(event.clientX - press.x, event.clientY - press.y) > 6) press = null;
+        raycaster.ray.at(sim.grab.reach, sim.grab.target);
+        start();
+        return;
+      }
+      if (event.pointerType === 'touch') return;
+      hovering = !!pickCard();
+      setCursor(hovering ? 'grab' : '');
+    };
+
+    const onPointerUp = event => {
+      if (!sim.grab) return;
+      sim.grab = null;
+      if (press && event.type === 'pointerup' && performance.now() - press.time < 450) flip(press.point);
+      press = null;
+      canvas.releasePointerCapture?.(event.pointerId);
+      setCursor(hovering && event.pointerType !== 'touch' ? 'grab' : '');
+      start();
+    };
+
+    const onTouchStart = event => {
+      if (!settings.interactive || event.touches.length !== 1) return;
+      toPointer(event.touches[0]);
+      if (pickCard()) event.preventDefault();
+    };
+
+    canvas.addEventListener('pointerdown', onPointerDown);
+    canvas.addEventListener('pointermove', onPointerMove);
+    canvas.addEventListener('pointerup', onPointerUp);
+    canvas.addEventListener('pointercancel', onPointerUp);
+    canvas.addEventListener('lostpointercapture', onPointerUp);
+    canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+
+    const resize = () => {
+      view.width = Math.max(1, container.clientWidth);
+      view.height = Math.max(1, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(view.width, view.height, false);
+      apply();
+      render();
+    };
+
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(container);
+    const intersectionObserver = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible) start();
+    });
+    intersectionObserver.observe(container);
+    const onVisibility = () => {
+      if (!document.hidden) start();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    resize();
+
+    return () => {
+      alive = false;
+      cancelAnimationFrame(raf);
+      resizeObserver.disconnect();
+      intersectionObserver.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
+      canvas.removeEventListener('pointerdown', onPointerDown);
+      canvas.removeEventListener('pointermove', onPointerMove);
+      canvas.removeEventListener('pointerup', onPointerUp);
+      canvas.removeEventListener('pointercancel', onPointerUp);
+      canvas.removeEventListener('lostpointercapture', onPointerUp);
+      canvas.removeEventListener('touchstart', onTouchStart);
+      [bodyMesh, frontMesh, backMesh, ring, clampMesh, eyelet, band].forEach(mesh => mesh.geometry?.dispose());
+      [frontMaterial, backMaterial, edgeMaterial, metalMaterial, bandMaterial].forEach(material => material.dispose());
+      [frontTexture, backTexture, strapTexture, grain, weave].forEach(texture => texture.dispose());
+      environment.dispose();
+      renderer.dispose();
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
+    };
+}
+
+
+
+
+// 每多一段实习经历，往这里加一项，就会多挂一块工牌
+const EXPERIENCES = [
+  { company: '待定', role: '实习岗位 · 待定', year: '2026', logo: '待' }
+];
+
+function drawFace(side, exp) {
+  const W = 1024, H = 1440;
+  const c = document.createElement('canvas');
+  c.width = W;
+  c.height = H;
+  const ctx = c.getContext('2d');
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  if (side === 'front') {
+    ctx.fillStyle = '#f7f4ea';
+    ctx.fillRect(0, 0, W, H);
+    // 公司 logo（占位）
+    ctx.beginPath();
+    ctx.arc(W / 2, 320, 170, 0, Math.PI * 2);
+    ctx.fillStyle = '#4f6b3a';
+    ctx.fill();
+    ctx.fillStyle = '#f8f6ec';
+    ctx.font = '600 96px "Microsoft YaHei", sans-serif';
+    ctx.fillText(exp.logo || '待定', W / 2, 326);
+    // 名字
+    ctx.fillStyle = '#2f5026';
+    ctx.font = '600 130px Georgia, "Songti SC", serif';
+    ctx.fillText('AITCH', W / 2, 620);
+    // 角色
+    ctx.fillStyle = '#6d7a5f';
+    ctx.font = '400 48px "Microsoft YaHei", sans-serif';
+    ctx.fillText(exp.role, W / 2, 722);
+    // 公司
+    ctx.fillStyle = '#8a957c';
+    ctx.font = '400 42px "Microsoft YaHei", sans-serif';
+    ctx.fillText('实习公司 · ' + exp.company, W / 2, 930);
+    // 分隔线
+    ctx.strokeStyle = 'rgba(60,80,40,.18)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(W * 0.18, 1100);
+    ctx.lineTo(W * 0.82, 1100);
+    ctx.stroke();
+    // 底部
+    ctx.fillStyle = '#9aa48a';
+    ctx.font = '400 34px "Microsoft YaHei", sans-serif';
+    ctx.fillText('INTERN BADGE · ' + exp.year, W / 2, 1180);
+  } else {
+    ctx.fillStyle = '#2f3a2a';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#e8e4d4';
+    ctx.font = '700 110px "Microsoft YaHei", serif';
+    ctx.fillText('实习经历', W / 2, 520);
+    ctx.fillStyle = '#b9c2a7';
+    ctx.font = '400 46px "Microsoft YaHei", sans-serif';
+    ctx.fillText(exp.company, W / 2, 660);
+    ctx.fillStyle = '#8a957c';
+    ctx.font = '400 38px "Microsoft YaHei", sans-serif';
+    ctx.fillText('保持好奇，继续生长', W / 2, 780);
+  }
+  return c.toDataURL('image/png');
+}
+
+const area = document.querySelector('#lanyard-area');
+if (area) {
+  EXPERIENCES.forEach(exp => {
+    const slot = document.createElement('div');
+    slot.className = 'lanyard-slot';
+    const box = document.createElement('div');
+    box.className = 'lanyard';
+    slot.appendChild(box);
+    area.appendChild(slot);
+    initLanyard(box, {
+      frontImage: drawFace('front', exp),
+      backImage: drawFace('back', exp),
+      size: 0.6,
+      strapLength: 0.5,
+      anchor: 'left',
+      strapColor: '#2e3b28',
+      cardColor: '#f7f4ea',
+      finish: 'glossy'
+    });
+  });
+}
+}catch(error){console.error(error);document.getElementById('lanyard-area').textContent='工牌加载失败：'+error.message;}</script></body>
 </html>
