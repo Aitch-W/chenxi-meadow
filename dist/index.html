@@ -65,12 +65,16 @@
 
   <section class="page" id="experience">
     <div class="page-body experience-body">
-      <p class="eyebrow"><i></i> EXPERIENCE</p>
-      <h2>实习经历</h2>
-      <div class="lanyard-stage">
-        <div id="lanyard-root" class="lanyard"></div>
+      <div class="lanyard-area" id="lanyard-area"></div>
+      <div class="exp-text">
+        <p class="eyebrow"><i></i> EXPERIENCE</p>
+        <h2>实习经历</h2>
+        <div class="exp-item">
+          <h3>待定 · 实习岗位</h3>
+          <p class="exp-meta">公司待定 · 时间待定</p>
+          <p class="exp-desc">这里会放实习经历的详细内容。等有了具体的实习经历，我再补上。</p>
+        </div>
       </div>
-      <p class="placeholder-note">拖拽工牌甩动，点击翻面。</p>
     </div>
   </section>
 </main>
@@ -80,10 +84,6 @@
 
 <script type="module">import('./scene.js').catch(()=>{document.getElementById('loading').textContent='风景加载失败，请刷新重试';document.getElementById('motion').disabled=true;document.getElementById('explore').disabled=true;document.getElementById('hint').textContent='三维资源加载失败，个人介绍仍可阅读';});</script>
 <script type="module" src="app.js"></script>
-<script type="module">
-import { initLanyard } from './lanyard3d.js';
-const el = document.querySelector('#lanyard-root');
-if (el) initLanyard(el, { frontImage: 'assets/card-front.webp', backImage: 'assets/card-back.webp', strapColor: '#2e3b28' });
-</script>
+<script type="module" src="lanyard-setup.js"></script>
 </body>
 </html>

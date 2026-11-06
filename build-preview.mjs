@@ -26,7 +26,8 @@ if (start < 0 || end < 9) throw Error('Missing scene module entry');
 const code = `<script type="module">try {${js}} catch(error) { console.error(error);document.getElementById('loading').textContent='风景加载失败，请刷新重试';document.getElementById('motion').disabled=true;document.getElementById('explore').disabled=true;document.body.classList.remove('piloting');}</script>`;
 html = html.slice(0, start) + code + html.slice(end);
 html = html.replace('<script type="module" src="app.js"></script>', () => `<script type="module">${app}</script>`);
-// preview 单文件无法解析 lanyard3d.js 的相对导入，去掉工牌挂载脚本
+// preview 单文件无法解析 lanyard 相关相对导入，去掉挂载脚本
 html = html.replace(/<script type="module">\s*import \{ initLanyard \}[\s\S]*?<\/script>/, '');
+html = html.replace(/<script type="module" src="lanyard-setup\.js"><\/script>/, '');
 fs.writeFileSync(path.join(root, 'preview.html'), html);
 console.log('Updated preview.html: ' + Buffer.byteLength(html) + ' bytes');

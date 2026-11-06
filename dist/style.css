@@ -159,16 +159,29 @@ body.alt .sidebar{transform:translateX(0)}
 }
 .work-slot .ph{font:400 12px var(--serif);letter-spacing:3px;color:#a3ab94}
 
-/* ===== 工牌 Lanyard（实习经历，ReactBits 组件改写） ===== */
-.experience-body{padding-top:20px;padding-bottom:20px}
-.lanyard-stage{
-  position:relative;width:100%;height:min(52vh,460px);
-  display:flex;justify-content:center;align-items:center;
-  margin:6px 0 2px;
+/* ===== 实习经历：悬挂工牌（ReactBits 组件改写） ===== */
+.experience-body{
+  position:relative;display:block;padding:0;height:100vh;height:100svh;
+  background:linear-gradient(180deg,#f7f5ee 0%,#eff1e7 100%);
+  overflow:hidden;
 }
-#lanyard-root{width:min(360px,82%);height:100%}
+.lanyard-area{
+  position:absolute;left:0;top:0;width:56%;height:100%;
+  display:flex;
+}
+.lanyard-slot{flex:1;height:100%;position:relative}
 .lanyard{position:relative;width:100%;height:100%;overflow:hidden}
 .lanyard-canvas{display:block;width:100%;height:100%}
+.exp-text{
+  position:absolute;right:5%;top:50%;transform:translateY(-50%);width:37%;
+  color:#384936;
+}
+.exp-text .eyebrow{margin-bottom:16px}
+.exp-text h2{font:500 clamp(34px,3.4vw,52px)/1.15 var(--serif);letter-spacing:2px;color:#2f5026;margin:0 0 26px}
+.exp-item{border-top:1px solid rgba(60,80,40,.16);padding-top:20px}
+.exp-item h3{font:500 22px var(--serif);letter-spacing:1px;color:#2f5026;margin:0 0 8px}
+.exp-meta{font-size:11px;letter-spacing:2px;color:#8a957c;margin:0 0 12px}
+.exp-desc{font-size:13px;line-height:2;letter-spacing:1px;color:#5b6751;margin:0}
 
 /* ===== 页脚 ===== */
 footer{
