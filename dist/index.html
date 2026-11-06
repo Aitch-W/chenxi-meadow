@@ -68,24 +68,7 @@
       <p class="eyebrow"><i></i> EXPERIENCE</p>
       <h2>实习经历</h2>
       <div class="lanyard-stage">
-        <div class="lanyard" id="lanyard">
-          <div class="strap"></div>
-          <div class="badge" id="badge">
-            <div class="badge-inner">
-              <div class="badge-face badge-front">
-                <div class="badge-clip"></div>
-                <div class="badge-photo">A</div>
-                <div class="badge-name">AITCH</div>
-                <div class="badge-role">软件工程 · 实习生</div>
-                <div class="badge-foot"><span class="badge-bar"></span><span>HN · 2026</span></div>
-              </div>
-              <div class="badge-face badge-back">
-                <div class="badge-back-title">INTERN</div>
-                <div class="badge-back-quote">保持好奇，继续生长</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div id="lanyard-root" class="lanyard"></div>
       </div>
       <p class="placeholder-note">拖拽工牌甩动，点击翻面。</p>
     </div>
@@ -97,5 +80,10 @@
 
 <script type="module">import('./scene.js').catch(()=>{document.getElementById('loading').textContent='风景加载失败，请刷新重试';document.getElementById('motion').disabled=true;document.getElementById('explore').disabled=true;document.getElementById('hint').textContent='三维资源加载失败，个人介绍仍可阅读';});</script>
 <script type="module" src="app.js"></script>
+<script type="module">
+import { initLanyard } from './lanyard3d.js';
+const el = document.querySelector('#lanyard-root');
+if (el) initLanyard(el, { frontImage: 'assets/card-front.webp', backImage: 'assets/card-back.webp', strapColor: '#2e3b28' });
+</script>
 </body>
 </html>

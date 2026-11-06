@@ -2,6 +2,16 @@
 
 > 约定：日常修改在 `dev` 分支进行，每次改动 = 一次提交 + 在此追加一条记录（按时间倒序，新条目在上）。稳定后合并回 `main`。
 
+## [0.2.8] - 2026-11-06
+
+### 照搬 ReactBits Lanyard 原版
+
+- 从 ReactBits 官方仓库取得原版 Lanyard 组件源码（纯 Three.js 实现，仅依赖 `three`）
+- 改写成原生 ES 模块 `dist/lanyard3d.js`（去掉 React，导出 `initLanyard`），保留原版物理绳带、卡片渲染、拖拽甩动与点击翻面
+- 下载配套贴图 `dist/assets/card-front.webp`、`card-back.webp`
+- 第三页挂载真实 3D 工牌
+- `preview.html` 中剥离工牌挂载脚本（单文件无法解析相对导入）
+
 ## [0.2.7] - 2026-11-06
 
 ### 实习经历页 + Lanyard 工牌
