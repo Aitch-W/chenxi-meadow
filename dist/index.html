@@ -1,11 +1,98 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#b5bb76"><meta name="description" content="王宸曦的个人空间 · 河南大学软件工程"><title>王宸曦 · 飞过旷野</title><link rel="stylesheet" href="style.css"></head>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#b5bb76">
+<meta name="description" content="AITCH 的个人空间 · 河南大学软件工程">
+<title>AITCH · 飞过旷野</title>
+<link rel="stylesheet" href="style.css">
+</head>
 <body>
-<header><a class="brand" href="./" aria-label="回到首页">宸曦<span>CHENXI WANG</span></a><span class="header-note">一个不断生长的个人空间</span><button id="motion" aria-pressed="false">暂停风景</button></header>
-<main><div id="atmosphere" aria-hidden="true"></div>
-<section class="landscape" aria-label="油画绘本风格的飞行旷野"><div id="scene"></div><div class="scene-fade"></div><div class="scene-note"><span class="line"></span><p>飞过旷野<small>循着风的方向，去探索世界</small></p></div><div id="loading" role="status">风景正在展开…</div></section>
-<section class="intro"><p class="eyebrow"><i></i> HELLO, I'M CHENXI</p><h1>你好，我是<br><span>王宸曦</span><b>。</b></h1><p class="school">河南大学<span>/</span>软件工程</p><div class="rule"></div><p class="description">在代码与想象之间<br>探索自己的方向</p><p class="subtext">这里记录我的学习、创作，<br>以及一路遇见的风景。</p><div class="interests" aria-label="我的兴趣"><span>编程</span><span>AI 探索</span><span>创作</span></div><button class="flight" id="explore">一起乘风<span aria-hidden="true">↗</span></button><p class="hint" id="hint" aria-live="polite">移动鼠标，和小飞机一起兜兜风</p></section>
-</main><footer><span>© 2026 王宸曦</span><span class="footer-center">保持好奇，继续生长</span><span><i></i> 此刻，正在探索</span></footer>
-<script type="module">import('./scene.js').catch(()=>{document.getElementById('loading').textContent='风景暂未加载，请联网后刷新';document.getElementById('motion').disabled=true;document.getElementById('explore').disabled=true;document.getElementById('hint').textContent='三维资源加载失败，个人介绍仍可阅读';});</script>
-</body></html>
+<div id="world" aria-hidden="true">
+  <div id="scene"></div>
+  <div id="atmosphere"></div>
+</div>
+
+<nav class="sidebar" aria-label="站点导航">
+  <span class="side-logo">AITCH</span>
+  <a href="#home">首页</a>
+  <a href="#works">作品集</a>
+  <a href="#experience">实习经历</a>
+</nav>
+
+<main id="pages">
+  <section class="page home" id="home">
+    <header>
+      <a class="brand" href="#home" aria-label="回到首页">AITCH</a>
+      <span class="header-note">一个不断生长的个人空间</span>
+      <button id="motion" aria-pressed="false">暂停风景</button>
+    </header>
+    <div class="scene-note"><span class="line"></span><p>飞过旷野<small>循着风的方向，去探索世界</small></p></div>
+    <div class="intro">
+      <p class="eyebrow"><i></i> HELLO, I'M AITCH</p>
+      <h1 class="name"><span class="en">AITCH</span><span class="zh">王宸曦</span></h1>
+      <p class="school">河南大学<span>/</span>软件工程</p>
+      <div class="rule"></div>
+      <p class="description">在代码与想象之间<br>探索自己的方向</p>
+      <p class="subtext">这里记录我的学习、创作，<br>以及一路遇见的风景。</p>
+      <div class="interests" aria-label="我的兴趣"><span>编程</span><span>AI 探索</span><span>创作</span></div>
+      <button class="flight" id="explore">一起乘风<span aria-hidden="true">↗</span></button>
+      <p class="hint" id="hint" aria-live="polite">移动鼠标，和小飞机一起兜兜风</p>
+    </div>
+    <div id="loading" role="status">风景正在展开…</div>
+    <footer>
+      <span>© 2026 王宸曦</span>
+      <span class="footer-center">保持好奇，继续生长</span>
+      <span><i></i> 此刻，正在探索</span>
+    </footer>
+  </section>
+
+  <section class="page" id="works">
+    <div class="page-body">
+      <p class="eyebrow"><i></i> SELECTED WORKS</p>
+      <h2>作品集</h2>
+      <div class="works-grid">
+        <article class="work-slot"><span class="ph">作品 · 空位 01</span></article>
+        <article class="work-slot"><span class="ph">作品 · 空位 02</span></article>
+        <article class="work-slot"><span class="ph">作品 · 空位 03</span></article>
+        <article class="work-slot"><span class="ph">作品 · 空位 04</span></article>
+        <article class="work-slot"><span class="ph">作品 · 空位 05</span></article>
+        <article class="work-slot"><span class="ph">作品 · 空位 06</span></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="experience">
+    <div class="page-body experience-body">
+      <div class="lanyard-area" id="lanyard-area"></div>
+      <div class="exp-text">
+        <p class="eyebrow"><i></i> EXPERIENCE</p>
+        <h2>实习经历</h2>
+        <div class="exp-item">
+          <h3>待定 · 实习岗位</h3>
+          <p class="exp-meta">公司待定 · 时间待定</p>
+          <p class="exp-desc">这里会放实习经历的详细内容。等有了具体的实习经历，我再补上。</p>
+        </div>
+      </div>
+    </div>
+  <footer class="contact-footer" id="contact" aria-label="联系我">
+ <div class="footer-content"><div class="footer-brand"><strong>AITCH</strong><div class="social-links">
+ <a href="https://github.com/Aitch-W/chenxi-meadow" target="_blank" rel="noopener noreferrer" aria-label="GitHub 项目仓库" title="GitHub">GH</a>
+ <a href="#contact" aria-label="发送邮件" title="邮箱">@</a>
+ <a href="#contact" aria-label="拨打电话" title="电话">☎</a></div></div>
+ <div class="footer-column"><h3>作品与代码</h3><a href="https://github.com/Aitch-W/chenxi-meadow" target="_blank" rel="noopener noreferrer">GitHub ↗</a><span>Aitch-W / chenxi-meadow</span></div>
+ <div class="footer-column"><h3>联系我</h3><a href="#contact">Email available on request</a><a href="#contact">Phone available on request</a></div></div>
+ <div class="footer-bottom">© 2026 AITCH · 王宸曦</div>
+ </footer>
+ </section>
+</main>
+
+<div id="plane-layer" aria-hidden="true"></div>
+<div id="cloud-cover" aria-hidden="true"></div>
+
+<script type="module">import('./scene.js').catch(()=>{document.getElementById('loading').textContent='风景加载失败，请刷新重试';document.getElementById('motion').disabled=true;document.getElementById('explore').disabled=true;document.getElementById('hint').textContent='三维资源加载失败，个人介绍仍可阅读';});</script>
+<script type="module" src="app.js"></script>
+<script type="module" src="lanyard-setup.js"></script>
+</body>
+</html>

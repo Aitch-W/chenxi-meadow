@@ -1,15 +1,23 @@
 import fs from 'node:fs';
 import path from 'node:path';
 const root=import.meta.dirname;
-let html=fs.readFileSync(path.join(root,'dist/index.html'),'utf8');
-const css=fs.readFileSync(path.join(root,'dist/style.css'),'utf8');
-let js=fs.readFileSync(path.join(root,'dist/scene.js'),'utf8');
-js=js.replace("import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';","const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js');");
-html=html.replace('<link rel="stylesheet" href="style.css">',`<style>${css}</style>`);
-const start=html.indexOf('<script type="module">');
-const end=html.indexOf('</script>',start)+9;
-if(start<0||end<9)throw Error('Missing module entry');
-const code=`<script type="module">try {${js}} catch(error) { console.error(error);document.getElementById('loading').textContent='风景暂未加载，请联网后刷新';document.getElementById('motion').disabled=true;document.getElementById('explore').disabled=true;document.body.classList.remove('piloting');}</script>`;
-html=html.slice(0,start)+code+html.slice(end);
+const read=name=>fs.readFileSync(path.join(root,'dist',name),'utf8');
+let html=read('index.html');
+const three=read('vendor/three.module.js');
+const match=three.match(/export\s*\{([\s\S]*?)\};?\s*$/);
+if(!match)throw Error('Missing Three exports');
+const names=match[1].split(',').map(n=>n.trim()).filter(Boolean).map(n=>{const parts=n.split(/\s+as\s+/);return parts.length===2?`${parts[1]}: ${parts[0]}`:n});
+const runtime=`const THREE=(()=>{${three.slice(0,match.index)};return {${names.join(',')}};})();`;
+const scene=read('scene.js').replace("import * as THREE from './vendor/three.module.js';",'');
+const lanyard=read('lanyard3d.js').replace("import * as THREE from './vendor/three.module.js';",'').replace('export function initLanyard','function initLanyard');
+const setup=read('lanyard-setup.js').replace("import { initLanyard } from './lanyard3d.js';",'');
+const bundle=`${runtime}
+try{${scene}}catch(error){console.error(error);document.getElementById('loading').textContent='风景加载失败：'+error.message;document.body.classList.remove('piloting');}
+{${read('app.js')}}
+try{${lanyard}
+${setup}}catch(error){console.error(error);document.getElementById('lanyard-area').textContent='工牌加载失败：'+error.message;}`;
+html=html.replace('<link rel="stylesheet" href="style.css">',()=>`<style>${read('style.css')}</style>`);
+html=html.replace(/<script type="module"[^>]*>[\s\S]*?<\/script>/g,'');
+html=html.replace('</body>',()=>`<script type="module">${bundle}</script></body>`);
 fs.writeFileSync(path.join(root,'preview.html'),html);
-console.log('Updated preview.html: '+Buffer.byteLength(html)+' bytes');
+console.log('Built preview with scene, navigation and draggable lanyard');
