@@ -3,8 +3,8 @@ import * as THREE from './vendor/three.module.js';
 // Terrain is below the biography; the second transparent renderer carries clouds and airplane above it.
 const scene=new THREE.Scene(),sky=new THREE.Scene(),planeScene=new THREE.Scene();scene.background=new THREE.Color('#b5bb76');
 const renderer=new THREE.WebGLRenderer({antialias:true}),air=new THREE.WebGLRenderer({antialias:true,alpha:true}),top=new THREE.WebGLRenderer({antialias:true,alpha:true});
-for(const r of [renderer,air,top]){r.setPixelRatio(Math.min(devicePixelRatio,1.75));r.outputColorSpace=THREE.SRGBColorSpace;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.0;}
-renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+for(const r of [renderer,air,top]){r.setPixelRatio(Math.min(devicePixelRatio,1.5));r.outputColorSpace=THREE.SRGBColorSpace;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.0;}
+renderer.shadowMap.enabled=true;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 const atmosphere=document.querySelector('#atmosphere');document.body.appendChild(atmosphere);
 document.querySelector('#scene').appendChild(renderer.domElement);document.querySelector('#atmosphere').appendChild(air.domElement);document.querySelector('#plane-layer').appendChild(top.domElement);
 const camera=new THREE.OrthographicCamera(-40,40,24,-24,.1,180);camera.position.set(0,65,20);camera.lookAt(0,0,0);
@@ -230,7 +230,33 @@ function makeRouteTile(i){
  return p;
 }
 const cars=[],windRotors=[];
+// Batch static opaque details per material, retaining movable cars and windmill rotors.
+function batchTerrain(tile){
+ tile.updateMatrixWorld(true);const inverse=new THREE.Matrix4().copy(tile.matrixWorld).invert(),matrix=new THREE.Matrix4();
+ const moving=new Set();for(const {car} of cars)car.traverse(o=>moving.add(o));for(const rotor of windRotors)rotor.traverse(o=>moving.add(o));
+ const groups=new Map();
+ tile.traverse(mesh=>{
+  if(!mesh.isMesh||mesh.isInstancedMesh||moving.has(mesh))return;
+  const m=mesh.material;
+  if(!m.isMeshStandardMaterial||m.transparent||m.vertexColors||Object.hasOwn(m,'onBeforeCompile'))return;
+  const key=[m.color.getHex(),m.roughness,m.metalness,m.side,m.map?.uuid||'',mesh.castShadow,mesh.receiveShadow].join('/');
+  if(!groups.has(key))groups.set(key,[]);groups.get(key).push(mesh);
+ });
+ let before=0,after=0;
+ for(const meshes of groups.values()){
+  if(meshes.length<3)continue;
+  const parts=[];let count=0;
+  for(const mesh of meshes){const g=mesh.geometry.index?mesh.geometry.toNonIndexed():mesh.geometry.clone();matrix.multiplyMatrices(inverse,mesh.matrixWorld);g.applyMatrix4(matrix);if(!g.attributes.normal)g.computeVertexNormals();parts.push(g);count+=g.attributes.position.count;}
+  const positions=new Float32Array(count*3),normals=new Float32Array(count*3),uv=new Float32Array(count*2);let offset=0;
+  for(const g of parts){positions.set(g.attributes.position.array,offset*3);normals.set(g.attributes.normal.array,offset*3);if(g.attributes.uv)uv.set(g.attributes.uv.array,offset*2);offset+=g.attributes.position.count;g.dispose();}
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.BufferAttribute(positions,3));geometry.setAttribute('normal',new THREE.BufferAttribute(normals,3));geometry.setAttribute('uv',new THREE.BufferAttribute(uv,2));geometry.computeBoundingSphere();
+  const combined=new THREE.Mesh(geometry,meshes[0].material);combined.castShadow=meshes[0].castShadow;combined.receiveShadow=meshes[0].receiveShadow;
+  for(const mesh of meshes)mesh.removeFromParent();tile.add(combined);before+=meshes.length;after++;
+ }
+ return {before,after};
+}
 const tiles=[0,1,2,3].map(makeRouteTile);
+const batchStats=tiles.map(batchTerrain);
 const plane=new THREE.Group();planeScene.add(plane);const white=material('#fafaf2',{roughness:1,metalness:0}),blue=material('#537882',{roughness:1}),dark=material('#4e5850');
 add(sphere,white,plane,0,0,0,.13,.11,.62);add(sphere,white,plane,0,-.005,-.05,1.02,.035,.15);add(sphere,white,plane,0,.03,.43,.36,.025,.09);add(box,white,plane,0,.12,.43,.035,.26,.21);add(sphere,blue,plane,0,.1,-.16,.09,.055,.19);const red=material('#b54531');add(box,red,plane,-.84,.025,-.05,.08,.02,.2);add(box,red,plane,.84,.025,-.05,.08,.02,.2);const prop=new THREE.Group();prop.position.z=-.65;plane.add(prop);add(box,dark,prop,0,0,0,.42,.025,.035);
 const shadowCanvas=document.createElement('canvas');shadowCanvas.width=shadowCanvas.height=128;const sc=shadowCanvas.getContext('2d'),sg=sc.createRadialGradient(64,64,1,64,64,63);sg.addColorStop(0,'rgba(34,55,17,.24)');sg.addColorStop(.5,'rgba(34,55,17,.17)');sg.addColorStop(1,'rgba(34,55,17,0)');sc.fillStyle=sg;sc.fillRect(0,0,128,128);const shadowTexture=new THREE.CanvasTexture(shadowCanvas);
@@ -275,15 +301,18 @@ void main(){
  #include <colorspace_fragment>
 }`});
 paintScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),paintMaterial));
-function resize(){const w=innerWidth,h=innerHeight;for(const r of [renderer,air,top])r.setSize(w,h);paintTarget.setSize(Math.round(w*renderer.getPixelRatio()),Math.round(h*renderer.getPixelRatio()));paintMaterial.uniforms.resolution.value.set(paintTarget.width,paintTarget.height);const width=w<h?58:80;camera.left=-width/2;camera.right=width/2;camera.top=width*h/w/2;camera.bottom=-width*h/w/2;camera.updateProjectionMatrix()}window.addEventListener('resize',resize);resize();ray.setFromCamera(pointer,camera);ray.ray.intersectPlane(flightLevel,target);plane.position.copy(target);
-function tick(ms){requestAnimationFrame(tick);const dt=Math.min((ms-last)/1000,.04);last=ms;if(!document.hidden&&!paused){time+=dt;boost=Math.max(0,boost-dt);if(flightJump){flightJump.elapsed+=dt;const t=Math.min(1,flightJump.elapsed/2.8);travel=THREE.MathUtils.lerp(flightJump.start,flightJump.end,t*t*(3-2*t));if(t===1)flightJump=null;}else travel+=dt*1.8;for(let i=0;i<tiles.length;i++)tiles[i].position.z=((travel-i*LENGTH+LENGTH*5.5)%(LENGTH*4))-LENGTH*1.5;water.uniforms.time.value=time;for(const rotor of windRotors)rotor.rotation.z+=dt*.32;for(const {car} of cars){const z=20*Math.sin(time*.06);car.position.set(road(z),0,z);car.rotation.y=Math.atan2(road(z+.05)-road(z-.05),.1)+(Math.cos(time*.06)<0?Math.PI:0);}
+const pageContainer=document.querySelector('#pages'),aircraftScreen=new THREE.Vector3(),cloudScreen=new THREE.Vector3();
+let lastTerrainDraw=-Infinity,lastShadowDraw=-Infinity;
+function resize(){const w=innerWidth,h=innerHeight;for(const r of [renderer,air,top])r.setSize(w,h);paintTarget.setSize(Math.round(w*Math.min(renderer.getPixelRatio(),1.15)),Math.round(h*Math.min(renderer.getPixelRatio(),1.15)));paintMaterial.uniforms.resolution.value.set(paintTarget.width,paintTarget.height);const width=w<h?58:80;camera.left=-width/2;camera.right=width/2;camera.top=width*h/w/2;camera.bottom=-width*h/w/2;camera.updateProjectionMatrix()}window.addEventListener('resize',resize);resize();ray.setFromCamera(pointer,camera);ray.ray.intersectPlane(flightLevel,target);plane.position.copy(target);
+function tick(ms){requestAnimationFrame(tick);const dt=Math.min((ms-last)/1000,.04);last=ms;if(document.hidden)return;const homeVisible=pageContainer.scrollTop<innerHeight;
+if(!paused){time+=dt;boost=Math.max(0,boost-dt);if(flightJump){flightJump.elapsed+=dt;const t=Math.min(1,flightJump.elapsed/2.8);travel=THREE.MathUtils.lerp(flightJump.start,flightJump.end,t*t*(3-2*t));if(t===1)flightJump=null;}else travel+=dt*1.8;for(let i=0;i<tiles.length;i++)tiles[i].position.z=((travel-i*LENGTH+LENGTH*5.5)%(LENGTH*4))-LENGTH*1.5;water.uniforms.time.value=time;for(const rotor of windRotors)rotor.rotation.z+=dt*.32;for(const {car} of cars){const z=20*Math.sin(time*.06);car.position.set(road(z),0,z);car.rotation.y=Math.atan2(road(z+.05)-road(z-.05),.1)+(Math.cos(time*.06)<0?Math.PI:0);}
 for(const {cloud,shadow,speed} of clouds){cloud.position.z+=dt*speed;if(cloud.position.z>100)cloud.position.z=-100;shadow.position.x=cloud.position.x+3.4;shadow.position.z=cloud.position.z+3.1}planeShadow.position.set(plane.position.x+2.3,0,plane.position.z+2.5);planeShadow.rotation.y=plane.rotation.y;}ray.setFromCamera(pointer,camera);ray.ray.intersectPlane(flightLevel,target);const dx=target.x-plane.position.x;plane.position.lerp(target,1-Math.exp(-dt*9));plane.position.y=6+Math.sin(ms*.001*3.1)*.045+Math.sin(ms*.001*8.3)*.012;plane.rotation.z=THREE.MathUtils.clamp(-dx*.08,-.3,.3)+Math.sin(ms*.001*2.3)*.035;plane.rotation.x=Math.sin(ms*.001*2.7)*.018;plane.rotation.y=Math.sin(ms*.001*1.5)*.025;prop.rotation.z+=dt*65;
 planeShadow.position.set(plane.position.x+2.3,0,plane.position.z+2.5);
 // Disturb individual lobes in screen space so contact matches the visible airplane.
-const aircraftScreen=plane.position.clone().project(camera);
-for(const state of cloudLobes){
+aircraftScreen.copy(plane.position).project(camera);
+if(homeVisible){sky.updateMatrixWorld(true);for(const state of cloudLobes){
  const {lobe,mist,home,scale}=state;
- const restWorld=home.clone();lobe.parent.localToWorld(restWorld);const screen=restWorld.clone().project(camera);
+ const screen=cloudScreen.copy(home).applyMatrix4(lobe.parent.matrixWorld).project(camera);
  const dx=(screen.x-aircraftScreen.x)*(camera.right-camera.left)/2;
  const dy=(screen.y-aircraftScreen.y)*(camera.top-camera.bottom)/2;
  const contact=1-smooth(.4,2.0,Math.hypot(dx,dy));
@@ -295,6 +324,13 @@ for(const state of cloudLobes){
  mist.position.copy(lobe.position);mist.position.x+=Math.sin(ms*.001*1.4+state.phase)*a*.12;
  mist.scale.set(1+a*.7,1+a*.35,1);mist.material.uniforms.alpha.value=a*.18;
  mist.visible=a>.015;
+}}
+atmosphere.style.opacity=String(1-THREE.MathUtils.clamp(pageContainer.scrollTop/innerHeight,0,1));
+// Keep the narrow background moving on content pages at 30fps; the aircraft remains full rate.
+if(ms-lastTerrainDraw>=(homeVisible?0:1000/30)){
+ lastTerrainDraw=ms;
+ if(ms-lastShadowDraw>=1000/24){renderer.shadowMap.needsUpdate=true;lastShadowDraw=ms;}
+ renderer.setRenderTarget(paintTarget);renderer.render(scene,camera);renderer.setRenderTarget(null);renderer.render(paintScene,paintCamera);
 }
-atmosphere.style.opacity=String(1-THREE.MathUtils.clamp(document.querySelector('#pages').scrollTop/innerHeight,0,1));
-if(document.querySelector('#pages').scrollTop<innerHeight){renderer.setRenderTarget(paintTarget);renderer.render(scene,camera);renderer.setRenderTarget(null);renderer.render(paintScene,paintCamera);air.render(sky,camera);}top.render(planeScene,camera)}requestAnimationFrame(tick);document.body.classList.add('loaded');
+if(homeVisible)air.render(sky,camera);
+top.render(planeScene,camera)}requestAnimationFrame(tick);document.body.classList.add('loaded');

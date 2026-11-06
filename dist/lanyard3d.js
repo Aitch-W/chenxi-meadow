@@ -1092,7 +1092,7 @@ export function initLanyard(container, opts = {}) {
 
     const tick = now => {
       raf = 0;
-      if (!alive) return;
+      if (!alive || !visible || document.hidden) return;
       const dt = Math.min(1 / 30, Math.max(1 / 240, (now - last) / 1000));
       last = now;
       time += dt;
@@ -1219,10 +1219,12 @@ export function initLanyard(container, opts = {}) {
     const intersectionObserver = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
       if (visible) start();
+      else { cancelAnimationFrame(raf); raf = 0; }
     });
     intersectionObserver.observe(container);
     const onVisibility = () => {
       if (!document.hidden) start();
+      else { cancelAnimationFrame(raf); raf = 0; }
     };
     document.addEventListener('visibilitychange', onVisibility);
 

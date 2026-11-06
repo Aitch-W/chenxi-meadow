@@ -5,7 +5,7 @@ const nav = document.querySelectorAll('.sidebar a[href^="#"]');
 const order = ['home', 'works', 'experience'];
 let page = 0, animating = false, pendingTarget = null, lastWheel = 0, touchY = 0;
 let peekTimer = 0, peeking = false, leftZone = 260;
-let scrollTarget=null,scrollFrame=0,scrollStamp=0;
+let scrollTarget=null,scrollFrame=0,scrollStamp=0,scrollPosition=0;
 function stopSmoothScroll(){cancelAnimationFrame(scrollFrame);scrollFrame=0;scrollTarget=null;}
 
 // 生成铺满全屏的球状云团（参照首页 3D 云）
@@ -95,17 +95,17 @@ function transitionTo(target) {
 function scrollExperience(delta){
  if(page!==2||animating)return false;
  const base=2*pages.clientHeight;
- if(delta<=0&&pages.scrollTop<=base+2&&(scrollTarget===null||scrollTarget<=base+2))return false;
+ if(delta<=0&&pages.scrollTop<=base+3&&(scrollTarget===null||scrollTarget<=base+3)){stopSmoothScroll();pages.scrollTop=base;return false;}
  scrollTarget=Math.max(base,Math.min(pages.scrollHeight-pages.clientHeight,(scrollTarget??pages.scrollTop)+delta));
  if(matchMedia('(prefers-reduced-motion: reduce)').matches){pages.scrollTop=scrollTarget;scrollTarget=null;updateSidebar();return true;}
- if(!scrollFrame){scrollStamp=performance.now();scrollFrame=requestAnimationFrame(easeScroll);}return true;
+ if(!scrollFrame){scrollPosition=pages.scrollTop;scrollStamp=performance.now();scrollFrame=requestAnimationFrame(easeScroll);}return true;
 }
 function easeScroll(now){
  if(scrollTarget===null||page!==2){stopSmoothScroll();return;}
  const dt=Math.min(50,now-scrollStamp);scrollStamp=now;
- const diff=scrollTarget-pages.scrollTop;
- if(Math.abs(diff)<1){pages.scrollTop=scrollTarget;scrollTarget=null;scrollFrame=0;return;}
- pages.scrollTop+=diff*(1-Math.exp(-dt/95));scrollFrame=requestAnimationFrame(easeScroll);
+ const diff=scrollTarget-scrollPosition;
+ if(Math.abs(diff)<.75){pages.scrollTop=scrollTarget;scrollTarget=null;scrollFrame=0;return;}
+ scrollPosition+=diff*(1-Math.exp(-dt/95));pages.scrollTop=scrollPosition;scrollFrame=requestAnimationFrame(easeScroll);
 }
 pages.addEventListener('scroll',updateSidebar,{passive:true});
 function flip(dir) {
@@ -129,7 +129,7 @@ window.addEventListener('wheel', (e) => {
   const now = performance.now();
   if (now - lastWheel < 80) return;
   lastWheel = now;
-  flip(e.deltaY > 0 ? 1 : -1);
+  transitionTo(page+(e.deltaY>0?1:-1));
 }, { passive: false });
 
 window.addEventListener('keydown', (e) => {
