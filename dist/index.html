@@ -13,6 +13,7 @@
   <div id="scene"></div>
   <div id="atmosphere"></div>
 </div>
+<div id="scene-extra" aria-hidden="true"></div>
 
 <nav class="sidebar" aria-label="站点导航">
   <span class="side-logo">AITCH</span>
@@ -85,5 +86,6 @@
 <script type="module">import('./scene.js').catch(()=>{document.getElementById('loading').textContent='风景加载失败，请刷新重试';document.getElementById('motion').disabled=true;document.getElementById('explore').disabled=true;document.getElementById('hint').textContent='三维资源加载失败，个人介绍仍可阅读';});</script>
 <script type="module" src="app.js"></script>
 <script type="module" src="lanyard-setup.js"></script>
+<script type="module" src="scenes.js"></script>
 </body>
 </html>

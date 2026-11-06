@@ -34,6 +34,8 @@ button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:5px}
 #atmosphere{z-index:2;pointer-events:none}
 #atmosphere canvas{filter:saturate(.72) contrast(.92)}
 canvas{width:100%;height:100%;display:block}
+#scene-extra{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0}
+#scene-extra canvas{width:100%;height:100%;display:block}
 
 /* 飞机层：永远浮在 UI 之上 */
 #plane-layer{position:fixed;inset:0;z-index:35;pointer-events:none}
