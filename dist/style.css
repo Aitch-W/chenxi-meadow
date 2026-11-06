@@ -49,13 +49,12 @@ body::after{
 /* ===== 滚动页面（翻页器） ===== */
 #pages{
   position:fixed;inset:0;z-index:3;
-  overflow-y:auto;
-  scroll-snap-type:y mandatory;
-  scroll-behavior:smooth;
+  overflow-y:auto;overscroll-behavior:contain;
+  scroll-behavior:auto;scrollbar-width:none;touch-action:none;
 }
+#pages::-webkit-scrollbar{display:none}
 .page{
   position:relative;height:100vh;height:100svh;
-  scroll-snap-align:start;scroll-snap-stop:always;
 }
 
 /* ===== 第 1 页 · 顶部栏 ===== */
@@ -172,22 +171,24 @@ footer i{display:inline-block;width:6px;height:6px;border-radius:50%;background:
 /* ===== 云层转场（由滚动进度驱动） ===== */
 #cloud-cover{
   position:fixed;inset:0;z-index:40;pointer-events:none;
-  opacity:0;transform:translateY(106%);
-  will-change:opacity,transform;
+  opacity:0;transform:translateY(106%) scale(1);
+  transform-origin:50% 60%;
+  will-change:opacity,transform,filter;
   background:
-    radial-gradient(440px 250px at 3% 30%, #ffffff 0 58%, transparent 80%),
-    radial-gradient(560px 300px at 20% 20%, #fdfdfb 0 58%, transparent 80%),
-    radial-gradient(480px 270px at 38% 36%, #ffffff 0 58%, transparent 80%),
-    radial-gradient(620px 320px at 56% 22%, #fdfdfb 0 58%, transparent 80%),
-    radial-gradient(500px 280px at 74% 34%, #ffffff 0 58%, transparent 80%),
-    radial-gradient(620px 330px at 93% 20%, #fdfdfb 0 58%, transparent 80%),
-    radial-gradient(720px 380px at 10% 62%, #fbfcf8 0 58%, transparent 80%),
-    radial-gradient(780px 400px at 48% 68%, #fbfcf8 0 58%, transparent 80%),
-    radial-gradient(720px 380px at 86% 64%, #fbfcf8 0 58%, transparent 80%),
-    radial-gradient(900px 520px at 16% 100%, #f0f2eb 0 60%, transparent 84%),
-    radial-gradient(980px 560px at 62% 104%, #f0f2eb 0 60%, transparent 84%),
-    radial-gradient(900px 520px at 100% 100%, #f0f2eb 0 60%, transparent 84%),
-    linear-gradient(0deg, #e6e9e1 0%, #f0f2eb 55%, #fafbf8 84%, #ffffff 100%);
+    radial-gradient(300px 180px at 6% 34%, #ffffff 0 52%, transparent 84%),
+    radial-gradient(360px 210px at 22% 22%, #fefefc 0 52%, transparent 84%),
+    radial-gradient(320px 190px at 38% 32%, #ffffff 0 52%, transparent 84%),
+    radial-gradient(380px 220px at 54% 20%, #fefefc 0 52%, transparent 84%),
+    radial-gradient(330px 195px at 70% 30%, #ffffff 0 52%, transparent 84%),
+    radial-gradient(390px 225px at 86% 20%, #fefefc 0 52%, transparent 84%),
+    radial-gradient(460px 260px at 12% 52%, #fdfdfb 0 54%, transparent 84%),
+    radial-gradient(520px 290px at 36% 58%, #fdfdfb 0 54%, transparent 84%),
+    radial-gradient(500px 280px at 62% 54%, #fdfdfb 0 54%, transparent 84%),
+    radial-gradient(500px 280px at 88% 58%, #fdfdfb 0 54%, transparent 84%),
+    radial-gradient(760px 420px at 16% 92%, #f2f4ee 0 56%, transparent 86%),
+    radial-gradient(840px 460px at 50% 98%, #f2f4ee 0 56%, transparent 86%),
+    radial-gradient(760px 420px at 86% 92%, #f2f4ee 0 56%, transparent 86%),
+    linear-gradient(0deg, #dfe3d9 0%, #eceee7 24%, #f6f8f2 52%, #ffffff 82%);
 }
 
 /* ===== 响应式 ===== */
