@@ -133,7 +133,7 @@ window.addEventListener('mousemove', (e) => {
         peekTimer = 0;
         peeking = true;
         updateSidebar();
-      }, 3000);
+      }, 1500);
     }
   } else {
     if (peekTimer) { clearTimeout(peekTimer); peekTimer = 0; }
@@ -154,3 +154,60 @@ leftZone = Math.min(280, innerWidth * 0.32);
 
 buildCloud();
 setActive(0);
+
+// ---- 工牌 Lanyard：摆动物理 + 拖拽甩动 + 点击翻面 ----
+const lanyard = document.querySelector('#lanyard');
+const badge = document.querySelector('#badge');
+if (lanyard && badge) {
+  let rotZ = 0, rotX = 0, velZ = 0, velX = 0;
+  let dragging = false, moved = false;
+  let startX = 0, startY = 0, lastPX = 0, lastPY = 0;
+
+  function lanyardTick() {
+    requestAnimationFrame(lanyardTick);
+    if (!dragging) {
+      velZ += -rotZ * 0.045;
+      velX += -rotX * 0.045;
+      velZ *= 0.95;
+      velX *= 0.95;
+      rotZ = Math.max(-70, Math.min(70, rotZ + velZ));
+      rotX = Math.max(-45, Math.min(45, rotX + velX));
+      if (Math.abs(rotZ) < 0.02 && Math.abs(velZ) < 0.02) { rotZ = 0; velZ = 0; }
+      if (Math.abs(rotX) < 0.02 && Math.abs(velX) < 0.02) { rotX = 0; velX = 0; }
+    }
+    lanyard.style.transform = 'rotateX(' + rotX.toFixed(2) + 'deg) rotateZ(' + rotZ.toFixed(2) + 'deg)';
+  }
+
+  badge.addEventListener('pointerdown', (e) => {
+    dragging = true; moved = false;
+    startX = lastPX = e.clientX; startY = lastPY = e.clientY;
+    lanyard.classList.add('dragging');
+    try { badge.setPointerCapture(e.pointerId); } catch (_) {}
+    e.preventDefault();
+  });
+
+  badge.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX, dy = e.clientY - startY;
+    if (Math.hypot(dx, dy) > 5) moved = true;
+    rotZ = Math.max(-60, Math.min(60, dx * 0.28));
+    rotX = Math.max(-40, Math.min(40, -dy * 0.22));
+    velZ = Math.max(-6, Math.min(6, (e.clientX - lastPX) * 0.4));
+    velX = Math.max(-6, Math.min(6, (e.clientY - lastPY) * -0.3));
+    lastPX = e.clientX; lastPY = e.clientY;
+  });
+
+  badge.addEventListener('pointerup', () => {
+    if (!dragging) return;
+    dragging = false;
+    lanyard.classList.remove('dragging');
+    if (!moved) badge.classList.toggle('flipped');
+  });
+
+  badge.addEventListener('pointercancel', () => {
+    dragging = false;
+    lanyard.classList.remove('dragging');
+  });
+
+  lanyardTick();
+}

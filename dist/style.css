@@ -159,6 +159,64 @@ body.alt .sidebar{transform:translateX(0)}
 }
 .work-slot .ph{font:400 12px var(--serif);letter-spacing:3px;color:#a3ab94}
 
+/* ===== 工牌 Lanyard（实习经历） ===== */
+.experience-body{padding-top:20px;padding-bottom:20px}
+.lanyard-stage{
+  position:relative;width:100%;height:min(48vh,430px);
+  display:flex;justify-content:center;align-items:flex-start;
+  perspective:1100px;margin:4px 0 2px;
+}
+.lanyard{
+  position:relative;width:230px;transform-origin:50% 0;
+  will-change:transform;cursor:grab;touch-action:none;
+}
+.lanyard.dragging{cursor:grabbing}
+.strap{
+  width:22px;height:120px;margin:0 auto;position:relative;
+  background:repeating-linear-gradient(-45deg,#55684a 0 5px,#46563d 5px 10px);
+  border-radius:2px;box-shadow:0 2px 6px rgba(0,0,0,.18);
+}
+.strap::after{content:'';position:absolute;inset:0;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,.18),transparent 45%,rgba(0,0,0,.12))}
+.badge{width:220px;margin:0 auto;perspective:900px}
+.badge-inner{
+  position:relative;width:100%;aspect-ratio:3/4;
+  transform-style:preserve-3d;transition:transform .6s cubic-bezier(.3,.7,.3,1);
+}
+.badge.flipped .badge-inner{transform:rotateY(180deg)}
+.badge-face{
+  position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;
+  overflow:hidden;box-shadow:0 20px 44px rgba(30,40,25,.28);
+  display:flex;flex-direction:column;align-items:center;
+}
+.badge-front{background:linear-gradient(160deg,#fbf9f1 0%,#efece0 100%);padding:22px 20px 16px}
+.badge-clip{
+  width:56px;height:10px;border-radius:6px;background:#cfd3c4;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.25);margin-bottom:16px;position:relative;
+}
+.badge-clip::before{content:'';position:absolute;left:50%;top:-26px;width:2px;height:26px;background:#8d977f;transform:translateX(-50%)}
+.badge-photo{
+  width:96px;height:96px;border-radius:50%;
+  background:linear-gradient(150deg,#7f9a5e,#4f6b3a);color:#f8f6ec;
+  display:grid;place-items:center;font:500 44px var(--serif);
+  box-shadow:inset 0 2px 6px rgba(255,255,255,.35),0 6px 16px rgba(60,80,40,.25);
+  margin-bottom:14px;
+}
+.badge-name{font:600 26px var(--serif);letter-spacing:3px;color:#2f5026}
+.badge-role{font-size:11px;letter-spacing:2px;color:#6d7a5f;margin-top:6px}
+.badge-foot{
+  margin-top:auto;width:100%;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid rgba(60,80,40,.14);padding-top:10px;
+  font-size:9px;letter-spacing:2px;color:#8a957c;
+}
+.badge-bar{flex:1;height:14px;margin-right:10px;opacity:.55;
+  background:repeating-linear-gradient(90deg,#3b4a30 0 2px,transparent 2px 4px,#3b4a30 4px 5px,transparent 5px 8px)}
+.badge-back{
+  background:linear-gradient(160deg,#33402c 0%,#253020 100%);color:#eeeadd;
+  transform:rotateY(180deg);justify-content:center;gap:16px;
+}
+.badge-back-title{font:700 34px var(--serif);letter-spacing:8px;color:#e8e4d4}
+.badge-back-quote{font:400 13px "Songti SC","SimSun",serif;letter-spacing:3px;color:#b9c2a7}
+
 /* ===== 页脚 ===== */
 footer{
   position:absolute;z-index:6;bottom:20px;left:4%;width:92%;
