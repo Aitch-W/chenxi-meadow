@@ -83,6 +83,7 @@ if (host) {
     pos.set(Math.cos(a) * R, Math.sin(a) * R * Math.sin(tilt), Math.sin(a) * R * Math.cos(tilt));
     ahead.set(Math.cos(a + 0.02) * R, Math.sin(a + 0.02) * R * Math.sin(tilt), Math.sin(a + 0.02) * R * Math.cos(tilt));
     plane.position.copy(pos);
+    plane.up.copy(pos).normalize();
     plane.lookAt(ahead);
     if (plane.userData.prop) plane.userData.prop.rotation.z += dt * 40;
     renderer.render(scene, camera);
@@ -122,6 +123,7 @@ if (host) {
     add(box, red, -0.84, 0.025, -0.05, 0.08, 0.02, 0.2);
     add(box, red, 0.84, 0.025, -0.05, 0.08, 0.02, 0.2);
     g.userData.prop = add(box, dark, 0, 0, -0.65, 0.42, 0.025, 0.035);
+    g.rotation.y = Math.PI;
     g.scale.setScalar(0.24);
     return g;
   }
