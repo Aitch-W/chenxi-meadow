@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#b5bb76">
 <meta name="description" content="AITCH 的个人空间 · 河南大学软件工程">
 <title>AITCH · 飞过旷野</title>
-<link rel="stylesheet" href="style.css?v=20261108-globe25">
+<link rel="stylesheet" href="style.css?v=20261108-globe26">
 </head>
 <body>
 <div id="world" aria-hidden="true">
@@ -73,7 +73,10 @@
         <article class="work-slot"><span class="ph">作品 · 空位 05</span></article>
         <article class="work-slot"><span class="ph">作品 · 空位 06</span></article>
       </div>
-      <div id="globe-stage" aria-hidden="true"></div>
+      <div class="globe-wrap">
+        <div id="globe-stage" role="button" tabindex="0" aria-label="飞往兴趣地带"></div>
+        <button class="globe-caption" id="globe-cta" type="button">飞往兴趣地带 ↗</button>
+      </div>
     </div>
   </section>
 
@@ -105,8 +108,20 @@
 <div id="plane-layer" aria-hidden="true"></div>
 <div id="cloud-cover" aria-hidden="true"></div>
 
+<div id="map-transition" aria-hidden="true">
+  <div class="map-paper"></div>
+  <svg class="map-svg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice">
+    <path id="map-route" d="M 140 470 C 320 380 460 220 640 260 S 860 140 880 100" fill="none" stroke="#a8432b" stroke-width="2.5" stroke-dasharray="9 7" opacity="0.85"/>
+    <g>
+      <animateMotion dur="2.3s" fill="freeze" rotate="auto">
+        <mpath href="#map-route"/>
+      </animateMotion>
+      <path d="M0 0 L16 -6 L34 0 L16 6 Z" fill="#2f3a2a"/>
+    </g>
+  </svg>
+</div>
 <script type="module">import('./scene.js?v=20261107-cloud19').catch(()=>{document.body.classList.remove('piloting');document.getElementById('loading').textContent='风景加载失败，请刷新重试';document.getElementById('motion').disabled=true;document.getElementById('hint').textContent='三维资源加载失败，个人介绍仍可阅读';});</script>
-<script type="module" src="app.js?v=20261107-cloud19"></script>
+<script type="module" src="app.js?v=20261108-interest26"></script>
 <script type="module" src="lanyard-setup.js?v=20261107-pig20"></script>
 <script type="module" src="globe.js?v=20261108-globe25"></script>
 </body>

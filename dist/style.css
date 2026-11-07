@@ -161,8 +161,18 @@ body.alt .sidebar{transform:translateX(0)}
 
 /* 作品集右侧地球 */
 #works .page-body{position:relative}
-#globe-stage{position:absolute;right:4%;top:50%;transform:translateY(-50%);width:min(30vw,640px);height:min(30vw,640px);pointer-events:none}
-@media(max-width:1700px){#globe-stage{display:none}}
+.globe-wrap{position:absolute;right:4%;top:50%;transform:translateY(-50%);width:min(30vw,640px);display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none}
+#globe-stage{position:relative;width:100%;aspect-ratio:1;pointer-events:auto;cursor:pointer}
+.globe-caption{pointer-events:auto;cursor:pointer;background:none;border:0;padding:6px 10px;font:500 12px var(--serif);letter-spacing:3px;color:#4b6536;transition:color .2s;border-bottom:1px solid transparent}
+.globe-caption:hover{color:#2f5026;border-bottom-color:#2f5026}
+@media(max-width:1700px){.globe-wrap{display:none}}
+
+/* 夺宝奇兵虚线地图转场 */
+#map-transition{position:fixed;inset:0;z-index:80;background:#efe6d0;opacity:0;pointer-events:none;transition:opacity .5s ease;overflow:hidden}
+#map-transition.show{opacity:1;pointer-events:auto}
+.map-paper{position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,#f6efdc,#e6d9bd 58%,#d6c6a2)}
+.map-paper::after{content:'';position:absolute;inset:0;opacity:.5;background-image:radial-gradient(rgba(120,100,60,.12) 1px,transparent 1px);background-size:14px 14px}
+.map-svg{position:absolute;inset:0;width:100%;height:100%}
 
 /* ===== 实习经历：悬挂工牌（ReactBits 组件改写） ===== */
 .experience-body{

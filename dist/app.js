@@ -284,3 +284,17 @@ document.querySelector('#view-works').addEventListener('click',()=>flip(1));
   try { printedHost = new URL(url).host; } catch {}
   card.querySelectorAll('[data-senate-host]').forEach(el => { el.textContent = printedHost; });
 })();
+
+// 地球 → 夺宝奇兵虚线地图 → 兴趣地带
+const mapTransition = document.querySelector('#map-transition');
+const globeCta = document.querySelector('#globe-cta');
+const globeStage = document.querySelector('#globe-stage');
+let mapBusy = false;
+function flyToInterest() {
+  if (mapBusy) return;
+  mapBusy = true;
+  if (mapTransition) mapTransition.classList.add('show');
+  setTimeout(() => { location.href = 'interest.html'; }, 2400);
+}
+if (globeCta) globeCta.addEventListener('click', flyToInterest);
+if (globeStage) globeStage.addEventListener('click', flyToInterest);

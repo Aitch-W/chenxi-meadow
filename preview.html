@@ -169,8 +169,18 @@ body.alt .sidebar{transform:translateX(0)}
 
 /* 作品集右侧地球 */
 #works .page-body{position:relative}
-#globe-stage{position:absolute;right:4%;top:50%;transform:translateY(-50%);width:min(30vw,640px);height:min(30vw,640px);pointer-events:none}
-@media(max-width:1700px){#globe-stage{display:none}}
+.globe-wrap{position:absolute;right:4%;top:50%;transform:translateY(-50%);width:min(30vw,640px);display:flex;flex-direction:column;align-items:center;gap:10px;pointer-events:none}
+#globe-stage{position:relative;width:100%;aspect-ratio:1;pointer-events:auto;cursor:pointer}
+.globe-caption{pointer-events:auto;cursor:pointer;background:none;border:0;padding:6px 10px;font:500 12px var(--serif);letter-spacing:3px;color:#4b6536;transition:color .2s;border-bottom:1px solid transparent}
+.globe-caption:hover{color:#2f5026;border-bottom-color:#2f5026}
+@media(max-width:1700px){.globe-wrap{display:none}}
+
+/* 夺宝奇兵虚线地图转场 */
+#map-transition{position:fixed;inset:0;z-index:80;background:#efe6d0;opacity:0;pointer-events:none;transition:opacity .5s ease;overflow:hidden}
+#map-transition.show{opacity:1;pointer-events:auto}
+.map-paper{position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,#f6efdc,#e6d9bd 58%,#d6c6a2)}
+.map-paper::after{content:'';position:absolute;inset:0;opacity:.5;background-image:radial-gradient(rgba(120,100,60,.12) 1px,transparent 1px);background-size:14px 14px}
+.map-svg{position:absolute;inset:0;width:100%;height:100%}
 
 /* ===== 实习经历：悬挂工牌（ReactBits 组件改写） ===== */
 .experience-body{
@@ -386,7 +396,10 @@ body.at-contact #experience::before{opacity:1}
         <article class="work-slot"><span class="ph">作品 · 空位 05</span></article>
         <article class="work-slot"><span class="ph">作品 · 空位 06</span></article>
       </div>
-      <div id="globe-stage" aria-hidden="true"></div>
+      <div class="globe-wrap">
+        <div id="globe-stage" role="button" tabindex="0" aria-label="飞往兴趣地带"></div>
+        <button class="globe-caption" id="globe-cta" type="button">飞往兴趣地带 ↗</button>
+      </div>
     </div>
   </section>
 
@@ -418,6 +431,18 @@ body.at-contact #experience::before{opacity:1}
 <div id="plane-layer" aria-hidden="true"></div>
 <div id="cloud-cover" aria-hidden="true"></div>
 
+<div id="map-transition" aria-hidden="true">
+  <div class="map-paper"></div>
+  <svg class="map-svg" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice">
+    <path id="map-route" d="M 140 470 C 320 380 460 220 640 260 S 860 140 880 100" fill="none" stroke="#a8432b" stroke-width="2.5" stroke-dasharray="9 7" opacity="0.85"/>
+    <g>
+      <animateMotion dur="2.3s" fill="freeze" rotate="auto">
+        <mpath href="#map-route"/>
+      </animateMotion>
+      <path d="M0 0 L16 -6 L34 0 L16 6 Z" fill="#2f3a2a"/>
+    </g>
+  </svg>
+</div>
 
 
 
@@ -55740,6 +55765,20 @@ document.querySelector('#view-works').addEventListener('click',()=>flip(1));
   try { printedHost = new URL(url).host; } catch {}
   card.querySelectorAll('[data-senate-host]').forEach(el => { el.textContent = printedHost; });
 })();
+
+// 地球 → 夺宝奇兵虚线地图 → 兴趣地带
+const mapTransition = document.querySelector('#map-transition');
+const globeCta = document.querySelector('#globe-cta');
+const globeStage = document.querySelector('#globe-stage');
+let mapBusy = false;
+function flyToInterest() {
+  if (mapBusy) return;
+  mapBusy = true;
+  if (mapTransition) mapTransition.classList.add('show');
+  setTimeout(() => { location.href = 'interest.html'; }, 2400);
+}
+if (globeCta) globeCta.addEventListener('click', flyToInterest);
+if (globeStage) globeStage.addEventListener('click', flyToInterest);
 }
 try{
 
