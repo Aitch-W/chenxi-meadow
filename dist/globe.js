@@ -28,7 +28,7 @@ if (host) {
 
   // 地球：真实贴图 + 首页风格化
   const earthImg = await loadImage('assets/earth.jpg');
-  const map = earthImg ? stylizeEarth(earthImg) : makeMapTexture();
+  const map = earthImg ? recolorEarth(earthImg) : makeMapTexture();
   const globe = new THREE.Mesh(
     new THREE.SphereGeometry(1, 96, 96),
     new THREE.MeshStandardMaterial({ map, roughness: 0.92, metalness: 0 })
@@ -71,6 +71,7 @@ if (host) {
 
   const pos = new THREE.Vector3();
   const ahead = new THREE.Vector3();
+  const back = new THREE.Vector3();
   const R = 1.35;
   const tilt = 0.38;
   let last = performance.now();
@@ -86,7 +87,8 @@ if (host) {
     ahead.set(Math.cos(a + 0.02) * R, Math.sin(a + 0.02) * R * Math.sin(tilt), Math.sin(a + 0.02) * R * Math.cos(tilt));
     plane.position.copy(pos);
     plane.up.copy(pos).normalize();
-    plane.lookAt(ahead);
+    back.copy(pos).multiplyScalar(2).sub(ahead);
+    plane.lookAt(back);
     if (plane.userData.prop) plane.userData.prop.rotation.z += dt * 40;
     renderer.render(scene, camera);
   }
@@ -112,21 +114,45 @@ if (host) {
     });
   }
 
-  function stylizeEarth(img) {
+  function recolorEarth(img) {
     const w = 1024, h = 512;
     const c = document.createElement('canvas');
     c.width = w;
     c.height = h;
     const ctx = c.getContext('2d');
-    ctx.filter = 'saturate(.55) sepia(.16) brightness(1.06) contrast(.92)';
     ctx.drawImage(img, 0, 0, w, h);
-    ctx.filter = 'none';
-    ctx.globalCompositeOperation = 'soft-light';
-    ctx.fillStyle = 'rgba(247,247,239,0.28)';
-    ctx.fillRect(0, 0, w, h);
-    ctx.globalCompositeOperation = 'source-over';
-    for (let i = 0; i < 4200; i++) {
-      ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.045)';
+    const im = ctx.getImageData(0, 0, w, h);
+    const d = im.data;
+    const sea = [40, 160, 176];
+    const desert = [214, 122, 48];
+    const grass = [92, 170, 62];
+    for (let i = 0; i < d.length; i += 4) {
+      let r = d[i] / 255, g = d[i + 1] / 255, b = d[i + 2] / 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+      const l = (max + min) / 2;
+      let hh = 0, s = 0;
+      if (max !== min) {
+        const dl = max - min;
+        s = l > 0.5 ? dl / (2 - max - min) : dl / (max + min);
+        if (max === r) hh = (g - b) / dl + (g < b ? 6 : 0);
+        else if (max === g) hh = (b - r) / dl + 2;
+        else hh = (r - g) / dl + 4;
+        hh *= 60;
+      }
+      if (s < 0.14 || l > 0.9) continue;
+      let t = null;
+      if (hh >= 170 && hh <= 280) t = sea;
+      else if (hh >= 25 && hh <= 70) t = desert;
+      else if (hh > 70 && hh < 170) t = grass;
+      if (!t) continue;
+      const k = 0.95 + (l - 0.5) * 0.25;
+      d[i] = Math.min(255, t[0] * k);
+      d[i + 1] = Math.min(255, t[1] * k);
+      d[i + 2] = Math.min(255, t[2] * k);
+    }
+    ctx.putImageData(im, 0, 0);
+    for (let i = 0; i < 2600; i++) {
+      ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.035)';
       ctx.fillRect(Math.random() * w, Math.random() * h, 2, 2);
     }
     const tex = new THREE.CanvasTexture(c);
@@ -185,7 +211,6 @@ if (host) {
     add(box, red, -0.84, 0.025, -0.05, 0.08, 0.02, 0.2);
     add(box, red, 0.84, 0.025, -0.05, 0.08, 0.02, 0.2);
     g.userData.prop = add(box, dark, 0, 0, -0.65, 0.42, 0.025, 0.035);
-    g.rotation.y = Math.PI;
     g.scale.setScalar(0.18);
     return g;
   }
