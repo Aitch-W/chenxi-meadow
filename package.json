@@ -1,1 +1,1 @@
-{"name":"chenxi-meadow","private":true,"type":"module","scripts":{"dev":"node server.mjs","check":"node --check dist/scene.js"}}
+{"name":"chenxi-meadow","private":true,"type":"module","scripts":{"dev":"node server.mjs","check":"node --check dist/scene.js","test:terrain":"node tests/terrain-performance.mjs","test:cloud":"node tests/cloud-transition.mjs"}}

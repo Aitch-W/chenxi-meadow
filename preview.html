@@ -206,9 +206,9 @@ footer i{display:inline-block;width:6px;height:6px;border-radius:50%;background:
 /* ===== 云层转场（由滚动进度驱动） ===== */
 #cloud-cover{
   position:fixed;inset:0;z-index:40;pointer-events:none;overflow:hidden;
-  opacity:0;transform:translateY(106%) scale(1);
+  opacity:0;transform:translate3d(0,106%,0) scale(1);
   transform-origin:50% 60%;
-  will-change:opacity,transform,filter;
+  contain:layout paint;
   background:linear-gradient(0deg,#edefe8 0%,#f4f5f0 50%,#fbfbf8 100%);
 }
 .puff{
@@ -279,6 +279,41 @@ body.at-contact .next-page-hint{opacity:0;visibility:hidden;pointer-events:none}
 #experience::before{content:'';position:absolute;top:0;left:0;width:var(--side-w);height:100vh;height:100svh;background:linear-gradient(180deg,#f7f5ee 0%,#eff1e7 100%);opacity:0;pointer-events:none;transition:opacity .55s cubic-bezier(.22,.9,.24,1)}
 body.at-contact #experience::before{opacity:1}
 @media(prefers-reduced-motion:reduce){#experience::before{transition:none}}
+
+/* ===== Senate 子域作品卡 ===== */
+.work-card{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:#1b2418;border:1px solid rgba(60,80,40,.14);box-shadow:0 12px 30px rgba(40,50,30,.09);isolation:isolate}
+.work-card img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 38%;transition:transform .9s cubic-bezier(.2,.7,.2,1),filter .5s}
+.work-card:hover img,.work-card:focus-within img{transform:scale(1.045);filter:saturate(.55) brightness(.38) blur(.6px)}
+.work-rest{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;flex-direction:column;gap:3px;padding:38px 18px 14px;color:#f7f4e8;background:linear-gradient(180deg,transparent,rgba(15,24,13,.86));transition:opacity .45s;pointer-events:none}
+.work-rest b{font:500 17px/1.2 var(--serif);letter-spacing:1px}
+.work-rest small{font:9px var(--serif);letter-spacing:2px;color:#d8dfc5}
+.work-detail{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:flex-end;padding:20px 20px 17px;color:#f2f2e6;background:linear-gradient(180deg,rgba(16,28,14,.52) 0%,rgba(16,28,14,.9) 32%,#101d0e 58%,#0d180c 100%);opacity:0;transform:translateY(12px);transition:opacity .45s,transform .45s;pointer-events:none}
+.work-card:hover .work-detail,.work-card:focus-within .work-detail{opacity:1;transform:none}
+.work-card:hover .work-rest,.work-card:focus-within .work-rest{opacity:0}
+.work-kicker{font:9px var(--serif);letter-spacing:2.5px;color:#bbc9a3;margin:0 0 5px}
+.work-detail h3{font:500 23px/1.1 var(--serif);letter-spacing:1px;color:#fffdf2;margin:0}
+.work-sub{font:9px var(--serif);letter-spacing:2px;color:#d9cfa6;margin:4px 0 8px}
+.work-desc{font:11px/1.75 var(--serif);letter-spacing:.4px;color:#dfe5d0;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.work-tags{display:flex;flex-wrap:wrap;gap:5px;list-style:none;margin:9px 0 0;padding:0}
+.work-tags li{font:8px var(--serif);letter-spacing:1px;color:#cdd8b7;border:1px solid rgba(205,216,183,.34);padding:3px 6px}
+.work-domain{font:8px var(--serif);letter-spacing:1px;color:#c9a95e;margin:8px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.work-hit{position:absolute;inset:0;z-index:5;border-radius:inherit;color:transparent;text-decoration:none}
+.work-hit:focus-visible{outline:2px solid #f2e9c9;outline-offset:-5px}
+@media(hover:none){.work-detail{display:none}.work-rest{opacity:1}}
+@media(max-width:900px){.work-rest b{font-size:15px}.work-detail{padding:16px}.work-detail h3{font-size:21px}.work-desc{-webkit-line-clamp:2}}
+
+@media(max-width:600px){
+  :root{--side-w:74px}
+  .sidebar{padding:18px 8px}
+  .side-logo{top:20px;left:12px;font-size:11px;letter-spacing:1px}
+  .sidebar a{font-size:10px;letter-spacing:1px;padding:8px 4px}
+  .page-body{padding:28px 14px}
+  .page-body h2{font-size:34px}
+  .works-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .work-rest{padding:24px 10px 9px}
+  .work-rest b{font-size:12px;letter-spacing:.5px}
+  .work-rest small{font-size:7px;letter-spacing:1px}
+}
 </style>
 </head>
 <body>
@@ -310,8 +345,8 @@ body.at-contact #experience::before{opacity:1}
       <p class="description">在代码与想象之间<br>探索自己的方向</p>
       <p class="subtext">这里记录我的学习、创作，<br>以及一路遇见的风景。</p>
       <div class="interests" aria-label="我的兴趣"><span>编程</span><span>AI 探索</span><span>创作</span></div>
-      <button class="flight" id="explore">一起乘风<span aria-hidden="true">↗</span></button>
-      <p class="hint" id="hint" aria-live="polite">移动鼠标，和小飞机一起兜兜风</p>
+      <button class="flight" id="view-works" aria-label="查看作品集">查看作品集<span aria-hidden="true">↓</span></button>
+      <p class="hint" id="hint" aria-live="polite">移动鼠标，和小飞机一起兜兜风 · 卡顿可点右上角「暂停飞行」</p>
     </div>
     <div id="loading" role="status">风景正在展开…</div>
     <footer>
@@ -326,7 +361,20 @@ body.at-contact #experience::before{opacity:1}
       <p class="eyebrow"><i></i> SELECTED WORKS</p>
       <h2>作品集</h2>
       <div class="works-grid">
-        <article class="work-slot"><span class="ph">作品 · 空位 01</span></article>
+        <!-- 已部署：https://senate.aitchwcx.me/；如需改地址，直接改 data-senate-url -->
+        <article class="work-card senate-card" data-senate-url="https://senate.aitchwcx.me/" style="position:relative;display:block;width:100%;aspect-ratio:4/3;overflow:hidden;border-radius:10px;background:#1b2418">
+          <img src="assets/senate-preview.jpg" alt="The Senate 元老院消费决策议会首页预览" loading="lazy" decoding="async" fetchpriority="low" width="960" height="720" style="display:block;width:100%;height:100%;object-fit:cover;object-position:center 38%">
+          <span class="work-rest"><b>The Senate</b><small>元老院消费决策议会</small></span>
+          <div class="work-detail">
+            <p class="work-kicker">INTERACTIVE · 2026</p>
+            <h3>The Senate</h3>
+            <p class="work-sub">元老院消费决策议会</p>
+            <p class="work-desc">把一件犹豫的商品交给 3 / 5 / 7 位先贤：逐条质询、独立表态、最终裁决。可接入 DeepSeek，让先贤真正开口。</p>
+            <ul class="work-tags"><li>交互叙事</li><li>DeepSeek</li><li>罗马主题</li></ul>
+            <p class="work-domain"><span data-senate-host>senate.…</span> · 打开子站 ↗</p>
+          </div>
+          <a class="work-hit" data-senate-link href="" target="_blank" rel="noopener" aria-label="打开 The Senate 子站"></a>
+        </article>
         <article class="work-slot"><span class="ph">作品 · 空位 02</span></article>
         <article class="work-slot"><span class="ph">作品 · 空位 03</span></article>
         <article class="work-slot"><span class="ph">作品 · 空位 04</span></article>
@@ -343,9 +391,9 @@ body.at-contact #experience::before{opacity:1}
         <p class="eyebrow"><i></i> EXPERIENCE</p>
         <h2>实习经历</h2>
         <div class="exp-item">
-          <h3>待定 · 实习岗位</h3>
-          <p class="exp-meta">公司待定 · 时间待定</p>
-          <p class="exp-desc">这里会放实习经历的详细内容。等有了具体的实习经历，我再补上。</p>
+          <h3>还没有</h3>
+          <p class="exp-meta">简历这一栏还空着</p>
+          <p class="exp-desc">还没有实习经历——不过，你想做我的第一位天使投资人吗？</p>
         </div>
       </div>
     </div>
@@ -54940,15 +54988,19 @@ if ( typeof window !== 'undefined' ) {
 ;return {ACESFilmicToneMapping,AddEquation,AddOperation,AdditiveAnimationBlendMode,AdditiveBlending,AgXToneMapping,AlphaFormat,AlwaysCompare,AlwaysDepth,AlwaysStencilFunc,AmbientLight,AnimationAction,AnimationClip,AnimationLoader,AnimationMixer,AnimationObjectGroup,AnimationUtils,ArcCurve,ArrayCamera,ArrowHelper,AttachedBindMode,Audio,AudioAnalyser,AudioContext,AudioListener,AudioLoader,AxesHelper,BackSide,BasicDepthPacking,BasicShadowMap,BatchedMesh,Bone,BooleanKeyframeTrack,Box2,Box3,Box3Helper,BoxGeometry,BoxHelper,BufferAttribute,BufferGeometry,BufferGeometryLoader,ByteType,Cache,Camera,CameraHelper,CanvasTexture,CapsuleGeometry,CatmullRomCurve3,CineonToneMapping,CircleGeometry,ClampToEdgeWrapping,Clock,Color,ColorKeyframeTrack,ColorManagement,CompressedArrayTexture,CompressedCubeTexture,CompressedTexture,CompressedTextureLoader,ConeGeometry,ConstantAlphaFactor,ConstantColorFactor,Controls,CubeCamera,CubeReflectionMapping,CubeRefractionMapping,CubeTexture,CubeTextureLoader,CubeUVReflectionMapping,CubicBezierCurve,CubicBezierCurve3,CubicInterpolant,CullFaceBack,CullFaceFront,CullFaceFrontBack,CullFaceNone,Curve,CurvePath,CustomBlending,CustomToneMapping,CylinderGeometry,Cylindrical,Data3DTexture,DataArrayTexture,DataTexture,DataTextureLoader,DataUtils,DecrementStencilOp,DecrementWrapStencilOp,DefaultLoadingManager,DepthFormat,DepthStencilFormat,DepthTexture,DetachedBindMode,DirectionalLight,DirectionalLightHelper,DiscreteInterpolant,DodecahedronGeometry,DoubleSide,DstAlphaFactor,DstColorFactor,DynamicCopyUsage,DynamicDrawUsage,DynamicReadUsage,EdgesGeometry,EllipseCurve,EqualCompare,EqualDepth,EqualStencilFunc,EquirectangularReflectionMapping,EquirectangularRefractionMapping,Euler,EventDispatcher,ExtrudeGeometry,FileLoader,Float16BufferAttribute,Float32BufferAttribute,FloatType,Fog,FogExp2,FramebufferTexture,FrontSide,Frustum,GLBufferAttribute,GLSL1,GLSL3,GreaterCompare,GreaterDepth,GreaterEqualCompare,GreaterEqualDepth,GreaterEqualStencilFunc,GreaterStencilFunc,GridHelper,Group,HalfFloatType,HemisphereLight,HemisphereLightHelper,IcosahedronGeometry,ImageBitmapLoader,ImageLoader,ImageUtils,IncrementStencilOp,IncrementWrapStencilOp,InstancedBufferAttribute,InstancedBufferGeometry,InstancedInterleavedBuffer,InstancedMesh,Int16BufferAttribute,Int32BufferAttribute,Int8BufferAttribute,IntType,InterleavedBuffer,InterleavedBufferAttribute,Interpolant,InterpolateDiscrete,InterpolateLinear,InterpolateSmooth,InvertStencilOp,KeepStencilOp,KeyframeTrack,LOD,LatheGeometry,Layers,LessCompare,LessDepth,LessEqualCompare,LessEqualDepth,LessEqualStencilFunc,LessStencilFunc,Light,LightProbe,Line,Line3,LineBasicMaterial,LineCurve,LineCurve3,LineDashedMaterial,LineLoop,LineSegments,LinearFilter,LinearInterpolant,LinearMipMapLinearFilter,LinearMipMapNearestFilter,LinearMipmapLinearFilter,LinearMipmapNearestFilter,LinearSRGBColorSpace,LinearToneMapping,LinearTransfer,Loader,LoaderUtils,LoadingManager,LoopOnce,LoopPingPong,LoopRepeat,LuminanceAlphaFormat,LuminanceFormat,MOUSE,Material,MaterialLoader,MathUtils,Matrix2,Matrix3,Matrix4,MaxEquation,Mesh,MeshBasicMaterial,MeshDepthMaterial,MeshDistanceMaterial,MeshLambertMaterial,MeshMatcapMaterial,MeshNormalMaterial,MeshPhongMaterial,MeshPhysicalMaterial,MeshStandardMaterial,MeshToonMaterial,MinEquation,MirroredRepeatWrapping,MixOperation,MultiplyBlending,MultiplyOperation,NearestFilter,NearestMipMapLinearFilter,NearestMipMapNearestFilter,NearestMipmapLinearFilter,NearestMipmapNearestFilter,NeutralToneMapping,NeverCompare,NeverDepth,NeverStencilFunc,NoBlending,NoColorSpace,NoToneMapping,NormalAnimationBlendMode,NormalBlending,NotEqualCompare,NotEqualDepth,NotEqualStencilFunc,NumberKeyframeTrack,Object3D,ObjectLoader,ObjectSpaceNormalMap,OctahedronGeometry,OneFactor,OneMinusConstantAlphaFactor,OneMinusConstantColorFactor,OneMinusDstAlphaFactor,OneMinusDstColorFactor,OneMinusSrcAlphaFactor,OneMinusSrcColorFactor,OrthographicCamera,PCFShadowMap,PCFSoftShadowMap,PMREMGenerator,Path,PerspectiveCamera,Plane,PlaneGeometry,PlaneHelper,PointLight,PointLightHelper,Points,PointsMaterial,PolarGridHelper,PolyhedronGeometry,PositionalAudio,PropertyBinding,PropertyMixer,QuadraticBezierCurve,QuadraticBezierCurve3,Quaternion,QuaternionKeyframeTrack,QuaternionLinearInterpolant,RED_GREEN_RGTC2_Format,RED_RGTC1_Format,REVISION,RGBADepthPacking,RGBAFormat,RGBAIntegerFormat,RGBA_ASTC_10x10_Format,RGBA_ASTC_10x5_Format,RGBA_ASTC_10x6_Format,RGBA_ASTC_10x8_Format,RGBA_ASTC_12x10_Format,RGBA_ASTC_12x12_Format,RGBA_ASTC_4x4_Format,RGBA_ASTC_5x4_Format,RGBA_ASTC_5x5_Format,RGBA_ASTC_6x5_Format,RGBA_ASTC_6x6_Format,RGBA_ASTC_8x5_Format,RGBA_ASTC_8x6_Format,RGBA_ASTC_8x8_Format,RGBA_BPTC_Format,RGBA_ETC2_EAC_Format,RGBA_PVRTC_2BPPV1_Format,RGBA_PVRTC_4BPPV1_Format,RGBA_S3TC_DXT1_Format,RGBA_S3TC_DXT3_Format,RGBA_S3TC_DXT5_Format,RGBDepthPacking,RGBFormat,RGBIntegerFormat,RGB_BPTC_SIGNED_Format,RGB_BPTC_UNSIGNED_Format,RGB_ETC1_Format,RGB_ETC2_Format,RGB_PVRTC_2BPPV1_Format,RGB_PVRTC_4BPPV1_Format,RGB_S3TC_DXT1_Format,RGDepthPacking,RGFormat,RGIntegerFormat,RawShaderMaterial,Ray,Raycaster,RectAreaLight,RedFormat,RedIntegerFormat,ReinhardToneMapping,RenderTarget,RepeatWrapping,ReplaceStencilOp,ReverseSubtractEquation,RingGeometry,SIGNED_RED_GREEN_RGTC2_Format,SIGNED_RED_RGTC1_Format,SRGBColorSpace,SRGBTransfer,Scene,ShaderChunk,ShaderLib,ShaderMaterial,ShadowMaterial,Shape,ShapeGeometry,ShapePath,ShapeUtils,ShortType,Skeleton,SkeletonHelper,SkinnedMesh,Source,Sphere,SphereGeometry,Spherical,SphericalHarmonics3,SplineCurve,SpotLight,SpotLightHelper,Sprite,SpriteMaterial,SrcAlphaFactor,SrcAlphaSaturateFactor,SrcColorFactor,StaticCopyUsage,StaticDrawUsage,StaticReadUsage,StereoCamera,StreamCopyUsage,StreamDrawUsage,StreamReadUsage,StringKeyframeTrack,SubtractEquation,SubtractiveBlending,TOUCH,TangentSpaceNormalMap,TetrahedronGeometry,Texture,TextureLoader,TextureUtils,TorusGeometry,TorusKnotGeometry,Triangle,TriangleFanDrawMode,TriangleStripDrawMode,TrianglesDrawMode,TubeGeometry,UVMapping,Uint16BufferAttribute,Uint32BufferAttribute,Uint8BufferAttribute,Uint8ClampedBufferAttribute,Uniform,UniformsGroup,UniformsLib,UniformsUtils,UnsignedByteType,UnsignedInt248Type,UnsignedInt5999Type,UnsignedIntType,UnsignedShort4444Type,UnsignedShort5551Type,UnsignedShortType,VSMShadowMap,Vector2,Vector3,Vector4,VectorKeyframeTrack,VideoTexture,WebGL3DRenderTarget,WebGLArrayRenderTarget,WebGLCoordinateSystem,WebGLCubeRenderTarget,WebGLMultipleRenderTargets,WebGLRenderTarget,WebGLRenderer,WebGLUtils,WebGPUCoordinateSystem,WireframeGeometry,WrapAroundEnding,ZeroCurvatureEnding,ZeroFactor,ZeroSlopeEnding,ZeroStencilOp,createCanvasElement};})();
 try{
 
+// Only phones/reduced-motion use the lighter scene; desktop keeps the original 60fps look.
+const lowPower=innerWidth<900&&matchMedia('(any-pointer:coarse)').matches;
+const dprCap=lowPower?1:1.5;
+
 // Terrain is below the biography; the second transparent renderer carries clouds and airplane above it.
 const scene=new THREE.Scene(),sky=new THREE.Scene(),planeScene=new THREE.Scene();scene.background=new THREE.Color('#b5bb76');
-const renderer=new THREE.WebGLRenderer({antialias:true}),air=new THREE.WebGLRenderer({antialias:true,alpha:true}),top=new THREE.WebGLRenderer({antialias:true,alpha:true});
-for(const r of [renderer,air,top]){r.setPixelRatio(Math.min(devicePixelRatio,1.5));r.outputColorSpace=THREE.SRGBColorSpace;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.0;}
-renderer.shadowMap.enabled=true;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const renderer=new THREE.WebGLRenderer({antialias:!lowPower}),air=new THREE.WebGLRenderer({antialias:!lowPower,alpha:true}),top=new THREE.WebGLRenderer({antialias:!lowPower,alpha:true});
+for(const r of [renderer,air,top]){r.setPixelRatio(Math.min(devicePixelRatio,dprCap));r.outputColorSpace=THREE.SRGBColorSpace;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.0;}
+renderer.shadowMap.enabled=!lowPower;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.type=THREE.PCFShadowMap;
 const atmosphere=document.querySelector('#atmosphere');document.body.appendChild(atmosphere);
 document.querySelector('#scene').appendChild(renderer.domElement);document.querySelector('#atmosphere').appendChild(air.domElement);document.querySelector('#plane-layer').appendChild(top.domElement);
 const camera=new THREE.OrthographicCamera(-40,40,24,-24,.1,180);camera.position.set(0,65,20);camera.lookAt(0,0,0);
-for(const s of [scene,sky,planeScene]){s.add(new THREE.HemisphereLight('#fff1d7','#758263',2.0));const light=new THREE.DirectionalLight('#fff0d5',1.5);light.position.set(-23,45,-22);if(s===scene){light.castShadow=true;light.shadow.mapSize.set(2048,2048);Object.assign(light.shadow.camera,{left:-65,right:65,top:85,bottom:-85,near:1,far:140});light.shadow.normalBias=.045;light.shadow.bias=-.0001;light.shadow.radius=3;}s.add(light)}
+for(const s of [scene,sky,planeScene]){s.add(new THREE.HemisphereLight('#fff1d7','#758263',2.0));const light=new THREE.DirectionalLight('#fff0d5',1.5);light.position.set(-23,45,-22);if(s===scene){light.castShadow=true;light.shadow.mapSize.set(lowPower?512:2048,lowPower?512:2048);Object.assign(light.shadow.camera,{left:-65,right:65,top:85,bottom:-85,near:1,far:140});light.shadow.normalBias=.10;light.shadow.bias=-.0004;light.shadow.radius=1.6;}s.add(light)}
 let seed=465;const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};const rand=(a,b)=>a+(b-a)*random();
 const material=(color,extra={})=>new THREE.MeshStandardMaterial({color,roughness:1,metalness:0,...extra});
 const sand=material('#dbc18b'),pathMat=material('#dfb77b'),trunkMat=material('#71603c'),rockMat=material('#d5d7c5'),cream=material('#fff9e8');
@@ -54958,20 +55010,20 @@ const texCanvas=document.createElement('canvas');texCanvas.width=texCanvas.heigh
 for(let i=0;i<1800;i++){const x=rand(0,2048),y=rand(0,2048),r=rand(10,100);const g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,i%2?'#b2d63830':'#5e971b20');g.addColorStop(1,'#91bd2100');ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2)}
 // Broken, overlapping pigment marks: the grain travels with the land.
 const pigments=['#d6cf91','#bfc080','#8eaa71','#789570','#e4d5a0','#a4b782'];
-for(let i=0;i<26000;i++){
+for(let i=0;i<(lowPower?12000:26000);i++){
  const x=rand(0,2048),y=rand(0,2048),w=rand(5,27),h=rand(2,9);
  ctx.save();ctx.translate(x,y);ctx.rotate(rand(-.65,.65));ctx.globalAlpha=rand(.12,.42);
  ctx.fillStyle=pigments[i%pigments.length];ctx.fillRect(-w/2,-h/2,w,h);
  ctx.globalAlpha=.16;ctx.fillStyle='#f5e6bc';ctx.fillRect(-w/2,-h/2,w,1);ctx.restore();
 }
-for(let i=0;i<95000;i++){ctx.fillStyle=i%2?'#fff4ce26':'#485d3920';ctx.fillRect(rand(0,2048),rand(0,2048),rand(.6,2),rand(.6,2))}
+for(let i=0;i<(lowPower?35000:95000);i++){ctx.fillStyle=i%2?'#fff4ce26':'#485d3920';ctx.fillRect(rand(0,2048),rand(0,2048),rand(.6,2),rand(.6,2))}
 const texture=new THREE.CanvasTexture(texCanvas);texture.colorSpace=THREE.SRGBColorSpace;texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(3,2);texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());const grass=material('#ffffff',{map:texture});
 // 沿飞行方向连续变化地貌配色（草原→蓝金田野→赤土→碧海），像第一页一样一直往前飞
 const LENGTH=100;const river=z=>-12+5.2*Math.sin(z/LENGTH*Math.PI*2)+.85*Math.sin(z/LENGTH*Math.PI*4+.5);const road=z=>-24+1.8*Math.sin(z/LENGTH*Math.PI*2+.9);
 function strip(fn,width,y,m,p){const vs=[],uv=[],ix=[];for(let i=0;i<=600;i++){const z=-50+i/6;const w=width*(1+.045*Math.sin(z*Math.PI*24/100)+.025*Math.sin(z*Math.PI*76/100));vs.push(fn(z)-w/2,y,z,fn(z)+w/2,y,z);uv.push(0,z,1,z);if(i<600){const k=i*2;ix.push(k,k+2,k+1,k+1,k+2,k+3)}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vs,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(ix);g.computeVertexNormals();const o=new THREE.Mesh(g,m);o.receiveShadow=true;p.add(o);return o}
 const water=new THREE.ShaderMaterial({uniforms:{time:{value:0}},vertexShader:`varying vec2 vUv; void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`varying vec2 vUv;uniform float time;void main(){float edge=abs(vUv.x-.5)*2.;float flow=sin(vUv.y*4.-time*2.+sin(vUv.x*42.+vUv.y*1.3))*sin(vUv.x*78.-vUv.y*3.+time);float wave=pow(max(0.,flow),14.);float current=sin(vUv.x*21.+sin(vUv.y*.8-time*.5))*0.5+0.5;vec3 col=mix(vec3(.025,.39,.66),vec3(.045,.66,.79),current*.5+edge*.5);col=mix(col,vec3(.32,.83,.84),smoothstep(.72,1.,edge));col+=vec3(.35,.45,.4)*wave*.65;float foam=pow(edge,20.)*(.5+.5*sin(vUv.y*18.+time));col+=foam*.23;gl_FragColor=vec4(col,1.);}`});
 function forest(p,tileIndex=0){const homes=settlementPlan(tileIndex);const leaves=new THREE.InstancedMesh(smallSphere,material('#ffffff'),18000);const stems=new THREE.InstancedMesh(new THREE.CylinderGeometry(.07,.12,1,5),trunkMat,700);let count=0,n=0;const d=new THREE.Object3D(),color=new THREE.Color();
-function tree(x,z,s){const region=biome(tileIndex,z);if(homes.some(h=>Math.abs(x-h.x)<1.5&&Math.abs(z-h.z)<1.5))return;if(n>=690||region>255||seaAt(region)>.01)return;if(region>175)s*=.72;d.position.set(x,.65*s,z);d.scale.set(s,1.3*s,s);d.rotation.set(0,0,0);d.updateMatrix();stems.setMatrixAt(n++,d.matrix);for(let j=0;j<26;j++){const a=j*2.39996,r=Math.sqrt(j/26)*.85*s;d.position.set(x+Math.cos(a)*r,1.2*s+Math.sqrt(Math.max(0,1-r*r/(s*s)))*.65*s+rand(-.2,.2)*s,z+Math.sin(a)*r);const size=rand(.23,.45)*s;d.scale.set(size,rand(.8,1.3)*size,size);d.rotation.set(rand(0,3),rand(0,3),0);d.updateMatrix();leaves.setMatrixAt(count,d.matrix);if(region>175){color.setHSL(rand(.25,.30),rand(.48,.66),rand(.18,.29));color.multiply(new THREE.Color('#496e29'));}else {color.setHSL(rand(.22,.29),rand(.48,.66),rand(.24,.43));color.multiply(new THREE.Color('#598f2e'));}leaves.setColorAt(count++,color)}}
+function tree(x,z,s){const region=biome(tileIndex,z);if(homes.some(h=>Math.abs(x-h.x)<1.5&&Math.abs(z-h.z)<1.5))return;if(n>=690||region>255||seaAt(region)>.01)return;if(region>175)s*=.72;d.position.set(x,.65*s,z);d.scale.set(s,1.3*s,s);d.rotation.set(0,0,0);d.updateMatrix();stems.setMatrixAt(n++,d.matrix);for(let j=0,L=lowPower?12:26;j<L;j++){const a=j*2.39996,r=Math.sqrt(j/L)*.85*s;d.position.set(x+Math.cos(a)*r,1.2*s+Math.sqrt(Math.max(0,1-r*r/(s*s)))*.65*s+rand(-.2,.2)*s,z+Math.sin(a)*r);const size=rand(.23,.45)*s;d.scale.set(size,rand(.8,1.3)*size,size);d.rotation.set(rand(0,3),rand(0,3),0);d.updateMatrix();leaves.setMatrixAt(count,d.matrix);if(region>175){color.setHSL(rand(.25,.30),rand(.48,.66),rand(.18,.29));color.multiply(new THREE.Color('#496e29'));}else {color.setHSL(rand(.22,.29),rand(.48,.66),rand(.24,.43));color.multiply(new THREE.Color('#598f2e'));}leaves.setColorAt(count++,color)}}
 for(let i=0;i<430;i++){let x=rand(-55,55),z=rand(-50,50);if(Math.abs(x-river(z))<3.7||Math.abs(x-road(z))<1.3)continue;if(x>5&&x<28&&Math.abs(z)<17&&random()<.93)continue;if(x>4&&random()<.45)x=rand(27,48);if(biome(tileIndex,z)>80&&biome(tileIndex,z)<175)continue;tree(x,z,rand(.35,.95))}
 for(let i=0;i<125;i++){const z=rand(-50,50);tree(river(z)+(random()>.5?1:-1)*rand(3.3,4.7),z,rand(.18,.5))}for(let j=0;j<100;j++){const z=-49+j*.98;if(biome(tileIndex,z)>90&&biome(tileIndex,z)<170)tree(road(z)+(j%2?1:-1)*1.5,z,.4)}leaves.count=count;stems.count=n;leaves.castShadow=leaves.receiveShadow=true;stems.castShadow=true;p.add(leaves,stems)}
 const roofMat=material('#a65337'),wallMat=material('#f0dfbb'),windowMat=material('#6d9090'),doorMat=material('#574b35');
@@ -55099,7 +55151,9 @@ function sandstone(parent,x,z,size,height){const g=new THREE.Group();g.position.
 }
 function makeRouteTile(i){
  const p=new THREE.Group();scene.add(p);
- const geo=new THREE.PlaneGeometry(140,100,140,200);geo.rotateX(-Math.PI/2);const pos=geo.attributes.position,colors=[];
+ // This surface is flat and its biome color varies only along z. Extra x columns
+ // repeat identical interpolation and UVs; retain all 200 longitudinal samples.
+ const geo=new THREE.PlaneGeometry(140,100,1,200);geo.rotateX(-Math.PI/2);const pos=geo.attributes.position,colors=[];
  for(let k=0;k<pos.count;k++){const x=pos.getX(k),z=pos.getZ(k),c=groundColor(biome(i,z),x,z);colors.push(c.r,c.g,c.b)}geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));
  const land=new THREE.Mesh(geo,material('#ffffff',{map:texture,vertexColors:true}));land.position.y=-.04;land.receiveShadow=true;p.add(land);
  function ribbon(fn,width,y,mat){const vs=[],uv=[],ix=[];for(let k=0;k<=600;k++){let z=-50+k/6,d=biome(i,z),w=width(d,z);const mud=dryAt(d)*(.16*Math.sin(z*5.7)+.10*Math.sin(z*13.1));vs.push(fn(z)-w/2-mud,y,z,fn(z)+w/2+mud*.8,y,z);uv.push(0,z,1,z);if(k<600){let n=k*2;ix.push(n,n+2,n+1,n+1,n+2,n+3)}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vs,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(ix);g.computeVertexNormals();const m=new THREE.Mesh(g,mat);m.receiveShadow=true;p.add(m)}
@@ -55170,16 +55224,40 @@ function makeRouteTile(i){
  return p;
 }
 const cars=[],windRotors=[];
-// Batch static opaque details per material, retaining movable cars and windmill rotors.
-function batchTerrain(tile){
+// Keep batches spatially bounded: a whole-route batch defeats frustum culling.
+// Geometry, vertex colors and instance transforms are retained at full detail.
+const TERRAIN_CELL=20;
+function partitionInstances(tile){
+ const sources=[];tile.traverse(o=>{if(o.isInstancedMesh)sources.push(o)});
+ const matrix=new THREE.Matrix4(),color=new THREE.Color();
+ for(const source of sources){
+  const cells=new Map();
+  for(let i=0;i<source.count;i++){
+   source.getMatrixAt(i,matrix);
+   const key=`${Math.floor(matrix.elements[12]/TERRAIN_CELL)}/${Math.floor(matrix.elements[14]/TERRAIN_CELL)}`;
+   if(!cells.has(key))cells.set(key,[]);cells.get(key).push(i);
+  }
+  for(const indices of cells.values()){
+   const chunk=new THREE.InstancedMesh(source.geometry,source.material,indices.length);
+   chunk.position.copy(source.position);chunk.quaternion.copy(source.quaternion);chunk.scale.copy(source.scale);
+   chunk.castShadow=source.castShadow;chunk.receiveShadow=source.receiveShadow;
+   indices.forEach((index,i)=>{source.getMatrixAt(index,matrix);chunk.setMatrixAt(i,matrix);if(source.instanceColor){source.getColorAt(index,color);chunk.setColorAt(i,color)}});
+   chunk.computeBoundingBox();chunk.computeBoundingSphere();source.parent.add(chunk);
+  }
+  source.removeFromParent();source.dispose();
+ }
+}
+function batchTerrain(tile,preserveMoving=true){
  tile.updateMatrixWorld(true);const inverse=new THREE.Matrix4().copy(tile.matrixWorld).invert(),matrix=new THREE.Matrix4();
  const moving=new Set();for(const {car} of cars)car.traverse(o=>moving.add(o));for(const rotor of windRotors)rotor.traverse(o=>moving.add(o));
- const groups=new Map();
+ const groups=new Map(),center=new THREE.Vector3();
  tile.traverse(mesh=>{
-  if(!mesh.isMesh||mesh.isInstancedMesh||moving.has(mesh))return;
+  if(!mesh.isMesh||mesh.isInstancedMesh||(preserveMoving&&moving.has(mesh)))return;
   const m=mesh.material;
   if(!m.isMeshStandardMaterial||m.transparent||m.vertexColors||Object.hasOwn(m,'onBeforeCompile'))return;
-  const key=[m.color.getHex(),m.roughness,m.metalness,m.side,m.map?.uuid||'',mesh.castShadow,mesh.receiveShadow].join('/');
+  if(!mesh.geometry.boundingBox)mesh.geometry.computeBoundingBox();
+  matrix.multiplyMatrices(inverse,mesh.matrixWorld);mesh.geometry.boundingBox.getCenter(center).applyMatrix4(matrix);
+  const key=[preserveMoving?Math.floor(center.x/TERRAIN_CELL):0,preserveMoving?Math.floor(center.z/TERRAIN_CELL):0,m.roughness,m.metalness,m.side,m.map?.uuid||'',mesh.castShadow,mesh.receiveShadow].join('/');
   if(!groups.has(key))groups.set(key,[]);groups.get(key).push(mesh);
  });
  let before=0,after=0;
@@ -55187,16 +55265,44 @@ function batchTerrain(tile){
   if(meshes.length<3)continue;
   const parts=[];let count=0;
   for(const mesh of meshes){const g=mesh.geometry.index?mesh.geometry.toNonIndexed():mesh.geometry.clone();matrix.multiplyMatrices(inverse,mesh.matrixWorld);g.applyMatrix4(matrix);if(!g.attributes.normal)g.computeVertexNormals();parts.push(g);count+=g.attributes.position.count;}
-  const positions=new Float32Array(count*3),normals=new Float32Array(count*3),uv=new Float32Array(count*2);let offset=0;
-  for(const g of parts){positions.set(g.attributes.position.array,offset*3);normals.set(g.attributes.normal.array,offset*3);if(g.attributes.uv)uv.set(g.attributes.uv.array,offset*2);offset+=g.attributes.position.count;g.dispose();}
-  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.BufferAttribute(positions,3));geometry.setAttribute('normal',new THREE.BufferAttribute(normals,3));geometry.setAttribute('uv',new THREE.BufferAttribute(uv,2));geometry.computeBoundingSphere();
-  const combined=new THREE.Mesh(geometry,meshes[0].material);combined.castShadow=meshes[0].castShadow;combined.receiveShadow=meshes[0].receiveShadow;
+  const positions=new Float32Array(count*3),normals=new Float32Array(count*3),uv=new Float32Array(count*2),colors=new Float32Array(count*3);let offset=0;
+  for(let i=0;i<parts.length;i++){const g=parts[i],color=meshes[i].material.color;positions.set(g.attributes.position.array,offset*3);normals.set(g.attributes.normal.array,offset*3);if(g.attributes.uv)uv.set(g.attributes.uv.array,offset*2);for(let j=offset;j<offset+g.attributes.position.count;j++){colors[j*3]=color.r;colors[j*3+1]=color.g;colors[j*3+2]=color.b;}offset+=g.attributes.position.count;g.dispose();}
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.BufferAttribute(positions,3));geometry.setAttribute('normal',new THREE.BufferAttribute(normals,3));geometry.setAttribute('uv',new THREE.BufferAttribute(uv,2));geometry.setAttribute('color',new THREE.BufferAttribute(colors,3));geometry.computeBoundingSphere();
+  // Linear vertex colors preserve each original color without one draw per pigment.
+  const batchMaterial=meshes[0].material.clone();batchMaterial.color.setHex(0xffffff);batchMaterial.vertexColors=true;
+  const combined=new THREE.Mesh(geometry,batchMaterial);combined.castShadow=meshes[0].castShadow;combined.receiveShadow=meshes[0].receiveShadow;
   for(const mesh of meshes)mesh.removeFromParent();tile.add(combined);before+=meshes.length;after++;
  }
  return {before,after};
 }
 const tiles=[0,1,2,3].map(makeRouteTile);
-const batchStats=tiles.map(batchTerrain);
+// Only flat ground-level surfaces receive depth-map shadows. Dense canopy lobes,
+// roof strips and masonry no longer shadow themselves as the shadow texel grid moves.
+function configureShadowReceivers(tile){
+ tile.updateMatrixWorld(true);const bounds=new THREE.Box3();
+ let receivers=0,casters=0;
+ tile.traverse(mesh=>{
+  if(!mesh.isMesh)return;
+  if(mesh.castShadow)casters++;
+  if(mesh.isInstancedMesh){mesh.receiveShadow=false;return;}
+  if(!mesh.geometry.boundingBox)mesh.geometry.computeBoundingBox();
+  bounds.copy(mesh.geometry.boundingBox).applyMatrix4(mesh.matrixWorld);
+  mesh.receiveShadow=bounds.max.y-bounds.min.y<.035&&bounds.max.y<.16;
+  if(mesh.receiveShadow)receivers++;
+ });return {receivers,casters};
+}
+const receiverStats=tiles.map(configureShadowReceivers);
+tiles.forEach(partitionInstances);
+const batchStats=tiles.map(tile=>batchTerrain(tile));
+// A rotor moves as one rigid object; its 57 pieces do not need 57 draw calls.
+const rotorBatchStats=windRotors.map(rotor=>batchTerrain(rotor,false));
+// Empty source groups no longer need walking every frame; static local matrices never change.
+const movingTerrain=new Set([...cars.map(({car})=>car),...windRotors]);
+function freezeTerrain(node,root=false){
+ for(const child of [...node.children]){freezeTerrain(child);if(child.isGroup&&!child.children.length&&!movingTerrain.has(child))child.removeFromParent();}
+ if(!root&&!movingTerrain.has(node)){node.updateMatrix();node.matrixAutoUpdate=false;}
+}
+tiles.forEach(tile=>freezeTerrain(tile,true));
 const plane=new THREE.Group();planeScene.add(plane);const white=material('#fafaf2',{roughness:1,metalness:0}),blue=material('#537882',{roughness:1}),dark=material('#4e5850');
 add(sphere,white,plane,0,0,0,.13,.11,.62);add(sphere,white,plane,0,-.005,-.05,1.02,.035,.15);add(sphere,white,plane,0,.03,.43,.36,.025,.09);add(box,white,plane,0,.12,.43,.035,.26,.21);add(sphere,blue,plane,0,.1,-.16,.09,.055,.19);const red=material('#b54531');add(box,red,plane,-.84,.025,-.05,.08,.02,.2);add(box,red,plane,.84,.025,-.05,.08,.02,.2);const prop=new THREE.Group();prop.position.z=-.65;plane.add(prop);add(box,dark,prop,0,0,0,.42,.025,.035);
 const shadowCanvas=document.createElement('canvas');shadowCanvas.width=shadowCanvas.height=128;const sc=shadowCanvas.getContext('2d'),sg=sc.createRadialGradient(64,64,1,64,64,63);sg.addColorStop(0,'rgba(34,55,17,.24)');sg.addColorStop(.5,'rgba(34,55,17,.17)');sg.addColorStop(1,'rgba(34,55,17,0)');sc.fillStyle=sg;sc.fillRect(0,0,128,128);const shadowTexture=new THREE.CanvasTexture(shadowCanvas);
@@ -55206,34 +55312,40 @@ float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(
 void main(){vec2 p=(v-.5)*2.;float n=noise(v*5.+time*.035)*.55+noise(v*13.-time*.02)*.3+noise(v*29.)*.15;float density=1.-smoothstep(.25,1.,length(p*vec2(.85,1.1))+.28*(n-.5));float a=density*alpha;gl_FragColor=vec4(mix(vec3(.83,.87,.86),vec3(1.),n*.55+.4),a);}`});
 const solidCloud=material('#ffffff',{roughness:1,transparent:true,depthWrite:false});
 const cloudLobes=[];
-const clouds=[];for(let i=0;i<15;i++){const c=new THREE.Group();const size=i%5===0?rand(3.0,3.8):rand(1.3,2.4);for(let j=0;j<13;j++){const a=j*2.399,r=Math.sqrt(j/13);const lobe=add(sphere,solidCloud.clone(),c,Math.cos(a)*r*1.5,rand(-.15,.3),Math.sin(a)*r,.85,.5,rand(.7,1.1));
+const clouds=[];for(let i=0,N=lowPower?8:15;i<N;i++){const c=new THREE.Group();const size=i%5===0?rand(3.0,3.8):rand(1.3,2.4);for(let j=0,M=lowPower?7:13;j<M;j++){const a=j*2.399,r=Math.sqrt(j/M);const lobe=add(sphere,solidCloud.clone(),c,Math.cos(a)*r*1.5,rand(-.15,.3),Math.sin(a)*r,.85,.5,rand(.7,1.1));
  const mistMaterial=cloudMat.clone();mistMaterial.uniforms.time=water.uniforms.time;mistMaterial.uniforms.alpha.value=0;
  const mist=new THREE.Mesh(new THREE.PlaneGeometry(2.1,1.6),mistMaterial);mist.quaternion.copy(camera.quaternion);c.add(mist);
  cloudLobes.push({lobe,mist,home:lobe.position.clone(),scale:lobe.scale.clone(),amount:0,phase:rand(0,6.28)});}c.scale.setScalar(size);c.position.set([-31,-8,21,40,-43,8,30,-19,48,15,-25,28,-5,38,-38][i],8.5,-78+i*12);sky.add(c);const sh=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:shadowTexture,transparent:true,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.scale.set(7*size,5*size,1);sh.position.y=.065;scene.add(sh);clouds.push({cloud:c,shadow:sh,speed:rand(.55,.9)})}
+// All cloud lobes share one draw call, with independent opacity for the existing dispersal.
+const cloudInstanceGeometry=sphere.clone();
+const cloudAlpha=new THREE.InstancedBufferAttribute(new Float32Array(cloudLobes.length).fill(1),1);cloudAlpha.setUsage(THREE.DynamicDrawUsage);
+cloudInstanceGeometry.setAttribute('cloudAlpha',cloudAlpha);
+const cloudInstanceMaterial=solidCloud.clone();
+cloudInstanceMaterial.onBeforeCompile=shader=>{
+ shader.vertexShader='attribute float cloudAlpha;varying float vCloudAlpha;\n'+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvCloudAlpha=cloudAlpha;');
+ shader.fragmentShader='varying float vCloudAlpha;\n'+shader.fragmentShader.replace('#include <opaque_fragment>','diffuseColor.a*=vCloudAlpha;\n#include <opaque_fragment>');
+};
+const cloudInstances=new THREE.InstancedMesh(cloudInstanceGeometry,cloudInstanceMaterial,cloudLobes.length);cloudInstances.instanceMatrix.setUsage(THREE.DynamicDrawUsage);cloudInstances.frustumCulled=false;sky.add(cloudInstances);
+const cloudInstanceMatrix=new THREE.Matrix4();
+for(const state of cloudLobes){state.lobe.visible=false;state.lobe.material.dispose();}
 const planeShadow=new THREE.Group();scene.add(planeShadow);const sm=new THREE.MeshBasicMaterial({color:'#34451c',transparent:true,opacity:.23,depthWrite:false});add(new THREE.PlaneGeometry(1.9,.19),sm,planeShadow,0,.08,0).rotation.x=-Math.PI/2;add(new THREE.PlaneGeometry(.16,1.2),sm,planeShadow,0,.08,0).rotation.x=-Math.PI/2;
-let paused=matchMedia('(prefers-reduced-motion: reduce)').matches,time=0,last=0,travel=0,boost=0,flightJump=null;
+let paused=matchMedia('(prefers-reduced-motion: reduce)').matches,time=0,last=0,travel=0;
 const pointer=new THREE.Vector2(-.38,0),target=new THREE.Vector3(-15,6,0),ray=new THREE.Raycaster(),flightLevel=new THREE.Plane(new THREE.Vector3(0,1,0),-6);
-const motion=document.querySelector('#motion');const sync=()=>{motion.textContent=paused?'继续飞行':'暂停飞行';motion.setAttribute('aria-pressed',String(paused))};sync();motion.onclick=()=>{paused=!paused;sync()};
+const motion=document.querySelector('#motion');const sync=()=>{motion.textContent=paused?'继续飞行':'暂停飞行';motion.setAttribute('aria-pressed',String(paused))};sync();motion.onclick=()=>{paused=!paused;tick.drawnPaused=false;sync()};
 window.addEventListener('pointermove',e=>{pointer.set(e.clientX/innerWidth*2-1,1-e.clientY/innerHeight*2);document.body.classList.add('piloting')});document.documentElement.addEventListener('pointerleave',()=>document.body.classList.remove('piloting'));
-window.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();pointer.x=THREE.MathUtils.clamp(pointer.x+(e.key==='ArrowRight'?.05:e.key==='ArrowLeft'?-.05:0),-.94,.94);pointer.y=THREE.MathUtils.clamp(pointer.y+(e.key==='ArrowUp'?.05:e.key==='ArrowDown'?-.05:0),-.9,.9)});document.querySelector('#explore').onclick=()=>{paused=false;const current=flightJump?flightJump.end:travel;const phase=((current%400)+400)%400;const stops=[120,220,335,420];const target=stops.find(v=>v>phase+8);flightJump={start:travel,end:current-phase+target,elapsed:0};sync()};
+window.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();pointer.x=THREE.MathUtils.clamp(pointer.x+(e.key==='ArrowRight'?.05:e.key==='ArrowLeft'?-.05:0),-.94,.94);pointer.y=THREE.MathUtils.clamp(pointer.y+(e.key==='ArrowUp'?.05:e.key==='ArrowDown'?-.05:0),-.9,.9)});
 const paintTarget=new THREE.WebGLRenderTarget(1,1);
 const paintScene=new THREE.Scene(),paintCamera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
-const paintMaterial=new THREE.ShaderMaterial({uniforms:{picture:{value:paintTarget.texture},resolution:{value:new THREE.Vector2(1,1)}},vertexShader:`varying vec2 v;void main(){v=uv;gl_Position=vec4(position.xy,0.,1.);}`,fragmentShader:`
-precision highp float;varying vec2 v;uniform sampler2D picture;uniform vec2 resolution;
+const paintMaterial=new THREE.ShaderMaterial({uniforms:{picture:{value:paintTarget.texture},resolution:{value:new THREE.Vector2(1,1)},brushStrength:{value:.28}},vertexShader:`varying vec2 v;void main(){v=uv;gl_Position=vec4(position.xy,0.,1.);}`,fragmentShader:`
+precision highp float;varying vec2 v;uniform sampler2D picture;uniform vec2 resolution;uniform float brushStrength;
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 void main(){
- vec3 best=vec3(0.);float low=1.e5;
- for(int q=0;q<4;q++){
-  vec2 direction=vec2(q<2?-1.:1.,(q==0||q==2)?-1.:1.);
-  vec3 mean=vec3(0.),square=vec3(0.);
-  for(int x=0;x<3;x++)for(int y=0;y<3;y++){
-   vec2 offset=vec2(float(x),float(y))*direction*1.65/resolution;
-   vec3 c=texture2D(picture,v+offset).rgb;mean+=c;square+=c*c;
-  }
-  mean/=9.;vec3 variance=abs(square/9.-mean*mean);float score=dot(variance,vec3(1.));
-  if(score<low){low=score;best=mean;}
- }
- vec3 original=texture2D(picture,v).rgb;best=mix(original,best,.78);
+ vec3 original=texture2D(picture,v).rgb;
+ vec2 pixel=1./resolution;
+ vec3 neighbors=texture2D(picture,v+vec2(pixel.x,0.)).rgb+texture2D(picture,v-vec2(pixel.x,0.)).rgb+texture2D(picture,v+vec2(0.,pixel.y)).rgb+texture2D(picture,v-vec2(0.,pixel.y)).rgb;
+ vec3 softened=(original*4.+neighbors)/8.;
+ float edge=clamp(length(original-neighbors*.25)*6.,0.,1.);
+ vec3 best=mix(original,softened,brushStrength*(1.-edge));
  float tooth=hash(floor(v*resolution))-.5;
  float weave=sin(v.x*resolution.x*2.1)*sin(v.y*resolution.y*2.3);
  best+=tooth*.032+weave*.006;gl_FragColor=vec4(best,1.);
@@ -55241,39 +55353,99 @@ void main(){
  #include <colorspace_fragment>
 }`});
 paintScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),paintMaterial));
-const pageContainer=document.querySelector('#pages'),aircraftScreen=new THREE.Vector3(),cloudScreen=new THREE.Vector3();
-let lastTerrainDraw=-Infinity,lastShadowDraw=-Infinity;
-function resize(){const w=innerWidth,h=innerHeight;for(const r of [renderer,air,top])r.setSize(w,h);paintTarget.setSize(Math.round(w*Math.min(renderer.getPixelRatio(),1.15)),Math.round(h*Math.min(renderer.getPixelRatio(),1.15)));paintMaterial.uniforms.resolution.value.set(paintTarget.width,paintTarget.height);const width=w<h?58:80;camera.left=-width/2;camera.right=width/2;camera.top=width*h/w/2;camera.bottom=-width*h/w/2;camera.updateProjectionMatrix()}window.addEventListener('resize',resize);resize();ray.setFromCamera(pointer,camera);ray.ray.intersectPlane(flightLevel,target);plane.position.copy(target);
-function tick(ms){requestAnimationFrame(tick);const dt=Math.min((ms-last)/1000,.04);last=ms;if(document.hidden)return;const homeVisible=pageContainer.scrollTop<innerHeight;
-if(!paused){time+=dt;boost=Math.max(0,boost-dt);if(flightJump){flightJump.elapsed+=dt;const t=Math.min(1,flightJump.elapsed/2.8);travel=THREE.MathUtils.lerp(flightJump.start,flightJump.end,t*t*(3-2*t));if(t===1)flightJump=null;}else travel+=dt*1.8;for(let i=0;i<tiles.length;i++)tiles[i].position.z=((travel-i*LENGTH+LENGTH*5.5)%(LENGTH*4))-LENGTH*1.5;water.uniforms.time.value=time;for(const rotor of windRotors)rotor.rotation.z+=dt*.32;for(const {car} of cars){const z=20*Math.sin(time*.06);car.position.set(road(z),0,z);car.rotation.y=Math.atan2(road(z+.05)-road(z-.05),.1)+(Math.cos(time*.06)<0?Math.PI:0);}
-for(const {cloud,shadow,speed} of clouds){cloud.position.z+=dt*speed;if(cloud.position.z>100)cloud.position.z=-100;shadow.position.x=cloud.position.x+3.4;shadow.position.z=cloud.position.z+3.1}planeShadow.position.set(plane.position.x+2.3,0,plane.position.z+2.5);planeShadow.rotation.y=plane.rotation.y;}ray.setFromCamera(pointer,camera);ray.ray.intersectPlane(flightLevel,target);const dx=target.x-plane.position.x;plane.position.lerp(target,1-Math.exp(-dt*9));plane.position.y=6+Math.sin(ms*.001*3.1)*.045+Math.sin(ms*.001*8.3)*.012;plane.rotation.z=THREE.MathUtils.clamp(-dx*.08,-.3,.3)+Math.sin(ms*.001*2.3)*.035;plane.rotation.x=Math.sin(ms*.001*2.7)*.018;plane.rotation.y=Math.sin(ms*.001*1.5)*.025;prop.rotation.z+=dt*65;
-planeShadow.position.set(plane.position.x+2.3,0,plane.position.z+2.5);
-// Disturb individual lobes in screen space so contact matches the visible airplane.
-aircraftScreen.copy(plane.position).project(camera);
-if(homeVisible){sky.updateMatrixWorld(true);for(const state of cloudLobes){
- const {lobe,mist,home,scale}=state;
- const screen=cloudScreen.copy(home).applyMatrix4(lobe.parent.matrixWorld).project(camera);
- const dx=(screen.x-aircraftScreen.x)*(camera.right-camera.left)/2;
- const dy=(screen.y-aircraftScreen.y)*(camera.top-camera.bottom)/2;
- const contact=1-smooth(.4,2.0,Math.hypot(dx,dy));
- state.amount=THREE.MathUtils.lerp(state.amount,contact,1-Math.exp(-dt*(contact>state.amount?8:1.25)));
- const a=state.amount,angle=Math.atan2(dy,dx),drift=.5*a;
- lobe.position.copy(home);lobe.position.x+=Math.cos(angle)*drift;lobe.position.z-=Math.sin(angle)*drift;
- lobe.scale.copy(scale).multiplyScalar(1+a*.26);lobe.material.opacity=1-a*.96;
- // Broken, drifting wisps occupy the displaced lobe; no airplane-attached overlay.
- mist.position.copy(lobe.position);mist.position.x+=Math.sin(ms*.001*1.4+state.phase)*a*.12;
- mist.scale.set(1+a*.7,1+a*.35,1);mist.material.uniforms.alpha.value=a*.18;
- mist.visible=a>.015;
-}}
-atmosphere.style.opacity=String(1-THREE.MathUtils.clamp(pageContainer.scrollTop/innerHeight,0,1));
-// Keep the narrow background moving on content pages at 30fps; the aircraft remains full rate.
-if(ms-lastTerrainDraw>=(homeVisible?0:1000/30)){
- lastTerrainDraw=ms;
- if(ms-lastShadowDraw>=1000/24){renderer.shadowMap.needsUpdate=true;lastShadowDraw=ms;}
- renderer.setRenderTarget(paintTarget);renderer.render(scene,camera);renderer.setRenderTarget(null);renderer.render(paintScene,paintCamera);
+const pageContainer=document.querySelector('#pages'),planeLayer=document.querySelector('#plane-layer'),aircraftScreen=new THREE.Vector3(),cloudScreen=new THREE.Vector3();
+let lastTerrainDraw=-Infinity,lastSimulation=0,cloudTransitionHold=false;
+window.addEventListener('aitch:cloud-transition',event=>{cloudTransitionHold=event.detail.hold;});
+let terrainCalls=0,terrainTriangles=0;
+const qualityRatio=Math.min(devicePixelRatio,dprCap);
+// Fixed-size samples: diagnostics do not accumulate allocations during a long flight.
+const frameIntervals=new Float32Array(600),submitTimes=new Float32Array(600);let sampleIndex=0,sampleCount=0;
+window.__aitchPerformance=()=>{
+ const intervals=Array.from(frameIntervals.subarray(0,sampleCount)).sort((a,b)=>a-b);
+ const total=intervals.reduce((sum,v)=>sum+v,0),submit=submitTimes.subarray(0,sampleCount);
+ return {pixelRatio:qualityRatio,terrainDrawCalls:terrainCalls,terrainTriangles,staticBatches:batchStats,samples:sampleCount,
+  fps:total?1000*sampleCount/total:0,frameP95Ms:intervals[Math.floor(sampleCount*.95)]||0,
+  submitMeanMs:sampleCount?submit.reduce((sum,v)=>sum+v,0)/sampleCount:0,framesOver25Ms:intervals.filter(v=>v>25).length,
+  geometries:renderer.info.memory?.geometries,textures:renderer.info.memory?.textures};
+};
+// Fit the shadow pass to the visible ground. Offscreen casters whose shadows enter
+// this rectangle are still included by the light's frustum; no shadow cadence skipping.
+const terrainLight=scene.children.find(o=>o.isDirectionalLight);
+const visibleGround=new THREE.Box3(),shadowCasters=[];
+// Tiles only translate and the sunlight is fixed. Cache each static caster's
+// projected footprint on the flat ground, including objects outside the camera
+// whose shadows fall inside it. Rotors and cars retain normal dynamic shadows.
+for(const tile of tiles){
+ tile.updateMatrixWorld(true);const inverse=new THREE.Matrix4().copy(tile.matrixWorld).invert();
+ tile.traverse(mesh=>{
+  if(!mesh.isMesh||!mesh.castShadow)return;
+  for(let parent=mesh;parent&&parent!==tile;parent=parent.parent)if(movingTerrain.has(parent))return;
+  if(mesh.isInstancedMesh){if(!mesh.boundingBox)mesh.computeBoundingBox();}else if(!mesh.geometry.boundingBox)mesh.geometry.computeBoundingBox();
+  const bounds=(mesh.isInstancedMesh?mesh.boundingBox:mesh.geometry.boundingBox).clone().applyMatrix4(new THREE.Matrix4().multiplyMatrices(inverse,mesh.matrixWorld));
+  const footprint=new THREE.Box3();
+  for(const x of [bounds.min.x,bounds.max.x])for(const y of [bounds.min.y,bounds.max.y])for(const z of [bounds.min.z,bounds.max.z])footprint.expandByPoint(new THREE.Vector3(x-y*terrainLight.position.x/terrainLight.position.y,0,z-y*terrainLight.position.z/terrainLight.position.y));
+  shadowCasters.push({mesh,tile,minX:footprint.min.x,maxX:footprint.max.x,minZ:footprint.min.z,maxZ:footprint.max.z});
+ });
 }
-if(homeVisible)air.render(sky,camera);
-top.render(planeScene,camera)}requestAnimationFrame(tick);document.body.classList.add('loaded');
+function updateTerrainShadowCasters(){
+ for(const c of shadowCasters){const x=c.tile.position.x,z=c.tile.position.z;c.mesh.castShadow=c.maxX+x>=visibleGround.min.x&&c.minX+x<=visibleGround.max.x&&c.maxZ+z>=visibleGround.min.z&&c.minZ+z<=visibleGround.max.z;}
+}
+function fitGroundShadow(){
+ camera.updateMatrixWorld(true);terrainLight.updateMatrixWorld(true);terrainLight.target.updateMatrixWorld(true);
+ terrainLight.shadow.updateMatrices(terrainLight);
+ const bounds=new THREE.Box3(),point=new THREE.Vector3(),groundPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0),cornerRay=new THREE.Raycaster();
+ visibleGround.makeEmpty();
+ for(const x of [-1,1])for(const y of [-1,1]){cornerRay.setFromCamera(new THREE.Vector2(x,y),camera);cornerRay.ray.intersectPlane(groundPlane,point);visibleGround.expandByPoint(point);bounds.expandByPoint(point.applyMatrix4(terrainLight.shadow.camera.matrixWorldInverse));}
+ visibleGround.expandByScalar(3);
+ Object.assign(terrainLight.shadow.camera,{left:bounds.min.x-3,right:bounds.max.x+3,bottom:bounds.min.y-3,top:bounds.max.y+3});
+ terrainLight.shadow.camera.updateProjectionMatrix();renderer.shadowMap.needsUpdate=true;
+}
+function resize(){const w=innerWidth,h=innerHeight;for(const r of [renderer,air,top])r.setSize(w,h);paintTarget.setSize(Math.round(w*renderer.getPixelRatio()),Math.round(h*renderer.getPixelRatio()));paintMaterial.uniforms.resolution.value.set(paintTarget.width,paintTarget.height);const width=w<h?58:80;camera.left=-width/2;camera.right=width/2;camera.top=width*h/w/2;camera.bottom=-width*h/w/2;camera.updateProjectionMatrix();fitGroundShadow()}window.addEventListener('resize',resize);resize();ray.setFromCamera(pointer,camera);ray.ray.intersectPlane(flightLevel,target);plane.position.copy(target);
+function tick(ms){requestAnimationFrame(tick);const frameMs=ms-last;const dt=Math.min(frameMs/1000,.04);last=ms;if(document.hidden){lastSimulation=0;return;}const homeVisible=pageContainer.scrollTop<innerHeight;
+ atmosphere.style.opacity=homeVisible?String(1-THREE.MathUtils.clamp(pageContainer.scrollTop/innerHeight,0,1)):'0';
+ // The airplane is the site-wide cursor; it always follows the pointer, including paused and content pages.
+ ray.setFromCamera(pointer,camera);ray.ray.intersectPlane(flightLevel,target);const dx=target.x-plane.position.x;plane.position.lerp(target,1-Math.exp(-dt*9));plane.position.y=6+Math.sin(ms*.001*3.1)*.045+Math.sin(ms*.001*8.3)*.012;plane.rotation.z=THREE.MathUtils.clamp(-dx*.08,-.3,.3)+Math.sin(ms*.001*2.3)*.035;plane.rotation.x=Math.sin(ms*.001*2.7)*.018;plane.rotation.y=Math.sin(ms*.001*1.5)*.025;prop.rotation.z+=dt*65;
+ top.render(planeScene,camera);
+ if(!homeVisible||paused||cloudTransitionHold){lastSimulation=ms;return;}
+ if(lowPower&&ms-lastTerrainDraw+.01<1000/30)return;
+ const step=lastSimulation?Math.min((ms-lastSimulation)/1000,.08):dt;lastSimulation=ms;
+ time+=step;travel+=step*1.8;for(let i=0;i<tiles.length;i++)tiles[i].position.z=((travel-i*LENGTH+LENGTH*5.5)%(LENGTH*4))-LENGTH*1.5;water.uniforms.time.value=time;for(const rotor of windRotors)rotor.rotation.z+=step*.32;for(const {car} of cars){const z=20*Math.sin(time*.06);car.position.set(road(z),0,z);car.rotation.y=Math.atan2(road(z+.05)-road(z-.05),.1)+(Math.cos(time*.06)<0?Math.PI:0);}
+ for(const {cloud,shadow,speed} of clouds){cloud.position.z+=step*speed;if(cloud.position.z>100)cloud.position.z=-100;shadow.position.x=cloud.position.x+3.4;shadow.position.z=cloud.position.z+3.1}planeShadow.position.set(plane.position.x+2.3,0,plane.position.z+2.5);planeShadow.rotation.y=plane.rotation.y;
+ aircraftScreen.copy(plane.position).project(camera);
+ sky.updateMatrixWorld(true);let cloudIndex=0;for(const state of cloudLobes){
+  const {lobe,mist,home,scale}=state;
+  const screen=cloudScreen.copy(home).applyMatrix4(lobe.parent.matrixWorld).project(camera);
+  const dx=(screen.x-aircraftScreen.x)*(camera.right-camera.left)/2;
+  const dy=(screen.y-aircraftScreen.y)*(camera.top-camera.bottom)/2;
+  const contact=1-smooth(.4,2.0,Math.hypot(dx,dy));
+  state.amount=THREE.MathUtils.lerp(state.amount,contact,1-Math.exp(-dt*(contact>state.amount?8:1.25)));
+  const a=state.amount,angle=Math.atan2(dy,dx),drift=.5*a;
+  lobe.position.copy(home);lobe.position.x+=Math.cos(angle)*drift;lobe.position.z-=Math.sin(angle)*drift;
+  lobe.scale.copy(scale).multiplyScalar(1+a*.26);lobe.material.opacity=1-a*.96;
+  mist.position.copy(lobe.position);mist.position.x+=Math.sin(ms*.001*1.4+state.phase)*a*.12;
+  mist.scale.set(1+a*.7,1+a*.35,1);mist.material.uniforms.alpha.value=a*.18;
+  mist.visible=a>.015;
+  lobe.updateMatrix();cloudInstanceMatrix.multiplyMatrices(lobe.parent.matrixWorld,lobe.matrix);
+  cloudInstances.setMatrixAt(cloudIndex,cloudInstanceMatrix);cloudAlpha.setX(cloudIndex,1-a*.96);cloudIndex++;
+ }
+ cloudInstances.instanceMatrix.needsUpdate=true;cloudAlpha.needsUpdate=true;
+ paintMaterial.uniforms.brushStrength.value=THREE.MathUtils.lerp(paintMaterial.uniforms.brushStrength.value,.28,1-Math.exp(-dt*8));
+ const interval=ms-lastTerrainDraw;lastTerrainDraw=ms;const submitStart=performance.now();
+ updateTerrainShadowCasters();
+ renderer.shadowMap.needsUpdate=true;
+ renderer.setRenderTarget(paintTarget);renderer.render(scene,camera);terrainCalls=renderer.info.render.calls;terrainTriangles=renderer.info.render.triangles;renderer.setRenderTarget(null);renderer.render(paintScene,paintCamera);
+ air.render(sky,camera);
+ if(interval>0&&interval<250){frameIntervals[sampleIndex]=interval;submitTimes[sampleIndex]=performance.now()-submitStart;sampleIndex=(sampleIndex+1)%frameIntervals.length;sampleCount=Math.min(sampleCount+1,frameIntervals.length);}
+}
+// Compile all route materials before starting motion, including later desert/island
+// shaders, so entering a new region does not compile its first program mid-flight.
+async function startFlight(){
+ renderer.setRenderTarget(paintTarget);
+ try{await Promise.all([renderer.compileAsync(scene,camera),air.compileAsync(sky,camera),top.compileAsync(planeScene,camera)]);renderer.setRenderTarget(null);await renderer.compileAsync(paintScene,paintCamera);}
+ catch(error){console.warn('Landscape shader warmup:',error);}
+ finally{renderer.setRenderTarget(null);last=performance.now();requestAnimationFrame(tick);document.body.classList.add('loaded');if(matchMedia('(pointer:fine)').matches)document.body.classList.add('piloting');}
+}
+startFlight();
 }catch(error){console.error(error);document.getElementById('loading').textContent='风景加载失败：'+error.message;document.body.classList.remove('piloting');}
 {// 受控翻页器：滚轮/键盘/触摸 → 云升起盖屏 → 翻页 → 云向四周散开
 const pages = document.querySelector('#pages');
@@ -55283,6 +55455,13 @@ const order = ['home', 'works', 'experience'];
 let page = 0, animating = false, pendingTarget = null, lastWheel = 0, touchY = 0;
 let peekTimer = 0, peeking = false, leftZone = 260;
 let scrollTarget=null,scrollFrame=0,scrollStamp=0,scrollPosition=0;
+let cloudNeedsRebuild=false;
+const nextPaint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+const holdTerrain=hold=>window.dispatchEvent(new CustomEvent('aitch:cloud-transition',{detail:{hold}}));
+const cloudHidden={transform:'translate3d(0,106%,0) scale(1)',opacity:0};
+const cloudCovered={transform:'translate3d(0,0,0) scale(1)',opacity:1};
+const cloudScattered={transform:'translate3d(0,-4%,0) scale(1.9)',opacity:0};
+const preparedImages=new WeakSet();
 function stopSmoothScroll(){cancelAnimationFrame(scrollFrame);scrollFrame=0;scrollTarget=null;}
 
 // 生成铺满全屏的球状云团（参照首页 3D 云）
@@ -55292,6 +55471,7 @@ function buildCloud() {
   const W = window.innerWidth, H = window.innerHeight;
   const cols = 10, rows = 7;
   const cw = W / cols, ch = H / rows;
+  const fragment=document.createDocumentFragment();
   for (let gy = 0; gy < rows; gy++) {
     for (let gx = 0; gx < cols; gx++) {
       const n = 1 + (Math.random() > 0.45 ? 1 : 0);
@@ -55305,10 +55485,11 @@ function buildCloud() {
         el.style.left = (x - d / 2).toFixed(0) + 'px';
         el.style.top = (y - d / 2).toFixed(0) + 'px';
         el.style.zIndex = String(1 + gy * 60 + gx * 3 + k);
-        cc.appendChild(el);
+        fragment.appendChild(el);
       }
     }
   }
+  cc.appendChild(fragment);
 }
 
 function setActive(i) {
@@ -55332,41 +55513,49 @@ function setPage(i) {
   setActive(i);
 }
 
-function cloudRise(done) {
-  cc.style.transition = 'transform .45s cubic-bezier(.45,.05,.3,1), opacity .4s ease, filter .4s ease';
-  cc.style.transform = 'translateY(0) scale(1)';
-  cc.style.opacity = '1';
-  cc.style.filter = 'blur(0px)';
-  setTimeout(done, 520);
+async function animateCloud(from,to,duration,easing){
+  // Animate only compositor properties. The existing puff gradients/shadows stay
+  // cached instead of blurring a growing, viewport-sized surface every frame.
+  const animation=cc.animate([from,to],{duration,easing,fill:'forwards'});
+  try{await animation.finished;Object.assign(cc.style,to);}
+  finally{animation.cancel();}
 }
 
-function cloudScatter(done) {
-  cc.style.transition = 'transform 1.05s cubic-bezier(.3,.65,.3,1), opacity 1.05s ease, filter 1.05s ease';
-  cc.style.transform = 'translateY(-4%) scale(1.9)';
-  cc.style.opacity = '0';
-  cc.style.filter = 'blur(9px)';
-  setTimeout(() => {
-    cc.style.transition = 'none';
-    cc.style.transform = 'translateY(106%) scale(1)';
-    cc.style.opacity = '0';
-    cc.style.filter = 'blur(0px)';
-    done();
-  }, 1100);
+function preparePageImages(target){
+  document.getElementById(order[target]).querySelectorAll('img').forEach(img=>{
+    if(preparedImages.has(img))return;preparedImages.add(img);
+    img.loading='eager';if(img.decode)img.decode().catch(()=>{});
+  });
 }
 
-function transitionTo(target) {
+async function transitionTo(target) {
   if (target < 0 || target >= order.length || target === page) return;
   if (animating) { pendingTarget = target; return; }
   animating = true;
-  cloudRise(() => {
+  try{
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches){setPage(target);return;}
+    // Lend the outgoing terrain's render budget to the rising cloud. The airplane
+    // cursor keeps running; terrain resumes under the opaque cover before reveal.
+    holdTerrain(true);
+    preparePageImages(target);
+    cc.style.willChange='transform, opacity';
+    await nextPaint();
+    await animateCloud(cloudHidden,cloudCovered,450,'cubic-bezier(.45,.05,.3,1)');
     setPage(target);
-    cloudScatter(() => {
-      animating = false;
-      const pt = pendingTarget;
-      pendingTarget = null;
-      if (pt !== null && pt !== page) transitionTo(pt);
-    });
-  });
+    holdTerrain(false);
+    // Render the destination while fully covered, then begin the compositor fade.
+    await nextPaint();
+    await animateCloud(cloudCovered,cloudScattered,1050,'cubic-bezier(.3,.65,.3,1)');
+  }catch(error){
+    console.warn('Cloud transition interrupted:',error);setPage(target);
+  }finally{
+    holdTerrain(false);
+    Object.assign(cc.style,cloudHidden);cc.style.willChange='auto';
+    animating=false;
+    if(cloudNeedsRebuild){cloudNeedsRebuild=false;buildCloud();}
+    const pt=pendingTarget;pendingTarget=null;
+    if(pt!==null&&pt!==page)transitionTo(pt);
+  }
 }
 
 function scrollExperience(delta){
@@ -55406,7 +55595,7 @@ window.addEventListener('wheel', (e) => {
   const now = performance.now();
   if (now - lastWheel < 80) return;
   lastWheel = now;
-  transitionTo(page+(e.deltaY>0?1:-1));
+  flip(e.deltaY>0?1:-1);
 }, { passive: false });
 
 window.addEventListener('keydown', (e) => {
@@ -55449,7 +55638,7 @@ window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
     stopSmoothScroll();pages.scrollTo({ top: page * pages.clientHeight, behavior: 'auto' });
-    if (!animating) buildCloud();
+    if (!animating) buildCloud();else cloudNeedsRebuild=true;
   }, 180);
 });
 leftZone = Math.min(280, innerWidth * 0.32);
@@ -55518,6 +55707,32 @@ if (lanyard && badge) {
 
 const nextHint=document.createElement('button');nextHint.className='next-page-hint';nextHint.type='button';nextHint.setAttribute('aria-label','向下探索下一页');nextHint.innerHTML='<span>向下探索</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg>';document.body.appendChild(nextHint);
 nextHint.addEventListener('click',()=>flip(1));
+
+// Home CTA opens the portfolio using the existing page navigation.
+document.querySelector('#view-works').addEventListener('click',()=>flip(1));
+
+// Senate portfolio card: derive the subdomain from the current host unless overridden.
+(() => {
+  const card = document.querySelector('.senate-card');
+  if (!card) return;
+  const override = (card.dataset.senateUrl || '').trim();
+  const host = location.hostname;
+  const local = !host || host === 'localhost' || host === '127.0.0.1' || host === '::1' || /^\d{1,3}(?:\.\d{1,3}){3}$/.test(host);
+  let url = override;
+  if (!url) {
+    if (local) url = 'http://127.0.0.1:4180/';
+    else if (host.endsWith('.pages.dev')) url = `https://senate-${host.slice(0, -'.pages.dev'.length)}.pages.dev/`;
+    else if (host.endsWith('.workers.dev')) url = `https://senate-${host.slice(0, -'.workers.dev'.length)}.workers.dev/`;
+    else url = `https://senate.${host.replace(/^www\./, '')}/`;
+  }
+  card.querySelectorAll('[data-senate-link]').forEach(link => {
+    link.href = url;
+    link.title = `打开 ${url}`;
+  });
+  let printedHost = url;
+  try { printedHost = new URL(url).host; } catch {}
+  card.querySelectorAll('[data-senate-host]').forEach(el => { el.textContent = printedHost; });
+})();
 }
 try{
 
@@ -56791,26 +57006,18 @@ function drawFace(side, exp) {
   if (side === 'front') {
     ctx.fillStyle = '#f7f4ea';
     ctx.fillRect(0, 0, W, H);
-    // 公司 logo（占位）
+    // 圆形 logo（下移）
     ctx.beginPath();
-    ctx.arc(W / 2, 320, 170, 0, Math.PI * 2);
+    ctx.arc(W / 2, 400, 180, 0, Math.PI * 2);
     ctx.fillStyle = '#4f6b3a';
     ctx.fill();
     ctx.fillStyle = '#f8f6ec';
-    ctx.font = '600 96px "Microsoft YaHei", sans-serif';
-    ctx.fillText(exp.logo || '待定', W / 2, 326);
-    // 名字
+    ctx.font = '600 100px "Microsoft YaHei", sans-serif';
+    ctx.fillText(exp.logo || '待定', W / 2, 406);
+    // 英文名（下移 + 放大）
     ctx.fillStyle = '#2f5026';
-    ctx.font = '600 130px Georgia, "Songti SC", serif';
-    ctx.fillText('AITCH', W / 2, 620);
-    // 角色
-    ctx.fillStyle = '#6d7a5f';
-    ctx.font = '400 48px "Microsoft YaHei", sans-serif';
-    ctx.fillText(exp.role, W / 2, 722);
-    // 公司
-    ctx.fillStyle = '#8a957c';
-    ctx.font = '400 42px "Microsoft YaHei", sans-serif';
-    ctx.fillText('实习公司 · ' + exp.company, W / 2, 930);
+    ctx.font = '600 170px Georgia, "Songti SC", serif';
+    ctx.fillText('AITCH', W / 2, 900);
     // 分隔线
     ctx.strokeStyle = 'rgba(60,80,40,.18)';
     ctx.lineWidth = 2;
@@ -56827,10 +57034,7 @@ function drawFace(side, exp) {
     ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = '#e8e4d4';
     ctx.font = '700 110px "Microsoft YaHei", serif';
-    ctx.fillText('实习经历', W / 2, 520);
-    ctx.fillStyle = '#b9c2a7';
-    ctx.font = '400 46px "Microsoft YaHei", sans-serif';
-    ctx.fillText(exp.company, W / 2, 660);
+    ctx.fillText('实习经历', W / 2, 560);
     ctx.fillStyle = '#8a957c';
     ctx.font = '400 38px "Microsoft YaHei", sans-serif';
     ctx.fillText('保持好奇，继续生长', W / 2, 780);

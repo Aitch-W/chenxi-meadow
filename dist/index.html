@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#b5bb76">
 <meta name="description" content="AITCH 的个人空间 · 河南大学软件工程">
 <title>AITCH · 飞过旷野</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=20261107-cloud19">
 </head>
 <body>
 <div id="world" aria-hidden="true">
@@ -37,8 +37,8 @@
       <p class="description">在代码与想象之间<br>探索自己的方向</p>
       <p class="subtext">这里记录我的学习、创作，<br>以及一路遇见的风景。</p>
       <div class="interests" aria-label="我的兴趣"><span>编程</span><span>AI 探索</span><span>创作</span></div>
-      <button class="flight" id="explore">一起乘风<span aria-hidden="true">↗</span></button>
-      <p class="hint" id="hint" aria-live="polite">移动鼠标，和小飞机一起兜兜风</p>
+      <button class="flight" id="view-works" aria-label="查看作品集">查看作品集<span aria-hidden="true">↓</span></button>
+      <p class="hint" id="hint" aria-live="polite">移动鼠标，和小飞机一起兜兜风 · 卡顿可点右上角「暂停飞行」</p>
     </div>
     <div id="loading" role="status">风景正在展开…</div>
     <footer>
@@ -53,7 +53,20 @@
       <p class="eyebrow"><i></i> SELECTED WORKS</p>
       <h2>作品集</h2>
       <div class="works-grid">
-        <article class="work-slot"><span class="ph">作品 · 空位 01</span></article>
+        <!-- 已部署：https://senate.aitchwcx.me/；如需改地址，直接改 data-senate-url -->
+        <article class="work-card senate-card" data-senate-url="https://senate.aitchwcx.me/" style="position:relative;display:block;width:100%;aspect-ratio:4/3;overflow:hidden;border-radius:10px;background:#1b2418">
+          <img src="assets/senate-preview.jpg" alt="The Senate 元老院消费决策议会首页预览" loading="lazy" decoding="async" fetchpriority="low" width="960" height="720" style="display:block;width:100%;height:100%;object-fit:cover;object-position:center 38%">
+          <span class="work-rest"><b>The Senate</b><small>元老院消费决策议会</small></span>
+          <div class="work-detail">
+            <p class="work-kicker">INTERACTIVE · 2026</p>
+            <h3>The Senate</h3>
+            <p class="work-sub">元老院消费决策议会</p>
+            <p class="work-desc">把一件犹豫的商品交给 3 / 5 / 7 位先贤：逐条质询、独立表态、最终裁决。可接入 DeepSeek，让先贤真正开口。</p>
+            <ul class="work-tags"><li>交互叙事</li><li>DeepSeek</li><li>罗马主题</li></ul>
+            <p class="work-domain"><span data-senate-host>senate.…</span> · 打开子站 ↗</p>
+          </div>
+          <a class="work-hit" data-senate-link href="" target="_blank" rel="noopener" aria-label="打开 The Senate 子站"></a>
+        </article>
         <article class="work-slot"><span class="ph">作品 · 空位 02</span></article>
         <article class="work-slot"><span class="ph">作品 · 空位 03</span></article>
         <article class="work-slot"><span class="ph">作品 · 空位 04</span></article>
@@ -70,9 +83,9 @@
         <p class="eyebrow"><i></i> EXPERIENCE</p>
         <h2>实习经历</h2>
         <div class="exp-item">
-          <h3>待定 · 实习岗位</h3>
-          <p class="exp-meta">公司待定 · 时间待定</p>
-          <p class="exp-desc">这里会放实习经历的详细内容。等有了具体的实习经历，我再补上。</p>
+          <h3>还没有</h3>
+          <p class="exp-meta">简历这一栏还空着</p>
+          <p class="exp-desc">还没有实习经历——不过，你想做我的第一位天使投资人吗？</p>
         </div>
       </div>
     </div>
@@ -91,8 +104,8 @@
 <div id="plane-layer" aria-hidden="true"></div>
 <div id="cloud-cover" aria-hidden="true"></div>
 
-<script type="module">import('./scene.js').catch(()=>{document.getElementById('loading').textContent='风景加载失败，请刷新重试';document.getElementById('motion').disabled=true;document.getElementById('explore').disabled=true;document.getElementById('hint').textContent='三维资源加载失败，个人介绍仍可阅读';});</script>
-<script type="module" src="app.js"></script>
+<script type="module">import('./scene.js?v=20261107-cloud19').catch(()=>{document.body.classList.remove('piloting');document.getElementById('loading').textContent='风景加载失败，请刷新重试';document.getElementById('motion').disabled=true;document.getElementById('hint').textContent='三维资源加载失败，个人介绍仍可阅读';});</script>
+<script type="module" src="app.js?v=20261107-cloud19"></script>
 <script type="module" src="lanyard-setup.js"></script>
 </body>
 </html>

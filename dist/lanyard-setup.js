@@ -16,26 +16,18 @@ function drawFace(side, exp) {
   if (side === 'front') {
     ctx.fillStyle = '#f7f4ea';
     ctx.fillRect(0, 0, W, H);
-    // 公司 logo（占位）
+    // 圆形 logo（下移）
     ctx.beginPath();
-    ctx.arc(W / 2, 320, 170, 0, Math.PI * 2);
+    ctx.arc(W / 2, 400, 180, 0, Math.PI * 2);
     ctx.fillStyle = '#4f6b3a';
     ctx.fill();
     ctx.fillStyle = '#f8f6ec';
-    ctx.font = '600 96px "Microsoft YaHei", sans-serif';
-    ctx.fillText(exp.logo || '待定', W / 2, 326);
-    // 名字
+    ctx.font = '600 100px "Microsoft YaHei", sans-serif';
+    ctx.fillText(exp.logo || '待定', W / 2, 406);
+    // 英文名（下移 + 放大）
     ctx.fillStyle = '#2f5026';
-    ctx.font = '600 130px Georgia, "Songti SC", serif';
-    ctx.fillText('AITCH', W / 2, 620);
-    // 角色
-    ctx.fillStyle = '#6d7a5f';
-    ctx.font = '400 48px "Microsoft YaHei", sans-serif';
-    ctx.fillText(exp.role, W / 2, 722);
-    // 公司
-    ctx.fillStyle = '#8a957c';
-    ctx.font = '400 42px "Microsoft YaHei", sans-serif';
-    ctx.fillText('实习公司 · ' + exp.company, W / 2, 930);
+    ctx.font = '600 170px Georgia, "Songti SC", serif';
+    ctx.fillText('AITCH', W / 2, 900);
     // 分隔线
     ctx.strokeStyle = 'rgba(60,80,40,.18)';
     ctx.lineWidth = 2;
@@ -52,10 +44,7 @@ function drawFace(side, exp) {
     ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = '#e8e4d4';
     ctx.font = '700 110px "Microsoft YaHei", serif';
-    ctx.fillText('实习经历', W / 2, 520);
-    ctx.fillStyle = '#b9c2a7';
-    ctx.font = '400 46px "Microsoft YaHei", sans-serif';
-    ctx.fillText(exp.company, W / 2, 660);
+    ctx.fillText('实习经历', W / 2, 560);
     ctx.fillStyle = '#8a957c';
     ctx.font = '400 38px "Microsoft YaHei", sans-serif';
     ctx.fillText('保持好奇，继续生长', W / 2, 780);

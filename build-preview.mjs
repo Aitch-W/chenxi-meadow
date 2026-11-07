@@ -16,7 +16,7 @@ try{${scene}}catch(error){console.error(error);document.getElementById('loading'
 {${read('app.js')}}
 try{${lanyard}
 ${setup}}catch(error){console.error(error);document.getElementById('lanyard-area').textContent='工牌加载失败：'+error.message;}`;
-html=html.replace('<link rel="stylesheet" href="style.css">',()=>`<style>${read('style.css')}</style>`);
+html=html.replace(/<link rel="stylesheet" href="style\.css(?:\?[^"]*)?">/,()=>`<style>${read('style.css')}</style>`);
 html=html.replace(/<script type="module"[^>]*>[\s\S]*?<\/script>/g,'');
 html=html.replace('</body>',()=>`<script type="module">${bundle}</script></body>`);
 fs.writeFileSync(path.join(root,'preview.html'),html);

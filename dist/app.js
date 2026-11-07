@@ -6,6 +6,13 @@ const order = ['home', 'works', 'experience'];
 let page = 0, animating = false, pendingTarget = null, lastWheel = 0, touchY = 0;
 let peekTimer = 0, peeking = false, leftZone = 260;
 let scrollTarget=null,scrollFrame=0,scrollStamp=0,scrollPosition=0;
+let cloudNeedsRebuild=false;
+const nextPaint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+const holdTerrain=hold=>window.dispatchEvent(new CustomEvent('aitch:cloud-transition',{detail:{hold}}));
+const cloudHidden={transform:'translate3d(0,106%,0) scale(1)',opacity:0};
+const cloudCovered={transform:'translate3d(0,0,0) scale(1)',opacity:1};
+const cloudScattered={transform:'translate3d(0,-4%,0) scale(1.9)',opacity:0};
+const preparedImages=new WeakSet();
 function stopSmoothScroll(){cancelAnimationFrame(scrollFrame);scrollFrame=0;scrollTarget=null;}
 
 // 生成铺满全屏的球状云团（参照首页 3D 云）
@@ -15,6 +22,7 @@ function buildCloud() {
   const W = window.innerWidth, H = window.innerHeight;
   const cols = 10, rows = 7;
   const cw = W / cols, ch = H / rows;
+  const fragment=document.createDocumentFragment();
   for (let gy = 0; gy < rows; gy++) {
     for (let gx = 0; gx < cols; gx++) {
       const n = 1 + (Math.random() > 0.45 ? 1 : 0);
@@ -28,10 +36,11 @@ function buildCloud() {
         el.style.left = (x - d / 2).toFixed(0) + 'px';
         el.style.top = (y - d / 2).toFixed(0) + 'px';
         el.style.zIndex = String(1 + gy * 60 + gx * 3 + k);
-        cc.appendChild(el);
+        fragment.appendChild(el);
       }
     }
   }
+  cc.appendChild(fragment);
 }
 
 function setActive(i) {
@@ -55,41 +64,49 @@ function setPage(i) {
   setActive(i);
 }
 
-function cloudRise(done) {
-  cc.style.transition = 'transform .45s cubic-bezier(.45,.05,.3,1), opacity .4s ease, filter .4s ease';
-  cc.style.transform = 'translateY(0) scale(1)';
-  cc.style.opacity = '1';
-  cc.style.filter = 'blur(0px)';
-  setTimeout(done, 520);
+async function animateCloud(from,to,duration,easing){
+  // Animate only compositor properties. The existing puff gradients/shadows stay
+  // cached instead of blurring a growing, viewport-sized surface every frame.
+  const animation=cc.animate([from,to],{duration,easing,fill:'forwards'});
+  try{await animation.finished;Object.assign(cc.style,to);}
+  finally{animation.cancel();}
 }
 
-function cloudScatter(done) {
-  cc.style.transition = 'transform 1.05s cubic-bezier(.3,.65,.3,1), opacity 1.05s ease, filter 1.05s ease';
-  cc.style.transform = 'translateY(-4%) scale(1.9)';
-  cc.style.opacity = '0';
-  cc.style.filter = 'blur(9px)';
-  setTimeout(() => {
-    cc.style.transition = 'none';
-    cc.style.transform = 'translateY(106%) scale(1)';
-    cc.style.opacity = '0';
-    cc.style.filter = 'blur(0px)';
-    done();
-  }, 1100);
+function preparePageImages(target){
+  document.getElementById(order[target]).querySelectorAll('img').forEach(img=>{
+    if(preparedImages.has(img))return;preparedImages.add(img);
+    img.loading='eager';if(img.decode)img.decode().catch(()=>{});
+  });
 }
 
-function transitionTo(target) {
+async function transitionTo(target) {
   if (target < 0 || target >= order.length || target === page) return;
   if (animating) { pendingTarget = target; return; }
   animating = true;
-  cloudRise(() => {
+  try{
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches){setPage(target);return;}
+    // Lend the outgoing terrain's render budget to the rising cloud. The airplane
+    // cursor keeps running; terrain resumes under the opaque cover before reveal.
+    holdTerrain(true);
+    preparePageImages(target);
+    cc.style.willChange='transform, opacity';
+    await nextPaint();
+    await animateCloud(cloudHidden,cloudCovered,450,'cubic-bezier(.45,.05,.3,1)');
     setPage(target);
-    cloudScatter(() => {
-      animating = false;
-      const pt = pendingTarget;
-      pendingTarget = null;
-      if (pt !== null && pt !== page) transitionTo(pt);
-    });
-  });
+    holdTerrain(false);
+    // Render the destination while fully covered, then begin the compositor fade.
+    await nextPaint();
+    await animateCloud(cloudCovered,cloudScattered,1050,'cubic-bezier(.3,.65,.3,1)');
+  }catch(error){
+    console.warn('Cloud transition interrupted:',error);setPage(target);
+  }finally{
+    holdTerrain(false);
+    Object.assign(cc.style,cloudHidden);cc.style.willChange='auto';
+    animating=false;
+    if(cloudNeedsRebuild){cloudNeedsRebuild=false;buildCloud();}
+    const pt=pendingTarget;pendingTarget=null;
+    if(pt!==null&&pt!==page)transitionTo(pt);
+  }
 }
 
 function scrollExperience(delta){
@@ -129,7 +146,7 @@ window.addEventListener('wheel', (e) => {
   const now = performance.now();
   if (now - lastWheel < 80) return;
   lastWheel = now;
-  transitionTo(page+(e.deltaY>0?1:-1));
+  flip(e.deltaY>0?1:-1);
 }, { passive: false });
 
 window.addEventListener('keydown', (e) => {
@@ -172,7 +189,7 @@ window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
     stopSmoothScroll();pages.scrollTo({ top: page * pages.clientHeight, behavior: 'auto' });
-    if (!animating) buildCloud();
+    if (!animating) buildCloud();else cloudNeedsRebuild=true;
   }, 180);
 });
 leftZone = Math.min(280, innerWidth * 0.32);
@@ -241,3 +258,29 @@ if (lanyard && badge) {
 
 const nextHint=document.createElement('button');nextHint.className='next-page-hint';nextHint.type='button';nextHint.setAttribute('aria-label','向下探索下一页');nextHint.innerHTML='<span>向下探索</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg>';document.body.appendChild(nextHint);
 nextHint.addEventListener('click',()=>flip(1));
+
+// Home CTA opens the portfolio using the existing page navigation.
+document.querySelector('#view-works').addEventListener('click',()=>flip(1));
+
+// Senate portfolio card: derive the subdomain from the current host unless overridden.
+(() => {
+  const card = document.querySelector('.senate-card');
+  if (!card) return;
+  const override = (card.dataset.senateUrl || '').trim();
+  const host = location.hostname;
+  const local = !host || host === 'localhost' || host === '127.0.0.1' || host === '::1' || /^\d{1,3}(?:\.\d{1,3}){3}$/.test(host);
+  let url = override;
+  if (!url) {
+    if (local) url = 'http://127.0.0.1:4180/';
+    else if (host.endsWith('.pages.dev')) url = `https://senate-${host.slice(0, -'.pages.dev'.length)}.pages.dev/`;
+    else if (host.endsWith('.workers.dev')) url = `https://senate-${host.slice(0, -'.workers.dev'.length)}.workers.dev/`;
+    else url = `https://senate.${host.replace(/^www\./, '')}/`;
+  }
+  card.querySelectorAll('[data-senate-link]').forEach(link => {
+    link.href = url;
+    link.title = `打开 ${url}`;
+  });
+  let printedHost = url;
+  try { printedHost = new URL(url).host; } catch {}
+  card.querySelectorAll('[data-senate-host]').forEach(el => { el.textContent = printedHost; });
+})();
