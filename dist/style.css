@@ -161,8 +161,8 @@ body.alt .sidebar{transform:translateX(0)}
 
 /* 作品集右侧地球 */
 #works .page-body{position:relative}
-#globe-stage{position:absolute;left:62%;top:50%;transform:translateY(-50%);width:min(26vw,480px);height:min(26vw,480px);pointer-events:none}
-@media(max-width:1400px){#globe-stage{display:none}}
+#globe-stage{position:absolute;right:4%;top:50%;transform:translateY(-50%);width:min(30vw,640px);height:min(30vw,640px);pointer-events:none}
+@media(max-width:1700px){#globe-stage{display:none}}
 
 /* ===== 实习经历：悬挂工牌（ReactBits 组件改写） ===== */
 .experience-body{
