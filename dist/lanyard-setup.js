@@ -1,11 +1,23 @@
 import { initLanyard } from './lanyard3d.js';
 
+const BADGE_PORTRAIT_URL = 'assets/badge-pig.jpg';
+
 // 每多一段实习经历，往这里加一项，就会多挂一块工牌
 const EXPERIENCES = [
-  { company: '待定', role: '实习岗位 · 待定', year: '2026', logo: '待' }
+  { company: '待定', role: '实习岗位 · 待定', year: '2026', logo: '待', photo: 'assets/badge-pig.jpg' }
 ];
 
-function drawFace(side, exp) {
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawFace(side, exp, img) {
   const W = 1024, H = 1440;
   const c = document.createElement('canvas');
   c.width = W;
@@ -16,29 +28,48 @@ function drawFace(side, exp) {
   if (side === 'front') {
     ctx.fillStyle = '#f7f4ea';
     ctx.fillRect(0, 0, W, H);
-    // 圆形 logo（下移）
-    ctx.beginPath();
-    ctx.arc(W / 2, 400, 180, 0, Math.PI * 2);
-    ctx.fillStyle = '#4f6b3a';
-    ctx.fill();
-    ctx.fillStyle = '#f8f6ec';
-    ctx.font = '600 100px "Microsoft YaHei", sans-serif';
-    ctx.fillText(exp.logo || '待定', W / 2, 406);
-    // 英文名（下移 + 放大）
+    // 证件照：圆角矩形
+    const px = 200, py = 140, pw = 624, ph = 624, r = 64;
+    ctx.save();
+    roundRect(ctx, px, py, pw, ph, r);
+    ctx.clip();
+    if (img) {
+      const s = Math.max(pw / img.width, ph / img.height);
+      const iw = img.width * s;
+      const ih = img.height * s;
+      ctx.drawImage(img, px + (pw - iw) / 2, py + (ph - ih) / 2, iw, ih);
+    } else {
+      ctx.fillStyle = '#4f6b3a';
+      ctx.fillRect(px, py, pw, ph);
+      ctx.fillStyle = '#f8f6ec';
+      ctx.font = '600 120px "Microsoft YaHei", sans-serif';
+      ctx.fillText(exp.logo || '待', W / 2, py + ph / 2);
+    }
+    ctx.restore();
+    // 照片描边
+    ctx.strokeStyle = 'rgba(60,80,40,.16)';
+    ctx.lineWidth = 4;
+    roundRect(ctx, px, py, pw, ph, r);
+    ctx.stroke();
+    // 名字
     ctx.fillStyle = '#2f5026';
     ctx.font = '600 170px Georgia, "Songti SC", serif';
-    ctx.fillText('AITCH', W / 2, 900);
+    ctx.fillText('AITCH', W / 2, 960);
+    // 副标题
+    ctx.fillStyle = '#8a957c';
+    ctx.font = '400 46px "Microsoft YaHei", sans-serif';
+    ctx.fillText('王宸曦', W / 2, 1052);
     // 分隔线
-    ctx.strokeStyle = 'rgba(60,80,40,.18)';
+    ctx.strokeStyle = 'rgba(60,80,40,.16)';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(W * 0.18, 1100);
-    ctx.lineTo(W * 0.82, 1100);
+    ctx.moveTo(W * 0.22, 1140);
+    ctx.lineTo(W * 0.78, 1140);
     ctx.stroke();
     // 底部
     ctx.fillStyle = '#9aa48a';
-    ctx.font = '400 34px "Microsoft YaHei", sans-serif';
-    ctx.fillText('INTERN BADGE · ' + exp.year, W / 2, 1180);
+    ctx.font = '400 32px "Microsoft YaHei", sans-serif';
+    ctx.fillText('INTERN BADGE · ' + exp.year, W / 2, 1220);
   } else {
     ctx.fillStyle = '#2f3a2a';
     ctx.fillRect(0, 0, W, H);
@@ -52,8 +83,19 @@ function drawFace(side, exp) {
   return c.toDataURL('image/png');
 }
 
+function loadImage(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
 const area = document.querySelector('#lanyard-area');
 if (area) {
+  const img = await loadImage(BADGE_PORTRAIT_URL);
   EXPERIENCES.forEach(exp => {
     const slot = document.createElement('div');
     slot.className = 'lanyard-slot';
@@ -62,8 +104,8 @@ if (area) {
     slot.appendChild(box);
     area.appendChild(slot);
     initLanyard(box, {
-      frontImage: drawFace('front', exp),
-      backImage: drawFace('back', exp),
+      frontImage: drawFace('front', exp, img),
+      backImage: drawFace('back', exp, img),
       size: 0.6,
       strapLength: 0.5,
       anchor: 'left',
