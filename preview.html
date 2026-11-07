@@ -57141,19 +57141,34 @@ if (host) {
   const world = new THREE.Group();
   scene.add(world);
 
-  // 地球：真实贴图 + 首页风格化
   const earthImg = await loadImage('assets/earth.jpg');
-  const map = earthImg ? recolorEarth(earthImg) : makeMapTexture();
+  const earth = earthImg ? buildEarth(earthImg) : { tex: makeMapTexture(), regionAt: () => 0 };
   const globe = new THREE.Mesh(
     new THREE.SphereGeometry(1, 96, 96),
-    new THREE.MeshStandardMaterial({ map, roughness: 0.92, metalness: 0 })
+    new THREE.MeshStandardMaterial({ map: earth.tex, roughness: 0.92, metalness: 0 })
   );
   world.add(globe);
 
-  // 云：集中赤道附近，跟着地球转
+  // 球面上种树 / 仙人掌（荒漠→深绿仙人掌，草原→浅绿树）
+  const UP = new THREE.Vector3(0, 1, 0);
+  let placed = 0;
+  for (let i = 0; i < 300 && placed < 110; i++) {
+    const px = Math.floor(Math.random() * 1024);
+    const py = Math.floor(Math.random() * 512);
+    const region = earth.regionAt(px, py);
+    if (region !== 2 && region !== 3) continue;
+    const pos = pointFromPixel(px, py);
+    const model = region === 2 ? makeCactus() : makeTree();
+    model.position.copy(pos);
+    model.quaternion.setFromUnitVectors(UP, pos.clone().normalize());
+    world.add(model);
+    placed++;
+  }
+
+  // 云：赤道附近，20 朵
   const cloudMat = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 1 });
   const puffGeo = new THREE.SphereGeometry(1, 12, 12);
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 20; i++) {
     const cl = new THREE.Group();
     const n = 5 + ((Math.random() * 4) | 0);
     for (let j = 0; j < n; j++) {
@@ -57209,6 +57224,13 @@ if (host) {
   }
   requestAnimationFrame(tick);
 
+  function pointFromPixel(px, py) {
+    const phi = (px / 1024) * Math.PI * 2;
+    const theta = (py / 512) * Math.PI;
+    const s = Math.sin(theta);
+    return new THREE.Vector3(-Math.cos(phi) * s, Math.cos(theta), Math.sin(phi) * s);
+  }
+
   function placeOnSphere(obj, radius, equator) {
     const lat = equator ? (Math.random() - 0.5) * 0.55 : Math.asin(2 * Math.random() - 1);
     const lon = Math.random() * Math.PI * 2;
@@ -57229,7 +57251,7 @@ if (host) {
     });
   }
 
-  function recolorEarth(img) {
+  function buildEarth(img) {
     const w = 1024, h = 512;
     const c = document.createElement('canvas');
     c.width = w;
@@ -57238,11 +57260,13 @@ if (host) {
     ctx.drawImage(img, 0, 0, w, h);
     const im = ctx.getImageData(0, 0, w, h);
     const d = im.data;
+    const region = new Uint8Array(w * h);
     const sea = [40, 160, 176];
     const desert = [214, 122, 48];
     const grass = [92, 170, 62];
-    for (let i = 0; i < d.length; i += 4) {
-      let r = d[i] / 255, g = d[i + 1] / 255, b = d[i + 2] / 255;
+    for (let p = 0; p < w * h; p++) {
+      const i = p * 4;
+      const r = d[i] / 255, g = d[i + 1] / 255, b = d[i + 2] / 255;
       const max = Math.max(r, g, b), min = Math.min(r, g, b);
       const l = (max + min) / 2;
       let hh = 0, s = 0;
@@ -57255,25 +57279,34 @@ if (host) {
         hh *= 60;
       }
       if (s < 0.14 || l > 0.9) continue;
-      let t = null;
-      if (hh >= 170 && hh <= 280) t = sea;
-      else if (hh >= 25 && hh <= 70) t = desert;
-      else if (hh > 70 && hh < 170) t = grass;
+      let t = null, reg = 0;
+      if (hh >= 170 && hh <= 280) { t = sea; reg = 1; }
+      else if (hh >= 25 && hh <= 70) { t = desert; reg = 2; }
+      else if (hh > 70 && hh < 170) { t = grass; reg = 3; }
       if (!t) continue;
+      region[p] = reg;
       const k = 0.95 + (l - 0.5) * 0.25;
       d[i] = Math.min(255, t[0] * k);
       d[i + 1] = Math.min(255, t[1] * k);
       d[i + 2] = Math.min(255, t[2] * k);
     }
     ctx.putImageData(im, 0, 0);
+    // 边缘柔化：轻微模糊，让色块之间渐变过渡
+    const c2 = document.createElement('canvas');
+    c2.width = w;
+    c2.height = h;
+    const ctx2 = c2.getContext('2d');
+    ctx2.filter = 'blur(4px)';
+    ctx2.drawImage(c, 0, 0);
+    ctx2.filter = 'none';
     for (let i = 0; i < 2600; i++) {
-      ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.035)';
-      ctx.fillRect(Math.random() * w, Math.random() * h, 2, 2);
+      ctx2.fillStyle = Math.random() > 0.5 ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.035)';
+      ctx2.fillRect(Math.random() * w, Math.random() * h, 2, 2);
     }
-    const tex = new THREE.CanvasTexture(c);
+    const tex = new THREE.CanvasTexture(c2);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 8;
-    return tex;
+    return { tex, regionAt: (px, py) => region[py * w + px] || 0 };
   }
 
   function makeMapTexture() {
@@ -57301,6 +57334,40 @@ if (host) {
     const tex = new THREE.CanvasTexture(c);
     tex.colorSpace = THREE.SRGBColorSpace;
     return tex;
+  }
+
+  function makeTree() {
+    const g = new THREE.Group();
+    const trunkMat = new THREE.MeshStandardMaterial({ color: '#6b4a2a', roughness: 1 });
+    const leafMat = new THREE.MeshStandardMaterial({ color: '#8fc46a', roughness: 1 });
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.009, 0.05, 5), trunkMat);
+    trunk.position.y = 0.025;
+    g.add(trunk);
+    const leafGeo = new THREE.IcosahedronGeometry(1, 1);
+    for (let i = 0; i < 3; i++) {
+      const m = new THREE.Mesh(leafGeo, leafMat);
+      const a = i * 2.1;
+      m.position.set(Math.cos(a) * 0.012, 0.06 + Math.random() * 0.02, Math.sin(a) * 0.012);
+      const s = 0.018 + Math.random() * 0.01;
+      m.scale.set(s, s, s);
+      g.add(m);
+    }
+    return g;
+  }
+
+  function makeCactus() {
+    const g = new THREE.Group();
+    const mat = new THREE.MeshStandardMaterial({ color: '#2f6b2f', roughness: 1 });
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.014, 0.07, 6), mat);
+    body.position.y = 0.035;
+    g.add(body);
+    for (const sgn of [-1, 1]) {
+      const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.007, 0.008, 0.03, 5), mat);
+      arm.position.set(sgn * 0.018, 0.045, 0);
+      arm.rotation.z = sgn * -0.5;
+      g.add(arm);
+    }
+    return g;
   }
 
   function makePlane() {
