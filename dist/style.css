@@ -159,6 +159,11 @@ body.alt .sidebar{transform:translateX(0)}
 }
 .work-slot .ph{font:400 12px var(--serif);letter-spacing:3px;color:#a3ab94}
 
+/* 作品集右侧地球 */
+#works .page-body{position:relative}
+#globe-stage{position:absolute;right:1%;top:50%;transform:translateY(-50%);width:34%;height:62vh;min-height:300px;pointer-events:none}
+@media(max-width:1180px){#globe-stage{display:none}}
+
 /* ===== 实习经历：悬挂工牌（ReactBits 组件改写） ===== */
 .experience-body{
   position:relative;display:block;padding:0;height:100vh;height:100svh;
