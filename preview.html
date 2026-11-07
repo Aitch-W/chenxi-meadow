@@ -169,7 +169,7 @@ body.alt .sidebar{transform:translateX(0)}
 
 /* 作品集右侧地球 */
 #works .page-body{position:relative}
-#globe-stage{position:absolute;right:1%;top:50%;transform:translateY(-50%);width:34%;height:62vh;min-height:300px;pointer-events:none}
+#globe-stage{position:absolute;right:4%;top:50%;transform:translateY(-50%);width:min(26vw,460px);height:min(26vw,460px);pointer-events:none}
 @media(max-width:1180px){#globe-stage{display:none}}
 
 /* ===== 实习经历：悬挂工牌（ReactBits 组件改写） ===== */
@@ -57237,7 +57237,7 @@ if (host) {
     add(box, red, -0.84, 0.025, -0.05, 0.08, 0.02, 0.2);
     add(box, red, 0.84, 0.025, -0.05, 0.08, 0.02, 0.2);
     g.userData.prop = add(box, dark, 0, 0, -0.65, 0.42, 0.025, 0.035);
-    g.scale.setScalar(0.62);
+    g.scale.setScalar(0.24);
     return g;
   }
 

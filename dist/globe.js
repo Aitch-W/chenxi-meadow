@@ -122,7 +122,7 @@ if (host) {
     add(box, red, -0.84, 0.025, -0.05, 0.08, 0.02, 0.2);
     add(box, red, 0.84, 0.025, -0.05, 0.08, 0.02, 0.2);
     g.userData.prop = add(box, dark, 0, 0, -0.65, 0.42, 0.025, 0.035);
-    g.scale.setScalar(0.62);
+    g.scale.setScalar(0.24);
     return g;
   }
 
